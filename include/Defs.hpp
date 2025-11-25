@@ -1,5 +1,5 @@
 /**
- * Defs.hpp
+ * Defs.h"p"p
  * created on : Nov 30 2022
  * author : Z.LEI
  **/
@@ -13,8 +13,8 @@
 typedef std::vector<std::vector<double>> Centers;
 typedef std::vector<std::vector<int>> Neighbors;
 
-const int INSTANCE_INDEX = 1;           // which instance file
-const int ITERATION = 5000;             // max iteration
+const int INSTANCE_INDEX = 0;           // which instance file
+const int ITERATION = 200;             // max iteration
 const double MAX_TIME = 36000;          // max running time
 const int POPULATION_SIZE = 20;         // population size
 const int DISTANCE_THRESHOLD = 5;       // min distance in population
@@ -32,7 +32,7 @@ const std::string GREEDY_ALGO = "SQUEEZE";      // SQUEEZE, SPARSE
 const std::string DISTANCE = "EDIT";
 
 const std::string ENV = "LOCAL";                 // LOCAL, SERVER
-const bool LOG = false;                          // log more details
+const bool LOG = true;                          // log more details
 const int SEED = 0;                              // random seed
 
 // server
@@ -42,10 +42,12 @@ const std::string SERVER_LKH_EXE = "";
 const std::string SERVER_LKH_TMP_ROOT = "";
 
 // local
-const std::string LOCAL_DATA_DIR = "";              // directory of instances
-const std::string LOCAL_RES_DIR = "";               // directory of results
-const std::string LOCAL_LKH_EXE = "";               // path for LKH solver
-const std::string LOCAL_LKH_TMP_ROOT = "";          // LKH tmp output directory
+const std::string LOCAL_DATA_DIR = "../../datasets/";
+const std::string LOCAL_RES_DIR = "../../solutions/";
+const std::string LOCAL_LKH_EXE = "C:/Users/Demir/researchproject/MA-CETSP/external/LKH-2.0.11/LKH.exe";
+const std::string LOCAL_LKH_TMP_ROOT = "C:/Users/Demir/researchproject/MA-CETSP/external/LKH-2.0.11/tmp/";
+
+
 
 // instances
 const std::vector<std::string> FILENAMES = {

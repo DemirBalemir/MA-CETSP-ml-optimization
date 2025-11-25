@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Population.cpp
  * created on : March 03 2022
  * author : Z.LEI
@@ -6,7 +6,7 @@
 
 #include "Genetic/Population.hpp"
 
-Population::Population(Parameters *params): neighbor(params->neighbor_size), ls(params) {
+Population::Population(Parameters* params) : neighbor(params->neighbor_size), ls(params) {
     this->initialization = params->init;
     this->selection = params->select;
     this->crossover_type = params->crossover;
@@ -25,7 +25,7 @@ Population::~Population() {
     delete crossover;
 }
 
-void Population::setContext(Centers &centers, Random *random, std::string timestamp) {
+void Population::setContext(Centers& centers, Random* random, std::string timestamp) {
     this->random = random;
     this->centers = centers;
     neighbor.setContext(centers.size());
@@ -39,7 +39,7 @@ List* Population::randomSolution() {
     std::vector<int> ids(centers.size() - 1);
     std::iota(ids.begin(), ids.end(), 1);
     random->permutation(ids);
-    List *solution = new List();
+    List* solution = new List();
     Node* head = new Node(0, centers[0][0], centers[0][1]);
     solution->add(head);
     for (int i = 0; i < ids.size(); ++i) {
@@ -48,7 +48,7 @@ List* Population::randomSolution() {
         double r = random->randomDoubleDistr(0, 1);
         double x = centers[id][0] + r * centers[id][2] * cos(theta);
         double y = centers[id][1] + r * centers[id][2] * sin(theta);
-        if (pow(x - centers[id][0], 2) + pow(y - centers[id][1], 2) > pow(centers[id][2], 2)){
+        if (pow(x - centers[id][0], 2) + pow(y - centers[id][1], 2) > pow(centers[id][2], 2)) {
             std::cout << "ERROR : init point out of circle" << std::endl;
         }
         Node* node = new Node(id, x, y);
@@ -60,7 +60,7 @@ List* Population::randomSolution() {
 List* Population::kmeansSolution() {
     std::vector<std::vector<int>> groups = kmeans.getGroups();
     // random.permutation(groups);
-    List *solution = new List();
+    List* solution = new List();
     for (int i = 0; i < groups.size(); ++i) {
         random->permutation(groups[i]);
         for (int j = 0; j < groups[i].size(); ++j) {
@@ -71,7 +71,7 @@ List* Population::kmeansSolution() {
                 double r = random->randomDoubleDistr(0, 1);
                 x = centers[id][0] + r * centers[id][2] * cos(theta);
                 y = centers[id][1] + r * centers[id][2] * sin(theta);
-                if (pow(x - centers[id][0], 2) + pow(y - centers[id][1], 2) > pow(centers[id][2], 2)){
+                if (pow(x - centers[id][0], 2) + pow(y - centers[id][1], 2) > pow(centers[id][2], 2)) {
                     std::cout << "ERROR : init point out of circle" << std::endl;
                 }
             }
@@ -87,27 +87,29 @@ List* Population::kmeansSolution() {
     return solution;
 }
 
-List *Population::initSolution() {
+List* Population::initSolution() {
     List* solution = nullptr;
     if (initialization == "RANDOM") {
         solution = randomSolution();
-    } else if (initialization == "KMEANS") {
+    }
+    else if (initialization == "KMEANS") {
         solution = kmeansSolution();
-    } else {
+    }
+    else {
         std::cerr << "[ERROR] invalid initialization method" << std::endl;
     }
     solution = ls.initSolOpt(solution);
     return solution;
 }
 
-List *Population::initPopulation() {
+List* Population::initPopulation() {
     auto start = std::chrono::high_resolution_clock::now();
 
     if (initialization == "KMEANS") {
         auto start_kmeans = std::chrono::high_resolution_clock::now();
         kmeans.run();
         auto end_kmeans = std::chrono::high_resolution_clock::now();
-        std::cout << "kmeans time : "<< std::chrono::duration <double> (end_kmeans - start_kmeans).count() << " s"  << std::endl;
+        std::cout << "kmeans time : " << std::chrono::duration <double>(end_kmeans - start_kmeans).count() << " s" << std::endl;
     }
 
     List* best = nullptr;
@@ -121,13 +123,13 @@ List *Population::initPopulation() {
 
     best_solution = new List(*best);
 
-    std::sort(population.begin(), population.end(), [] (List* s1, List* s2) {
+    std::sort(population.begin(), population.end(), [](List* s1, List* s2) {
         return s1->getValue() < s2->getValue();
-    });
+        });
 
     auto end = std::chrono::high_resolution_clock::now();
     if (LOG) {
-        std::cout << initialization << " init time : "<< std::chrono::duration <double> (end - start).count() << " s"  << std::endl;
+        std::cout << initialization << " init time : " << std::chrono::duration <double>(end - start).count() << " s" << std::endl;
     }
     neighbor.updateNeighbors();
     return best_solution;
@@ -141,7 +143,8 @@ std::pair<List*, List*> Population::chooseParent() {
             i = random->randomInt(size);
             j = random->randomInt(size);
         }
-    } else if (selection == "ROULETTE") {
+    }
+    else if (selection == "ROULETTE") {
         int sum_portion = (1 + size) * size / 2;
         int lucky;
         while (i == j) {
@@ -159,10 +162,10 @@ std::pair<List*, List*> Population::chooseParent() {
     if (LOG) {
         std::cout << "parents indices : " << i << " " << j << std::endl;
     }
-    return {population[i], population[j]};
+    return { population[i], population[j] };
 }
 
-List *Population::nextPopulation(int patience) {
+List* Population::nextPopulation(int patience) {
     std::pair<List*, List*> parents;
     double dist1 = 0, dist2 = 0;
     List* offspring = nullptr;
@@ -170,7 +173,8 @@ List *Population::nextPopulation(int patience) {
     while (dist1 == 0 || dist2 == 0) {
         if (try_times-- <= 0) {
             randomSwap(offspring);
-        } else {
+        }
+        else {
             parents = chooseParent();
             offspring = crossover->run(parents.first, parents.second);
         }
@@ -186,20 +190,52 @@ List *Population::nextPopulation(int patience) {
         randomSwap(offspring);
     }
 
+    // ======== PRE-VND COST ========
+    offspring->evaluate();
+    double pre_cost = offspring->getValue();  
+
+    // STORE RAW COORDS
+    std::vector<std::pair<double, double>> raw_coords;
+    Node* p_raw = offspring->head();
+    for (int k = 0; k < offspring->size(); ++k) {
+        raw_coords.push_back({ p_raw->x, p_raw->y });
+        p_raw = p_raw->next;
+    }
+
+    // Run VND
     offspring = ls.VND(offspring);
+
+    // ======== POST-VND COST ========
+    offspring->evaluate();
+    double post_cost = offspring->getValue();
+
+    // ======== NOW WRITE THEM TO THE LIST ========
+    offspring->pre_vnd_value = pre_cost;
+    offspring->post_vnd_value = post_cost;
+
+    offspring->pre_vnd_coords = raw_coords;
+    offspring->birth_iter = current_iter;
+    offspring->instance_index = data->instance_index;
+
+
+
     insertSolution(offspring);
 
     populationManagement();
 
+    offspring->post_vnd_fitness_at_birth = offspring->getFitness();
+
+
+
     if (LOG) {
         std::cout << "standard population size : " << population_size << ", current population size : " << population.size() << std::endl;
         std::cout << "population distances : " << std::endl;
-        for (auto &p : population) {
+        for (auto& p : population) {
             std::cout << p->getDistance() << " ";
         }
         std::cout << std::endl;
         std::cout << "population costs : " << std::endl;
-        for (auto &p : population) {
+        for (auto& p : population) {
             std::cout << p->getValue() << " ";
         }
         std::cout << std::endl;
@@ -208,7 +244,7 @@ List *Population::nextPopulation(int patience) {
     return best_solution;
 }
 
-bool Population::insertSolution(List *s) {
+bool Population::insertSolution(List* s) {
     double distance_threshold = dist_th;
     double min_dist = INT_MAX;
     std::vector<double> distances(population.size(), 0);
@@ -219,13 +255,19 @@ bool Population::insertSolution(List *s) {
     }
     s->setDistance(min_dist);
     if ((min_dist > 0 && best_solution && s->getValue() < best_solution->getValue()) || min_dist > distance_threshold) {
+        s->was_inserted = true;
+
         for (int i = 0; i < population.size(); ++i) {
             population[i]->setDistance(distances[i]);
         }
         population.emplace_back(s);
         neighbor.updateCentroids(s);
+
         return true;
-    } else {
+    }
+    else {
+        s->was_inserted = false;
+
         return false;
     }
 }
@@ -248,18 +290,18 @@ void Population::populationManagement() {
     std::unordered_map<List*, std::vector<double>> rank;
 
     // value rank
-    std::sort(population.begin(), population.end(), [] (List* s1, List* s2) {
+    std::sort(population.begin(), population.end(), [](List* s1, List* s2) {
         return s1->getValue() < s2->getValue();
-    });
+        });
 
     for (int i = 0; i < population.size(); ++i) {
         rank[population[i]].emplace_back(100.0 * i / (population.size() - 1));
     }
 
     // distance rank
-    std::sort(population.begin(), population.end(), [] (List* s1, List* s2) {
+    std::sort(population.begin(), population.end(), [](List* s1, List* s2) {
         return s1->getDistance() > s2->getDistance();
-    });
+        });
 
     for (int i = 0; i < population.size(); ++i) {
         rank[population[i]].emplace_back(100.0 * i / (population.size() - 1));
@@ -271,19 +313,49 @@ void Population::populationManagement() {
         population[i]->setFitness(fitness);
     }
 
-    std::sort(population.begin(), population.end(), [] (List* s1, List* s2) {
+    std::sort(population.begin(), population.end(), [](List* s1, List* s2) {
         return s1->getFitness() < s2->getFitness();
-    });
+        });
 
     if (population.size() >= 1.5 * population_size) {
+
+        // ========== LOGGING: DEATH OF REMOVED SOLUTIONS ==========
+        // Solutions that will be deleted are from index population_size to old_size-1
+        int old_size = population.size();
+        for (int i = population_size; i < old_size; ++i) {
+            List* dying = population[i];
+
+
+            if (!dying->was_inserted)
+                continue;
+            if (dying->birth_iter < 0)
+                continue;
+            // Assign death iteration
+            dying->death_iter = current_iter;
+
+            dying->censored = false;
+
+
+            // Log final objective value
+            dying->final_fitness = dying->getValue();
+
+            // Call Data logger
+            if (current_iter <= 100) {
+                data->writeSolutionLog(dying);
+            }
+        }
+
+        // Actually delete them
         population.resize(population_size);
+
+        // The rest stays the same
         neighbor.updateNeighbors();
         updateDistances();
     }
 
-    List* best = *std::min_element(population.begin(), population.end(), [] (List* s1, List* s2) {
+    List* best = *std::min_element(population.begin(), population.end(), [](List* s1, List* s2) {
         return s1->getValue() < s2->getValue();
-    });
+        });
 
     if (best->getValue() < best_solution->getValue()) {
         delete best_solution;
@@ -295,17 +367,16 @@ void Population::populationManagement() {
 void Population::randomSwap(List* s) {
     int steps = 5;
     while (steps-- > 0) {
-        int i = random->randomInt(s->size()-1) + 1;
-        int j = random->randomInt(s->size()-1) + 1;
+        int i = random->randomInt(s->size() - 1) + 1;
+        int j = random->randomInt(s->size() - 1) + 1;
         while (i == j && abs(i - j) == 1) {
-            i = random->randomInt(s->size()-1) + 1;
-            j = random->randomInt(s->size()-1) + 1;
+            i = random->randomInt(s->size() - 1) + 1;
+            j = random->randomInt(s->size() - 1) + 1;
         }
         Node* p1 = s->head();
         Node* p2 = s->head();
-        while(i-- > 0) p1 = p1->next;
+        while (i-- > 0) p1 = p1->next;
         while (j-- > 0) p2 = p2->next;
         Node::swap(p1, p2);
     }
 }
-

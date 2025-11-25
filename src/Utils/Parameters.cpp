@@ -39,7 +39,7 @@ Parameters::Parameters(int argc, char **argv) {
     distance = parser.get<std::string>("distance");
     population_size = parser.get<int>("pop_size");
     iteration = parser.get<int>("iteration");
-    patience = iteration / 10;
+    patience = iteration ;
     max_time = parser.get<double>("max_time");
     fit_beta = parser.get<double>("fit_beta");
     dist_th = parser.get<int>("dist_th");

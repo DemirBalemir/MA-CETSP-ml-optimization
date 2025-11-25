@@ -18,8 +18,8 @@
 
 class Algo {
 private:
-    Random *random;
-    Parameters *params;
+    Random* random;
+    Parameters* params;
     Data data;
     Population population;
     int iteration;
@@ -27,7 +27,7 @@ private:
     int instance_index;
     std::string timestamp;  // timestamp
 public:
-    Algo(Parameters *params);
+    Algo(Parameters* params);
     ~Algo();
     void run();
 };

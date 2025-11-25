@@ -14,12 +14,25 @@
 #include <climits>
 
 class List {
-private:
+public:
     int _size;
     Node* _head;
     double value;
     double distance;    // distance to population
     double fitness;     // value and min distance
+    int birth_iter = -1;
+    int death_iter = -1;
+    int instance_index = -1;
+    double post_vnd_fitness_at_birth = -1;
+    double final_fitness = -1;
+    std::vector<std::pair<double, double>> pre_vnd_coords;
+    bool was_inserted = false;
+    bool censored = false;
+    double pre_vnd_value = -1;
+    double post_vnd_value = -1;
+
+
+
 public:
     List();
     List(const List& s);

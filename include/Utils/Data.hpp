@@ -24,17 +24,20 @@ private:
     std::string data_dir;                       // dir to read instance data
     std::string res_dir;                        // dir to write results
     std::string filename;                       // instance filename
-    int instance_index;                         // instance index
     std::string timestamp;                      // timestamp
     std::string result_filename;                // result filename
     void reduceSize();                          // reduce the size of centers
 public:
-    Data(Parameters *params);
+    Data(Parameters* params);
     ~Data() = default;
     void read();                                                        // read data
     void write(List* solution, int iter, std::string running_time);     // write the best solution when updating
     Centers getData();                                                  // get centers
     std::string getResultFilename();                                    // get result filename
+    void writeSolutionLog(List* s);
+    int instance_index;                         // instance index
+
+
 };
 
 #endif //CETSP_DATA_HPP

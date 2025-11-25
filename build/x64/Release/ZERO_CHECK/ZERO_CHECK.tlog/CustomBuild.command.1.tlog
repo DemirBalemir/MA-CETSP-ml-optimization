@@ -1,0 +1,10 @@
+^C:\USERS\DEMIR\RESEARCHPROJECT\MA-CETSP\BUILD\CMAKEFILES\A41CD06836D91118CD786C0E9311F280\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Demir/researchproject/MA-CETSP -BC:/Users/Demir/researchproject/MA-CETSP/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/Demir/researchproject/MA-CETSP/build/MA-CETSP.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

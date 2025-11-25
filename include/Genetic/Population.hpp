@@ -22,7 +22,7 @@
 
 class Population {
 private:
-    Random *random;
+    Random* random;
     LocalSearch ls;
     Crossover* crossover;
     Kmeans kmeans;
@@ -35,7 +35,6 @@ private:
     std::string crossover_type;
     double fit_beta;
     int dist_th;
-    std::vector<List*> population;
     std::unordered_map<List*, std::vector<double>> solution_map;
     List* initSolution();
     List* randomSolution();
@@ -46,11 +45,16 @@ private:
     void populationManagement();
     void randomSwap(List* s);
 public:
-    Population(Parameters *params);
+    std::vector<List*> population;
+    Population(Parameters* params);
     ~Population();
-    void setContext(Centers &centers, Random *random, std::string timestamp);
-    List *initPopulation();
-    List *nextPopulation(int patience);
+    void setContext(Centers& centers, Random* random, std::string timestamp);
+    List* initPopulation();
+    List* nextPopulation(int patience);
+    int current_iter = -1;
+    Data* data = nullptr;    // ADD THIS LINE
+
+
 };
 
 #endif //CETSP_POPULATION_HPP
