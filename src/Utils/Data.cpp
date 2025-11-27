@@ -76,7 +76,7 @@ void Data::write(List* solution, int iter, std::string running_time) {
         if (!std::filesystem::exists(res_dir)) {
             std::filesystem::create_directory(res_dir);
         }
-        std::string running_dir = res_dir + filename + "-" + this->timestamp + "/";
+        std::string running_dir = res_dir + "normal/" + filename + "-" + this->timestamp + "/";
         if (!std::filesystem::exists(running_dir)) {
             std::filesystem::create_directory(running_dir);
         }
@@ -107,9 +107,15 @@ void Data::write(List* solution, int iter, std::string running_time) {
 void Data::writeSolutionLog(List* s) {
     try {
         // directory for ML logs
-        std::string logdir = res_dir + "ml_logs-" + timestamp + "/";
+        std::string log_root = res_dir + "ml_logs/";
+        if (!std::filesystem::exists(log_root)) {
+            std::filesystem::create_directories(log_root);
+        }
+
+        // create directory for this instance / timestamp
+        std::string logdir = log_root + filename + "-" + timestamp + "/";
         if (!std::filesystem::exists(logdir)) {
-            std::filesystem::create_directory(logdir);
+            std::filesystem::create_directories(logdir);
         }
 
         // unique filename for this solution

@@ -56,16 +56,16 @@ void Algo::run() {
 
 
         // ==== AT EXACT ITERATION 100: LOG SURVIVORS ====
-        if (iter == 100) {
+        if (iter == TRAINING_TIME) {
 
             for (List* s : population.population) {
 
                 if (!s->was_inserted) continue;
                 if (s->birth_iter < 0) continue;
-                if (s->birth_iter > 100) continue; // doğum >100 loglanmaz
+                if (s->birth_iter > TRAINING_TIME) continue; // doğum >100 loglanmaz
 
                 // Hayatta kaldı → censored
-                s->death_iter = 100;
+                s->death_iter = TRAINING_TIME;
                 s->censored = true;
                 s->final_fitness = s->getValue();
 

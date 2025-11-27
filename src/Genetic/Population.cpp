@@ -340,7 +340,7 @@ void Population::populationManagement() {
             dying->final_fitness = dying->getValue();
 
             // Call Data logger
-            if (current_iter <= 100) {
+            if (current_iter <= TRAINING_TIME) {
                 data->writeSolutionLog(dying);
             }
         }
