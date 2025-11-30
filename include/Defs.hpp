@@ -14,7 +14,7 @@ typedef std::vector<std::vector<double>> Centers;
 typedef std::vector<std::vector<int>> Neighbors;
 
 const int INSTANCE_INDEX = 0;           // which instance file
-const int ITERATION = 200;             // max iteration
+const int ITERATION = 500;             // max iteration
 const double MAX_TIME = 36000;          // max running time
 const int POPULATION_SIZE = 20;         // population size
 const int DISTANCE_THRESHOLD = 5;       // min distance in population
@@ -23,7 +23,10 @@ const int NEIGHBOR_SIZE = 50;           // neighbors size of a target
 const double EPSILON = 1e-4;            // approximation in geometry and local search
 const double DELTA = 1e-3;              // approximation in accepting best solution
 const double PI = 3.14159265358979323846;
-const int TRAINING_TIME = ITERATION / 10;
+const int TRAINING_TIME = ITERATION / 2;
+const double ML_THRESHOLD = 1.05;
+const bool ML_ENABLE = true; 
+
 
 const std::string INITIALIZATION = "KMEANS";    // RANDOM, KMEANS
 const std::string SELECTION = "RANDOM";         // RANDOM, ROULETTE

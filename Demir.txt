@@ -1,6 +1,6 @@
 -----------RUN COMMAND-------------------------
 cd C:\Users\Demir\researchproject\MA-CETSP\build\Release
-MA-CETSP.exe
+.\MA-CETSP.exe
 
 --------------BUILD COMMAND------------------------
 

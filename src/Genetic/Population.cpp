@@ -5,6 +5,15 @@
  **/
 
 #include "Genetic/Population.hpp"
+#include <cstdio>
+#include <iostream>
+#include <memory>
+#include <stdexcept>
+#include <array>
+#include <cmath>
+#include <map>
+#include <sstream>
+
 
 Population::Population(Parameters* params) : neighbor(params->neighbor_size), ls(params) {
     this->initialization = params->init;
@@ -170,6 +179,8 @@ List* Population::nextPopulation(int patience) {
     double dist1 = 0, dist2 = 0;
     List* offspring = nullptr;
     int try_times = 5;
+
+    // ================= CREATE OFFSPRING =================
     while (dist1 == 0 || dist2 == 0) {
         if (try_times-- <= 0) {
             randomSwap(offspring);
@@ -185,16 +196,16 @@ List* Population::nextPopulation(int patience) {
         }
     }
 
-    // mutation
+    // Mutation
     if (random->randomInt(1000) < patience) {
         randomSwap(offspring);
     }
 
-    // ======== PRE-VND COST ========
+    // ================= PRE-VND COST =================
     offspring->evaluate();
-    double pre_cost = offspring->getValue();  
+    double pre_cost = offspring->getValue();
 
-    // STORE RAW COORDS
+    // ================= PRE-VND RAW COORDS =================
     std::vector<std::pair<double, double>> raw_coords;
     Node* p_raw = offspring->head();
     for (int k = 0; k < offspring->size(); ++k) {
@@ -202,33 +213,50 @@ List* Population::nextPopulation(int patience) {
         p_raw = p_raw->next;
     }
 
-    // Run VND
+    // ================= ML FILTER =================
+    if (ML_ENABLE && current_iter > TRAINING_TIME) {
+
+        // ---- feature extraction ----
+        auto feats = extract_geometry_features(raw_coords);
+        feats["pre_vnd_cost"] = pre_cost;
+
+        // ---- convert to JSON ----
+        std::string json_feat = features_to_json(feats);
+
+        // ---- ML predict ----
+        double score = predict_survival_score(json_feat);
+
+        // ---- reject low-survival offspring ----
+        if (score > ML_THRESHOLD) {
+            ml_reject_count++;   
+            if (LOG) std::cout << "[ML] Offspring rejected before VND. Score=" << score << "\n";
+            return best_solution;        }
+    }
+
+    // ================= VND IMPROVEMENT =================
     offspring = ls.VND(offspring);
 
-    // ======== POST-VND COST ========
+    // ================= POST-VND COST =================
     offspring->evaluate();
     double post_cost = offspring->getValue();
 
-    // ======== NOW WRITE THEM TO THE LIST ========
+    // ================= SAVE TO OFFSPRING OBJECT =================
     offspring->pre_vnd_value = pre_cost;
     offspring->post_vnd_value = post_cost;
-
     offspring->pre_vnd_coords = raw_coords;
     offspring->birth_iter = current_iter;
     offspring->instance_index = data->instance_index;
 
-
-
+    // ================= INSERT & SURVIVAL MGMT =================
     insertSolution(offspring);
-
     populationManagement();
 
     offspring->post_vnd_fitness_at_birth = offspring->getFitness();
 
-
-
+    // ================= LOGGING =================
     if (LOG) {
-        std::cout << "standard population size : " << population_size << ", current population size : " << population.size() << std::endl;
+        std::cout << "standard population size : " << population_size
+            << ", current population size : " << population.size() << std::endl;
         std::cout << "population distances : " << std::endl;
         for (auto& p : population) {
             std::cout << p->getDistance() << " ";
@@ -243,6 +271,7 @@ List* Population::nextPopulation(int patience) {
 
     return best_solution;
 }
+
 
 bool Population::insertSolution(List* s) {
     double distance_threshold = dist_th;
@@ -380,3 +409,202 @@ void Population::randomSwap(List* s) {
         Node::swap(p1, p2);
     }
 }
+#include <cstdio>
+#include <iostream>
+#include <memory>
+#include <stdexcept>
+#include <array>
+double Population::predict_survival_score(const std::string& json_features)
+{
+    std::string temp_json = "C:/Users/Demir/researchproject/MA-CETSP/temp_features.json";
+    {
+        std::ofstream f(temp_json);
+        f << json_features;
+    }
+
+    std::string python_exec =
+        "C:/Users/Demir/AppData/Local/Programs/Python/Python310/python.exe";
+
+    std::string script =
+        "\"C:/Users/Demir/researchproject/MA-CETSP/ml/scripts/predict.py\"";
+
+    std::string json_arg =
+        "\"" + temp_json + "\"";
+
+    std::string cmd =
+        python_exec + " " + script + " " + json_arg;
+
+    std::array<char, 256> buffer{};
+    std::string result;
+
+    std::unique_ptr<FILE, decltype(&_pclose)>
+        pipe(_popen(cmd.c_str(), "r"), _pclose);
+
+    if (!pipe) {
+        std::cerr << "[ML ERROR] popen failed\n";
+        return 0.0;
+    }
+
+    while (fgets(buffer.data(), buffer.size(), pipe.get())) {
+        result += buffer.data();
+    }
+
+    std::remove(temp_json.c_str());
+
+    try {
+        return std::stod(result);
+    }
+    catch (...) {
+        std::cerr << "[ML ERROR] Invalid Python output: " << result << "\n";
+        return 0.0;
+    }
+}
+
+
+    std::map<std::string, double> Population::extract_geometry_features(
+        const std::vector<std::pair<double, double>>& coords)
+    {
+        std::map<std::string, double> F;
+
+        int n = coords.size();
+        if (n < 2) {
+            // fallback
+            F["avg_edge_length"] = 0;
+            F["var_edge_length"] = 0;
+            F["bbox_width"] = 0;
+            F["bbox_height"] = 0;
+            F["bbox_area"] = 0;
+            F["centroid_x"] = 0;
+            F["centroid_y"] = 0;
+            F["centroid_dist_sum"] = 0;
+            F["angle_variance"] = 0;
+            return F;
+        }
+
+        // ------------------------
+        // KOORDİNATLARI MATRİSE ÇEVİR
+        // ------------------------
+        std::vector<double> xs(n), ys(n);
+        for (int i = 0; i < n; i++) {
+            xs[i] = coords[i].first;
+            ys[i] = coords[i].second;
+        }
+
+        // ------------------------
+        // EDGE LENGTHS
+        // ------------------------
+        std::vector<double> edges;
+        edges.reserve(n);
+
+        for (int i = 0; i < n - 1; i++) {
+            double dx = xs[i + 1] - xs[i];
+            double dy = ys[i + 1] - ys[i];
+            edges.push_back(std::sqrt(dx * dx + dy * dy));
+        }
+
+        double sum_e = 0;
+        for (double e : edges) sum_e += e;
+        double avg_e = sum_e / edges.size();
+
+        double var_sum = 0;
+        for (double e : edges) var_sum += (e - avg_e) * (e - avg_e);
+        double var_e = var_sum / edges.size();
+
+        F["avg_edge_length"] = avg_e;
+        F["var_edge_length"] = var_e;
+
+        // ------------------------
+        // BOUNDING BOX
+        // ------------------------
+        double min_x = *std::min_element(xs.begin(), xs.end());
+        double max_x = *std::max_element(xs.begin(), xs.end());
+        double min_y = *std::min_element(ys.begin(), ys.end());
+        double max_y = *std::max_element(ys.begin(), ys.end());
+
+        double width = max_x - min_x;
+        double height = max_y - min_y;
+
+        F["bbox_width"] = width;
+        F["bbox_height"] = height;
+        F["bbox_area"] = width * height;
+
+        // ------------------------
+        // CENTROID
+        // ------------------------
+        double cx = 0, cy = 0;
+        for (int i = 0; i < n; i++) {
+            cx += xs[i];
+            cy += ys[i];
+        }
+        cx /= n;
+        cy /= n;
+
+        F["centroid_x"] = cx;
+        F["centroid_y"] = cy;
+
+        // ------------------------
+        // DISTANCE TO CENTROID
+        // ------------------------
+        double dist_sum = 0;
+        for (int i = 0; i < n; i++) {
+            double dx = xs[i] - cx;
+            double dy = ys[i] - cy;
+            dist_sum += std::sqrt(dx * dx + dy * dy);
+        }
+        F["centroid_dist_sum"] = dist_sum;
+
+        // ------------------------
+        // ANGLE VARIANCE (smoothness)
+        // ------------------------
+        std::vector<double> angles;
+        for (int i = 1; i < n - 1; i++) {
+            double ax = xs[i - 1] - xs[i];
+            double ay = ys[i - 1] - ys[i];
+            double bx = xs[i + 1] - xs[i];
+            double by = ys[i + 1] - ys[i];
+
+            double dot = ax * bx + ay * by;
+            double normA = std::sqrt(ax * ax + ay * ay);
+            double normB = std::sqrt(bx * bx + by * by);
+
+            if (normA < 1e-9 || normB < 1e-9) continue;
+
+            double cosang = dot / (normA * normB);
+            if (cosang > 1) cosang = 1;
+            if (cosang < -1) cosang = -1;
+
+            angles.push_back(std::acos(cosang));
+        }
+
+        double var_ang = 0;
+        if (!angles.empty()) {
+            double avg_ang = 0;
+            for (double a : angles) avg_ang += a;
+            avg_ang /= angles.size();
+
+            double vap = 0;
+            for (double a : angles) vap += (a - avg_ang) * (a - avg_ang);
+            var_ang = vap / angles.size();
+        }
+
+        F["angle_variance"] = var_ang;
+
+        return F;
+    }
+std::string Population::features_to_json(const std::map<std::string, double>& feats)
+{
+    std::ostringstream oss;
+    oss << "{";
+    bool first = true;
+
+    for (auto& kv : feats) {
+        if (!first) oss << ",";
+        first = false;
+        oss << "\"" << kv.first << "\":" << kv.second;
+    }
+
+    oss << "}";
+    return oss.str();
+}
+
+

@@ -6,6 +6,7 @@
 
 #include "Algo.hpp"
 
+
 Algo::Algo(Parameters* params) : population(params), data(params) {
     this->params = params;
     this->random = new Random(params->seed);
@@ -55,8 +56,8 @@ void Algo::run() {
         auto end_iter = std::chrono::high_resolution_clock::now();
 
 
-        // ==== AT EXACT ITERATION 100: LOG SURVIVORS ====
-        if (iter == TRAINING_TIME) {
+        // ==== AT EXACT ITERATION TRAINING_TIME: LOG SURVIVORS ====
+        if (ML_ENABLE && iter == TRAINING_TIME) {
 
             for (List* s : population.population) {
 
@@ -71,6 +72,8 @@ void Algo::run() {
 
                 data.writeSolutionLog(s);
             }
+            run_ml_training();
+
         }
 
 
@@ -114,4 +117,37 @@ void Algo::run() {
         << " total_time: " << std::chrono::duration<double>(end_run - start_run).count()
         << " result_file: " << data.getResultFilename()
         << std::endl;
+
+    std::cout << "[ML] Total offspring rejected before VND: "
+        << population.ml_reject_count << std::endl;
+
+}
+void Algo::run_ml_training() {
+    std::cout << "\n[ML] Starting machine learning training phase..." << std::endl;
+
+    // Doğru Python yolu
+    std::string python_exec = "\"C:/Users/Demir/AppData/Local/Programs/Python/Python310/python.exe\"";
+
+    // Script yolu
+    std::string script_path = "C:/Users/Demir/researchproject/MA-CETSP/ml/scripts/train_cox.py";
+
+    // Komutu oluştur
+    std::string cmd = python_exec + " " + script_path;
+
+    std::cout << "[ML] Running command: " << cmd << std::endl;
+
+
+    // 3) Çalıştır
+    int result = system(cmd.c_str());
+
+    // 4) Çıkış kodu kontrolü
+    if (result != 0) {
+        std::cerr << "[ML ERROR] Training script failed. Exit code: "
+            << result << std::endl;
+
+    }
+    else {
+        std::cout << "[ML] Training completed successfully.\n" << std::endl;
+
+    }
 }

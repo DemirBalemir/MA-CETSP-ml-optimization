@@ -30,6 +30,8 @@ public:
     Algo(Parameters* params);
     ~Algo();
     void run();
+    void run_ml_training();
+
 };
 
 #endif //CETSP_ALGO_HPP

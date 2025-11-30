@@ -52,7 +52,15 @@ public:
     List* initPopulation();
     List* nextPopulation(int patience);
     int current_iter = -1;
+    int ml_reject_count = 0;
     Data* data = nullptr;    // ADD THIS LINE
+    double predict_survival_score(const std::string& json_features);
+    std::map<std::string, double> extract_geometry_features(const std::vector<std::pair<double, double>>& coords);
+    std::string features_to_json(const std::map<std::string, double>& feats);
+
+
+
+
 
 
 };
