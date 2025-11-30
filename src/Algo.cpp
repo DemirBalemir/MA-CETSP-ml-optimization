@@ -125,29 +125,36 @@ void Algo::run() {
 void Algo::run_ml_training() {
     std::cout << "\n[ML] Starting machine learning training phase..." << std::endl;
 
-    // Doğru Python yolu
-    std::string python_exec = "\"C:/Users/Demir/AppData/Local/Programs/Python/Python310/python.exe\"";
+    std::string python_exec =
+        "\"C:/Users/Demir/AppData/Local/Programs/Python/Python310/python.exe\"";
 
-    // Script yolu
-    std::string script_path = "C:/Users/Demir/researchproject/MA-CETSP/ml/scripts/train_cox.py";
+    std::string script_path;
 
-    // Komutu oluştur
+    if (ML_MODEL == "COX") {
+        script_path = "C:/Users/Demir/researchproject/MA-CETSP/ml/scripts/train_cox.py";
+    }
+    else if (ML_MODEL == "RSF") {
+        script_path = "C:/Users/Demir/researchproject/MA-CETSP/ml/scripts/train_rsf.py";
+    }
+    else if (ML_MODEL == "GBSA") {
+        script_path = "C:/Users/Demir/researchproject/MA-CETSP/ml/scripts/train_gbsa.py";
+    }
+    else {
+        std::cerr << "[ML ERROR] Unknown ML_MODEL in Defs.hpp: " << ML_MODEL << std::endl;
+        return;
+    }
+
     std::string cmd = python_exec + " " + script_path;
 
     std::cout << "[ML] Running command: " << cmd << std::endl;
 
-
-    // 3) Çalıştır
     int result = system(cmd.c_str());
 
-    // 4) Çıkış kodu kontrolü
     if (result != 0) {
         std::cerr << "[ML ERROR] Training script failed. Exit code: "
             << result << std::endl;
-
     }
     else {
         std::cout << "[ML] Training completed successfully.\n" << std::endl;
-
     }
 }

@@ -25,6 +25,7 @@ const double DELTA = 1e-3;              // approximation in accepting best solut
 const double PI = 3.14159265358979323846;
 const int TRAINING_TIME = ITERATION / 2;
 const double ML_THRESHOLD = 1.05;
+const std::string ML_MODEL = "GBSA"; // "COX", "RSF", or "GBSA"
 const bool ML_ENABLE = true; 
 
 

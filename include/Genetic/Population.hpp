@@ -57,6 +57,8 @@ public:
     double predict_survival_score(const std::string& json_features);
     std::map<std::string, double> extract_geometry_features(const std::vector<std::pair<double, double>>& coords);
     std::string features_to_json(const std::map<std::string, double>& feats);
+    double load_rsf_threshold();
+    double load_gbsa_threshold();
 
 
 

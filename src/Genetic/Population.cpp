@@ -223,11 +223,23 @@ List* Population::nextPopulation(int patience) {
         // ---- convert to JSON ----
         std::string json_feat = features_to_json(feats);
 
+        double threshold;
+
+        if (ML_MODEL == "COX") {
+            threshold = ML_THRESHOLD;   // sabit threshold
+        }
+        else if (ML_MODEL == "RSF") {
+            threshold = load_rsf_threshold();
+        }
+        else if (ML_MODEL == "GBSA") {
+            threshold = load_gbsa_threshold();
+        }
+
         // ---- ML predict ----
         double score = predict_survival_score(json_feat);
 
         // ---- reject low-survival offspring ----
-        if (score > ML_THRESHOLD) {
+        if (score > threshold) {
             ml_reject_count++;   
             if (LOG) std::cout << "[ML] Offspring rejected before VND. Score=" << score << "\n";
             return best_solution;        }
@@ -425,14 +437,24 @@ double Population::predict_survival_score(const std::string& json_features)
     std::string python_exec =
         "C:/Users/Demir/AppData/Local/Programs/Python/Python310/python.exe";
 
-    std::string script =
-        "\"C:/Users/Demir/researchproject/MA-CETSP/ml/scripts/predict.py\"";
+    std::string script;
 
-    std::string json_arg =
-        "\"" + temp_json + "\"";
+    if (ML_MODEL == "COX") {
+        script = "\"C:/Users/Demir/researchproject/MA-CETSP/ml/scripts/predict.py\"";
+    }
+    else if (ML_MODEL == "RSF") {
+        script = "\"C:/Users/Demir/researchproject/MA-CETSP/ml/scripts/predict_rsf.py\"";
+    }
+    else if (ML_MODEL == "GBSA") {
+        script = "\"C:/Users/Demir/researchproject/MA-CETSP/ml/scripts/predict_gbsa.py\"";
+    }
+    else {
+        std::cerr << "[ML ERROR] Unknown ML_MODEL in Defs.hpp\n";
+        return 0.0;
+    }
 
-    std::string cmd =
-        python_exec + " " + script + " " + json_arg;
+    std::string json_arg = "\"" + temp_json + "\"";
+    std::string cmd = python_exec + " " + script + " " + json_arg;
 
     std::array<char, 256> buffer{};
     std::string result;
@@ -459,6 +481,7 @@ double Population::predict_survival_score(const std::string& json_features)
         return 0.0;
     }
 }
+
 
 
     std::map<std::string, double> Population::extract_geometry_features(
@@ -606,5 +629,52 @@ std::string Population::features_to_json(const std::map<std::string, double>& fe
     oss << "}";
     return oss.str();
 }
+double Population::load_rsf_threshold()
+{
+    std::string path = "C:/Users/Demir/researchproject/MA-CETSP/ml/models/rsf_meta.json";
+    std::ifstream f(path);
+    if (!f.is_open()) {
+        std::cerr << "[ML ERROR] Could not open threshold file: " << path << "\n";
+        return 1e9; // dev threshold
+    }
 
+    std::string json;
+    std::getline(f, json);
 
+    size_t pos = json.find(":");
+    if (pos == std::string::npos) {
+        std::cerr << "[ML ERROR] Invalid threshold JSON\n";
+        return 1e9;
+    }
+
+    std::string value = json.substr(pos + 1);
+    value.erase(std::remove(value.begin(), value.end(), '}'), value.end());
+    value.erase(std::remove(value.begin(), value.end(), ' '), value.end());
+
+    return std::stod(value);
+}
+
+double Population::load_gbsa_threshold()
+{
+    std::string path = "C:/Users/Demir/researchproject/MA-CETSP/ml/models/gbsa_meta.json";
+    std::ifstream f(path);
+    if (!f.is_open()) {
+        std::cerr << "[ML ERROR] Could not open threshold file: " << path << "\n";
+        return 1e9;
+    }
+
+    std::string json;
+    std::getline(f, json);
+
+    size_t pos = json.find(":");
+    if (pos == std::string::npos) {
+        std::cerr << "[ML ERROR] Invalid threshold JSON\n";
+        return 1e9;
+    }
+
+    std::string value = json.substr(pos + 1);
+    value.erase(std::remove(value.begin(), value.end(), '}'), value.end());
+    value.erase(std::remove(value.begin(), value.end(), ' '), value.end());
+
+    return std::stod(value);
+}
