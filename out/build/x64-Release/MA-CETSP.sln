@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ALL_BUILD", "ALL_BUILD.vcxproj", "{786C7723-65C3-3FC4-9FAD-316F364F86CD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B737E1D9-CAB2-31BF-86E9-500319CA6306} = {B737E1D9-CAB2-31BF-86E9-500319CA6306}
+		{30E2FBD5-AC91-37D6-A977-4709B7A6A422} = {30E2FBD5-AC91-37D6-A977-4709B7A6A422}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MA-CETSP", "MA-CETSP.vcxproj", "{B737E1D9-CAB2-31BF-86E9-500319CA6306}"
+	ProjectSection(ProjectDependencies) = postProject
+		{30E2FBD5-AC91-37D6-A977-4709B7A6A422} = {30E2FBD5-AC91-37D6-A977-4709B7A6A422}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ZERO_CHECK", "ZERO_CHECK.vcxproj", "{30E2FBD5-AC91-37D6-A977-4709B7A6A422}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{786C7723-65C3-3FC4-9FAD-316F364F86CD}.Release|x64.ActiveCfg = Release|x64
+		{B737E1D9-CAB2-31BF-86E9-500319CA6306}.Release|x64.ActiveCfg = Release|x64
+		{B737E1D9-CAB2-31BF-86E9-500319CA6306}.Release|x64.Build.0 = Release|x64
+		{30E2FBD5-AC91-37D6-A977-4709B7A6A422}.Release|x64.ActiveCfg = Release|x64
+		{30E2FBD5-AC91-37D6-A977-4709B7A6A422}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3A2A01A0-5509-32CB-AA86-1FFDB8182A51}
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

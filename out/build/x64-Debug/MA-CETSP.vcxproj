@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{DB872B12-B962-3229-A332-00DD63573FA3}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>MA-CETSP</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Demir\researchproject\MA-CETSP\out\build\x64-Debug\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">MA-CETSP.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">MA-CETSP</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Demir\researchproject\MA-CETSP\include;C:\Users\Demir\researchproject\MA-CETSP\include\Genetic;C:\Users\Demir\researchproject\MA-CETSP\include\Genetic\Crossover;C:\Users\Demir\researchproject\MA-CETSP\include\LocalSearch;C:\Users\Demir\researchproject\MA-CETSP\include\Utils;C:\Users\Demir\researchproject\MA-CETSP\include\ML;C:\Users\Demir\researchproject\MA-CETSP\include\Features;C:\gurobi1203\win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Demir\researchproject\MA-CETSP\include;C:\Users\Demir\researchproject\MA-CETSP\include\Genetic;C:\Users\Demir\researchproject\MA-CETSP\include\Genetic\Crossover;C:\Users\Demir\researchproject\MA-CETSP\include\LocalSearch;C:\Users\Demir\researchproject\MA-CETSP\include\Utils;C:\Users\Demir\researchproject\MA-CETSP\include\ML;C:\Users\Demir\researchproject\MA-CETSP\include\Features;C:\gurobi1203\win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Demir\researchproject\MA-CETSP\include;C:\Users\Demir\researchproject\MA-CETSP\include\Genetic;C:\Users\Demir\researchproject\MA-CETSP\include\Genetic\Crossover;C:\Users\Demir\researchproject\MA-CETSP\include\LocalSearch;C:\Users\Demir\researchproject\MA-CETSP\include\Utils;C:\Users\Demir\researchproject\MA-CETSP\include\ML;C:\Users\Demir\researchproject\MA-CETSP\include\Features;C:\gurobi1203\win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>C:\gurobi1203\win64\lib\gurobi_c++md2017.lib;C:\gurobi1203\win64\lib\gurobi120.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/Demir/researchproject/MA-CETSP/out/build/x64-Debug/Debug/MA-CETSP.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/Demir/researchproject/MA-CETSP/out/build/x64-Debug/Debug/MA-CETSP.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Demir\researchproject\MA-CETSP\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/Demir/researchproject/MA-CETSP/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Users/Demir/researchproject/MA-CETSP -BC:/Users/Demir/researchproject/MA-CETSP/out/build/x64-Debug --check-stamp-file C:/Users/Demir/researchproject/MA-CETSP/out/build/x64-Debug/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.31\Modules\CMakeCInformation.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.31\Modules\CMakeCXXInformation.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.31\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.31\Modules\CMakeGenericSystem.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.31\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.31\Modules\CMakeLanguageInformation.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.31\Modules\CMakeRCInformation.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.31\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.31\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.31\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.31\Modules\Compiler\MSVC-C.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.31\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.31\Modules\Compiler\MSVC.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.31\Modules\Internal\CMakeCLinkerInformation.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.31\Modules\Internal\CMakeCXXLinkerInformation.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.31\Modules\Internal\CMakeCommonLinkerInformation.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-MSVC-C.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-MSVC-CXX.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-MSVC.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.31\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.31\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.31\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.31\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.31\Modules\Platform\Windows.cmake;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.31\Modules\Platform\WindowsPaths.cmake;C:\Users\Demir\researchproject\MA-CETSP\out\build\x64-Debug\CMakeFiles\3.31.6-msvc6\CMakeCCompiler.cmake;C:\Users\Demir\researchproject\MA-CETSP\out\build\x64-Debug\CMakeFiles\3.31.6-msvc6\CMakeCXXCompiler.cmake;C:\Users\Demir\researchproject\MA-CETSP\out\build\x64-Debug\CMakeFiles\3.31.6-msvc6\CMakeRCCompiler.cmake;C:\Users\Demir\researchproject\MA-CETSP\out\build\x64-Debug\CMakeFiles\3.31.6-msvc6\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Demir\researchproject\MA-CETSP\out\build\x64-Debug\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Algo.cpp" />
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\main.cpp" />
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Genetic\Distance.cpp" />
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Genetic\List.cpp" />
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Genetic\Node.cpp" />
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Genetic\Population.cpp" />
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Genetic\Crossover\Crossover.cpp" />
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Genetic\Crossover\CrossoverFactory.cpp" />
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Genetic\Crossover\EAX.cpp" />
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Genetic\Crossover\GAX.cpp" />
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Genetic\Crossover\KSX.cpp" />
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\LocalSearch\Greed.cpp" />
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\LocalSearch\LKH.cpp" />
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\LocalSearch\ListAdapter.cpp" />
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\LocalSearch\LocalSearch.cpp" />
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\LocalSearch\Neighbor.cpp" />
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\LocalSearch\Solver.cpp" />
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Utils\AlhazenProblem.cpp" />
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Utils\Data.cpp" />
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Utils\Kmeans.cpp" />
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Utils\Parameters.cpp" />
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Utils\Random.cpp" />
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Utils\Vector3d.cpp" />
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\ML\SurvivalModel.cpp" />
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Features\GeometryFeatures.cpp" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\Demir\researchproject\MA-CETSP\out\build\x64-Debug\ZERO_CHECK.vcxproj">
+      <Project>{0F791812-A644-35AB-93B4-78D17212B734}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

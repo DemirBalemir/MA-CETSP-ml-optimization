@@ -1,0 +1,16 @@
+----------RUN COMMAND-------------------------
+cd C:\Users\Demir\researchproject\MA-CETSP\build\Release
+.\MA-CETSP.exe
+
+--------------BUILD COMMAND------------------------
+
+cd C:\Users\Demir\researchproject\MA-CETSP\build
+cmake --build . --config Release
+
+//rebuild
+cd ..
+rm -rf build
+mkdir build
+cd build
+cmake ..
+cmake --build . --config Release

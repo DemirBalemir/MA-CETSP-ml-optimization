@@ -1,0 +1,3 @@
+C:/Users/Demir/researchproject/MA-CETSP/out/build/x64-Debug/CMakeFiles/MA-CETSP.dir
+C:/Users/Demir/researchproject/MA-CETSP/out/build/x64-Debug/CMakeFiles/ALL_BUILD.dir
+C:/Users/Demir/researchproject/MA-CETSP/out/build/x64-Debug/CMakeFiles/ZERO_CHECK.dir

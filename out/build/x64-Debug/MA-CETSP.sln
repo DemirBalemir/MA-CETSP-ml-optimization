@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ALL_BUILD", "ALL_BUILD.vcxproj", "{D861CD1C-34E6-3D18-977A-09D589A6A6ED}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DB872B12-B962-3229-A332-00DD63573FA3} = {DB872B12-B962-3229-A332-00DD63573FA3}
+		{0F791812-A644-35AB-93B4-78D17212B734} = {0F791812-A644-35AB-93B4-78D17212B734}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MA-CETSP", "MA-CETSP.vcxproj", "{DB872B12-B962-3229-A332-00DD63573FA3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0F791812-A644-35AB-93B4-78D17212B734} = {0F791812-A644-35AB-93B4-78D17212B734}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ZERO_CHECK", "ZERO_CHECK.vcxproj", "{0F791812-A644-35AB-93B4-78D17212B734}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D861CD1C-34E6-3D18-977A-09D589A6A6ED}.Debug|x64.ActiveCfg = Debug|x64
+		{DB872B12-B962-3229-A332-00DD63573FA3}.Debug|x64.ActiveCfg = Debug|x64
+		{DB872B12-B962-3229-A332-00DD63573FA3}.Debug|x64.Build.0 = Debug|x64
+		{0F791812-A644-35AB-93B4-78D17212B734}.Debug|x64.ActiveCfg = Debug|x64
+		{0F791812-A644-35AB-93B4-78D17212B734}.Debug|x64.Build.0 = Debug|x64
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1211540D-A782-3320-9500-525F154F4D6E}
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

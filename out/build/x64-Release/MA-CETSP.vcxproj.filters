@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Algo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Genetic\Distance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Genetic\List.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Genetic\Node.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Genetic\Population.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Genetic\Crossover\Crossover.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Genetic\Crossover\CrossoverFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Genetic\Crossover\EAX.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Genetic\Crossover\GAX.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Genetic\Crossover\KSX.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\LocalSearch\Greed.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\LocalSearch\LKH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\LocalSearch\ListAdapter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\LocalSearch\LocalSearch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\LocalSearch\Neighbor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\LocalSearch\Solver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Utils\AlhazenProblem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Utils\Data.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Utils\Kmeans.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Utils\Parameters.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Utils\Random.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Demir\researchproject\MA-CETSP\src\Utils\Vector3d.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Demir\researchproject\MA-CETSP\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{0793B3C3-2FFC-3253-AEF5-4BF25AE6671A}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
