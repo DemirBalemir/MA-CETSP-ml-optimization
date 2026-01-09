@@ -1,8 +1,21 @@
-# An Effective Memetic Algorithm for the Close-Enough Traveling Salesman Problem
+# New Learning-Assisted Memetic Algorithm for the Close-Enough Traveling Salesman Problem (LA-CETSP)
 
-This repository is the implementation in C++ for the paper [An Effective Memetic Algorithm for the Close-Enough Traveling Salesman Problem](https://www.sciencedirect.com/science/article/pii/S1568494624000401) by Zhenyu Lei, Jin-Kao Hao.
 
-We propose an effective memetic algorithm to solve the Close-Enough Traveling Salesman Problem (CETSP) which is a variant of the well-known Traveling Salesman Problem (TSP). Experimental results on the well-known benchmark instances show that the algorithm is highly competitive with the state-of-the-art methods. We also demonstrate the usefulness of the algorithm on a real laser welding robot path planning problem.
+This repository is based on the C++ implementation of the paper  
+[An Effective Memetic Algorithm for the Close-Enough Traveling Salesman Problem](https://www.sciencedirect.com/science/article/pii/S1568494624000401)  
+by **Zhenyu Lei** and **Jin-Kao Hao**.
+
+## Project Description
+
+This project extends the original memetic algorithm for the Close-Enough Traveling Salesman Problem (CETSP) by introducing **learning-assisted mechanisms** into the evolutionary search process.
+
+The main objective of this extension is to investigate how **machine learning–based survival models** can be integrated into a memetic algorithm to:
+- predict the quality of newly generated offspring solutions,
+- prune unpromising candidates early,
+- reduce unnecessary local search computations,
+- and improve overall computational efficiency.
+
+This implementation serves as an experimental research platform for studying hybrid optimization–learning approaches for CETSP. When learning assistance is disabled, the algorithm behaves exactly like the original method proposed in the paper.
 
 ## Overview
 
@@ -50,11 +63,10 @@ In addition, you can run the code with your own parameters by the following comm
 ```bash
 ./MA-CETSP -i <instance> -s <seed> -r <max iteration> -p <population size> -b <fitness beta> -d <distance threshold> -n <neighbor size>
 ```
-
+Additionally, the learning-assisted models can be enabled by setting the ML_ENABLE variable to true and selecting the desired model in the Defs.hpp file by changing the ML_MODEL variable accordingly.
 ## Citation
 
-If it is helpful for your research, please cite our paper:
-
+The paper is not yet published but the original papers citation is given below.
 ```bibtex
 @article{lei2024effective,
   title={An effective memetic algorithm for the close-enough traveling salesman problem},
@@ -65,3 +77,4 @@ If it is helpful for your research, please cite our paper:
   publisher={Elsevier}
 }
 ```
+
