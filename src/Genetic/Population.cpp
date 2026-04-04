@@ -254,7 +254,7 @@ List* Population::nextPopulation(int patience) {
 
         if (ML_MODEL == "COX") {
 
-            double threshold = ML_THRESHOLD;
+            double threshold = ml_model->load_cox_threshold();
 
             // IMPORTANT: this must be exp(beta^T x)
             double score = predict_cox_score(feats);

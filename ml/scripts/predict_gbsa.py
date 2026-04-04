@@ -1,34 +1,39 @@
-# ml/scripts/predict_gbsa.py
-
 import sys
 import json
 import pickle
 import pandas as pd
 from pathlib import Path
 
-
-# Resolve project root
 this_file = Path(__file__).resolve()
 project_root = this_file.parents[2]
 
-# Load model
+# Load model once at startup
 model_path = project_root / "ml" / "models" / "gbsa_model.pkl"
 with open(model_path, "rb") as f:
     gbsa, feature_names = pickle.load(f)
 
-# Read JSON path argument
-json_file = sys.argv[1]
-with open(json_file, "r") as f:
-    feats = json.load(f)
 
-# Convert to DataFrame
-df = pd.DataFrame([feats])
+def _predict(feats: dict) -> float:
+    df = pd.DataFrame([feats])
+    df = df.reindex(columns=feature_names, fill_value=0.0)
+    return float(gbsa.predict(df)[0])
 
-# Reorder columns to match training
-df = df.reindex(columns=feature_names, fill_value=0.0)
 
-# Predict (returns risk score)
-score = gbsa.predict(df)[0]
-
-# Output ONLY a float
-print(float(score))
+if len(sys.argv) > 1:
+    # One-shot mode (legacy): python predict_gbsa.py <json_path>
+    with open(sys.argv[1], "r") as f:
+        feats = json.load(f)
+    print(_predict(feats))
+else:
+    # Server mode: read one JSON line from stdin, write one score to stdout, repeat.
+    # The C++ persistent process uses this mode.
+    for line in sys.stdin:
+        line = line.strip()
+        if not line or line == "EXIT":
+            break
+        try:
+            feats = json.loads(line)
+            print(_predict(feats), flush=True)
+        except Exception as e:
+            print(sys.stderr, f"[GBSA ERROR] {e}", file=sys.stderr)
+            print(0.0, flush=True)
