@@ -34,7 +34,9 @@ void Algo::run() {
     int best_iter = 0;
     int patience = 0;
     bool improved = false;
+    bool ml_trained = false;
     std::chrono::duration<double> best_running_time;
+
     // init population
     List* best_solution = population.initPopulation();
     double best_solution_value = best_solution->getValue();
@@ -55,62 +57,72 @@ void Algo::run() {
 
         auto end_iter = std::chrono::high_resolution_clock::now();
 
+        // ==== ADAPTIVE ML TRAINING TRIGGER ====
+        // Conditions (all must hold, one-shot):
+        //   1. iter >= ML_MIN_TRAINING_ITER  — enough logged solutions collected
+        //   2. patience has hit ML_PATIENCE_FRACTION of max  OR  iter hit the hard ceiling
+        // Note: early stopping is suppressed before training fires so the model
+        // receives the full distribution of good and bad candidates.
+        if (ML_ENABLE && !ml_trained && iter >= ML_MIN_TRAINING_ITER) {
+            bool stagnation_trigger = patience >= static_cast<int>(patience_threshold * ML_PATIENCE_FRACTION);
+            bool ceiling_trigger    = iter >= ML_MAX_TRAINING_ITER;
 
-        // ==== AT EXACT ITERATION TRAINING_TIME: LOG SURVIVORS ====
-        if (ML_ENABLE && iter == TRAINING_TIME) {
+            if (stagnation_trigger || ceiling_trigger) {
+                std::cout << "[ML] Training triggered at iter " << iter
+                          << " (patience=" << patience
+                          << ", stagnation=" << stagnation_trigger
+                          << ", ceiling=" << ceiling_trigger << ")\n";
 
-            for (List* s : population.population) {
-
-                if (!s->was_inserted) continue;
-                if (s->birth_iter < 0) continue;
-                if (s->birth_iter > TRAINING_TIME) continue;
-
-                s->death_iter = TRAINING_TIME;
-                s->censored = true;
-                s->final_fitness = s->getValue();
-
-                data.writeSolutionLog(s);
-            }
-            run_ml_training();
-
-            if (population.ml_model) {
-                population.ml_model->reset_cox_cache();
-            }
-
-
-            if (ML_MODEL == "COX") {
+                // Log surviving solutions (censored — still alive at training time)
                 for (List* s : population.population) {
+                    if (!s->was_inserted) continue;
+                    if (s->birth_iter < 0) continue;
 
-                    if (s->has_cox_lp) continue;
+                    s->death_iter   = iter;
+                    s->censored     = true;
+                    s->final_fitness = s->getValue();
 
-                    std::vector<std::pair<double, double>> coords = s->pre_vnd_coords;
-                    if (coords.empty()) {
-                        Node* p = s->head();
-                        for (int i = 0; i < s->size(); ++i) {
-                            coords.push_back({ p->x, p->y });
-                            p = p->next;
-                        }
-                    }
-
-                    auto feats = GeometryFeatures::extract(coords);
-
-
-                    double cost = (s->pre_vnd_value >= 0)
-                        ? s->pre_vnd_value
-                        : s->getValue();
-
-                    feats["pre_vnd_cost"] = cost;
-
-                    s->cox_lp = population.predict_cox_score(feats);
-                    s->has_cox_lp = true;
+                    data.writeSolutionLog(s);
                 }
+
+                run_ml_training();
+
+                ml_trained = true;
+                population.training_completed_at = iter;
+
+                if (population.ml_model) {
+                    population.ml_model->reset_cox_cache();
+                }
+
+                // Back-fill Cox scores for all current population members
+                if (ML_MODEL == "COX") {
+                    for (List* s : population.population) {
+                        if (s->has_cox_lp) continue;
+
+                        std::vector<std::pair<double, double>> coords = s->pre_vnd_coords;
+                        if (coords.empty()) {
+                            Node* p = s->head();
+                            for (int i = 0; i < s->size(); ++i) {
+                                coords.push_back({ p->x, p->y });
+                                p = p->next;
+                            }
+                        }
+
+                        auto feats = GeometryFeatures::extract(coords);
+                        double cost = (s->pre_vnd_value >= 0)
+                            ? s->pre_vnd_value
+                            : s->getValue();
+                        feats["pre_vnd_cost"] = cost;
+
+                        s->cox_lp     = population.predict_cox_score(feats);
+                        s->has_cox_lp = true;
+                    }
+                }
+
+                // Reset patience so post-training convergence is measured cleanly
+                patience = 0;
             }
-
-
-
-
         }
-
 
         if (improved) {
             best_iter = iter;
@@ -126,17 +138,21 @@ void Algo::run() {
         std::cout << "[LOG] iter: " << iter
             << " best_iter: " << best_iter
             << " best_value: " << best_solution->getValue()
+            << " patience: " << patience
+            << " ml_trained: " << ml_trained
             << " iter_time: " << std::chrono::duration<double>(end_iter - start_iter).count()
             << " total_time: " << std::chrono::duration<double>(end_iter - start_run).count()
             << std::endl;
 
-        if (patience >= patience_threshold) {
-            std::cout << std::endl << "[STOP] best solution hasn't been improved since " << patience_threshold << " iterations" << std::endl;
+        // Early stopping: only active AFTER training has fired
+        if (ml_trained && patience >= patience_threshold) {
+            std::cout << "\n[STOP] best solution hasn't been improved since "
+                      << patience_threshold << " iterations (post-training)\n";
             break;
         }
 
         if (std::chrono::duration<double>(end_iter - start_run).count() > params->max_time) {
-            std::cout << std::endl << "[STOP] running time exceeds " << params->max_time << " seconds" << std::endl;
+            std::cout << "\n[STOP] running time exceeds " << params->max_time << " seconds\n";
             break;
         }
     }

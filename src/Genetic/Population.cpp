@@ -246,7 +246,7 @@ List* Population::nextPopulation(int patience) {
         p_raw = p_raw->next;
     }
     // ================= ML FILTER =================
-    if (ML_ENABLE && current_iter > TRAINING_TIME) {
+    if (ML_ENABLE && training_completed_at >= 0 && current_iter > training_completed_at) {
 
         // ---- feature extraction ----
         auto feats = GeometryFeatures::extract(raw_coords);
@@ -473,7 +473,8 @@ void Population::populationManagement() {
             dying->final_fitness = dying->getValue();
 
             // Call Data logger
-            if (current_iter <= TRAINING_TIME) {
+            if (training_completed_at < 0) {
+                // still in data-collection phase — log everything
                 data->writeSolutionLog(dying);
             }
         }

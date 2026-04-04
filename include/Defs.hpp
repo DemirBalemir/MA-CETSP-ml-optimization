@@ -23,9 +23,19 @@ const int NEIGHBOR_SIZE = 50;           // neighbors size of a target
 const double EPSILON = 1e-4;            // approximation in geometry and local search
 const double DELTA = 1e-3;              // approximation in accepting best solution
 const double PI = 3.14159265358979323846;
-const int TRAINING_TIME = ITERATION / 2;
+
+// ---- Adaptive ML training trigger (replaces fixed TRAINING_TIME) ----
+// Training fires on the first iteration where ALL of:
+//   1. iter >= ML_MIN_TRAINING_ITER        (enough logged solutions)
+//   2. patience >= patience_threshold * ML_PATIENCE_FRACTION   OR   iter >= ML_MAX_TRAINING_ITER
+// Early stopping (patience >= patience_threshold) is suppressed before
+// training fires so the model sees the full solution distribution.
+const int    ML_MIN_TRAINING_ITER = ITERATION / 5;         // floor  : 20 % of budget
+const int    ML_MAX_TRAINING_ITER = (ITERATION * 3) / 4;   // ceiling: 75 % of budget
+const double ML_PATIENCE_FRACTION = 0.4;                   // trigger at 40 % of max patience
+
 const std::string ML_MODEL = "RSF"; // "COX", "RSF", or "GBSA"
-const bool ML_ENABLE = true; 
+const bool ML_ENABLE = true;
 const double ML_THRESHOLD = 3;
 
 
