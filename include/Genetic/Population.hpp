@@ -60,7 +60,8 @@ public:
     List* nextPopulation(int patience);
     int current_iter = -1;
     int ml_reject_count = 0;
-    Data* data = nullptr;    // ADD THIS LINE 
+    int training_completed_at = -1;  // set by Algo after training fires; -1 = not yet trained
+    Data* data = nullptr;
     SurvivalModel* ml_model;
 
     double compute_relative_lp_threshold(double q);//keep
