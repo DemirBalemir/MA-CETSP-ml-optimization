@@ -6,6 +6,7 @@
 
 #include "Algo.hpp"
 #include <filesystem>
+#include <fstream>
 
 
 Algo::Algo(Parameters* params) : population(params), data(params) {
@@ -76,10 +77,18 @@ void Algo::run() {
                     data.writeSolutionLog(s);
                 }
 
-                run_ml_training();
+                bool train_ok = run_ml_training();
 
-                ml_trained = true;
-                population.training_completed_at = iter;
+                if (train_ok) {
+                    ml_trained = true;
+                    population.training_completed_at = iter;
+                } else {
+                    // Training failed — reset patience and try again at ceiling
+                    std::cerr << island_prefix_
+                              << "[ML] Training failed; will retry at ceiling iter "
+                              << ML_MAX_TRAINING_ITER << "\n";
+                    patience = 0;
+                }
 
                 if (population.ml_model) {
                     // invalidate() clears Cox cache AND kills the Python server
@@ -161,7 +170,7 @@ void Algo::run() {
               << "\n";
 }
 
-void Algo::run_ml_training() {
+bool Algo::run_ml_training() {
     std::cout << island_prefix_ << "[ML] Starting training (" << params->ml_model << ")...\n";
 
     std::string python_exec =
@@ -177,30 +186,48 @@ void Algo::run_ml_training() {
     } else {
         std::cerr << island_prefix_ << "[ML ERROR] Unknown ml_model: "
                   << params->ml_model << "\n";
-        return;
+        return false;
     }
 
     // Build absolute path to this island's log directory so the training script
     // reads only THIS island's solutions (avoids parallel-island file races).
     namespace fs = std::filesystem;
-    std::string log_dir = fs::weakly_canonical(
+    fs::path log_dir = fs::weakly_canonical(
         fs::current_path() / LOCAL_RES_DIR / "ml_logs" /
         (FILENAMES[params->instance_index] + "-" + params->timestamp)
-    ).string();
+    );
 
-    // Pass per-island model dir (absolute) and log dir so islands are fully isolated.
+    // Redirect all training output (stdout + stderr) to a per-island log file
+    // so it isn't lost in interleaved multi-island console output.
+    std::string training_log = params->model_dir + "training_log.txt";
+
     std::string cmd = python_exec
                     + " \"" + script + "\""
                     + " --model_dir \"" + params->model_dir + "\""
-                    + " --log_dir \"" + log_dir + "\"";
+                    + " --log_dir \"" + log_dir.string() + "\""
+                    + " > \"" + training_log + "\" 2>&1";
 
-    std::cout << island_prefix_ << "[ML] cmd: " << cmd << "\n";
+    std::cout << island_prefix_ << "[ML] log_dir=" << log_dir.string() << "\n";
+    std::cout << island_prefix_ << "[ML] model_dir=" << params->model_dir << "\n";
 
     int result = system(cmd.c_str());
-    if (result != 0) {
-        std::cerr << island_prefix_ << "[ML ERROR] Training failed (exit=" << result
-                  << ") — check Python output above for details\n";
+
+    // Always print the training log so errors are visible regardless of interleaving
+    std::cout << island_prefix_ << "[ML] ---- training output ----\n";
+    std::ifstream log_in(training_log);
+    if (log_in) {
+        std::string line;
+        while (std::getline(log_in, line))
+            std::cout << island_prefix_ << "  " << line << "\n";
     } else {
-        std::cout << island_prefix_ << "[ML] Training completed successfully.\n";
+        std::cout << island_prefix_ << "  (no log file — system() may have failed)\n";
     }
+    std::cout << island_prefix_ << "[ML] ---- end training output ----\n";
+
+    if (result != 0) {
+        std::cerr << island_prefix_ << "[ML ERROR] Training failed (exit=" << result << ")\n";
+        return false;
+    }
+    std::cout << island_prefix_ << "[ML] Training completed successfully.\n";
+    return true;
 }

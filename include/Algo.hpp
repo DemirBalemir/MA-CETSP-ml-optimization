@@ -33,7 +33,7 @@ public:
     Algo(Parameters* params);
     ~Algo();
     void run();
-    void run_ml_training();
+    bool run_ml_training();  // returns true on success
     double get_best_value() const { return best_value_; }
 };
 

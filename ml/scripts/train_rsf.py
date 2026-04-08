@@ -30,11 +30,15 @@ def main():
     if args.log_dir:
         log_dir_path = Path(args.log_dir)
         print(f"[INFO] Loading island logs from {log_dir_path}")
-        rows = load_run_dir(log_dir_path)
-        if rows:
-            df_logs = pd.DataFrame(rows)
+        if log_dir_path.exists() and log_dir_path.is_dir():
+            rows = load_run_dir(log_dir_path)
+            if rows:
+                df_logs = pd.DataFrame(rows)
+            else:
+                print("[WARN] Island log dir is empty, falling back to all logs")
+                df_logs = load_all_logs(get_default_log_root())
         else:
-            print("[WARN] Island log dir is empty, falling back to all logs")
+            print(f"[WARN] Island log dir not found: {log_dir_path}, falling back to all logs")
             df_logs = load_all_logs(get_default_log_root())
     else:
         log_root = get_default_log_root()
