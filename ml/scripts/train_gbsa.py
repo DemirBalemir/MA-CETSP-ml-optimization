@@ -15,6 +15,12 @@ def get_project_root() -> Path:
 
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--model_dir", default=None,
+                    help="Override output model directory (for parallel islands)")
+    args, _ = ap.parse_known_args()
+
     project_root = get_project_root()
 
     # ---- 1) Load logs ----
@@ -91,7 +97,10 @@ def main():
           f"(objective={obj:.4f})  threshold={threshold:.6f}")
 
     # ---- 7) Save model and meta ----
-    model_dir = project_root / "ml" / "models"
+    if args.model_dir:
+        model_dir = Path(args.model_dir)
+    else:
+        model_dir = project_root / "ml" / "models"
     model_dir.mkdir(exist_ok=True, parents=True)
 
     with open(model_dir / "gbsa_model.pkl", "wb") as f:

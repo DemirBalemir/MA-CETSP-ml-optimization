@@ -64,7 +64,11 @@ public:
     Data* data = nullptr;
     SurvivalModel* ml_model;
 
-    double compute_relative_lp_threshold(double q);//keep
+    // Runtime ML config (copied from params at construction — avoids Defs.hpp constants)
+    std::string ml_model_name;
+    bool        ml_enable_;
+
+    double compute_relative_lp_threshold(double q);
     double predict_cox_score(const std::map<std::string, double>& feats);
 
 

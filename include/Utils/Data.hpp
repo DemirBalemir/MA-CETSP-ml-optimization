@@ -37,7 +37,8 @@ public:
     void writeSolutionLog(List* s);
     int instance_index;                         // instance index
 
-
+private:
+    long long log_counter_ = 0;                 // per-instance counter (replaces static local)
 };
 
 #endif //CETSP_DATA_HPP

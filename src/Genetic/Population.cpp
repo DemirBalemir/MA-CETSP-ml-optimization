@@ -17,11 +17,12 @@
 Population::Population(Parameters* params)
     : neighbor(params->neighbor_size),
     ls(params),
-    random(nullptr),          // ✅ ADD THIS
+    random(nullptr),
     best_solution(nullptr),
     crossover(nullptr),
-    ml_model(new SurvivalModel())   // ✅ ADD THIS
-
+    ml_model(new SurvivalModel(params->model_dir, params->ml_model)),
+    ml_model_name(params->ml_model),
+    ml_enable_(params->ml_enable)
 {
     this->initialization = params->init;
     this->selection = params->select;
@@ -136,7 +137,7 @@ List* Population::initPopulation() {
         if (!solution) continue;
 
         insertSolution(solution);
-        if (ML_ENABLE && ML_MODEL == "COX" && !solution->has_cox_lp) {
+        if (ml_enable_ && ml_model_name == "COX" && !solution->has_cox_lp) {
             auto coords = solution->pre_vnd_coords;
             if (coords.empty()) {
                 Node* p = solution->head();
@@ -246,13 +247,13 @@ List* Population::nextPopulation(int patience) {
         p_raw = p_raw->next;
     }
     // ================= ML FILTER =================
-    if (ML_ENABLE && training_completed_at >= 0 && current_iter > training_completed_at) {
+    if (ml_enable_ && training_completed_at >= 0 && current_iter > training_completed_at) {
 
         // ---- feature extraction ----
         auto feats = GeometryFeatures::extract(raw_coords);
         feats["pre_vnd_cost"] = pre_cost;
 
-        if (ML_MODEL == "COX") {
+        if (ml_model_name == "COX") {
 
             double threshold = ml_model->load_cox_threshold();
 
@@ -277,13 +278,12 @@ List* Population::nextPopulation(int patience) {
                 return best_solution;
             }
         }
-        else if (ML_MODEL == "RSF" || ML_MODEL == "GBSA") {
+        else if (ml_model_name == "RSF" || ml_model_name == "GBSA") {
 
             double threshold = 0.0;
-            if (ML_MODEL == "RSF") {
+            if (ml_model_name == "RSF") {
                 threshold = ml_model->load_rsf_threshold();
-            }
-            else { // ML_MODEL == "GBSA"
+            } else {
                 threshold = ml_model->load_gbsa_threshold();
             }
 
@@ -294,7 +294,7 @@ List* Population::nextPopulation(int patience) {
             double score = ml_model->predict_survival_score(json);
 
             if (LOG) {
-                std::cout << "[ML-" << ML_MODEL << "] score=" << score
+                std::cout << "[ML-" << ml_model_name << "] score=" << score
                     << " threshold=" << threshold << "\n";
             }
 
@@ -303,13 +303,13 @@ List* Population::nextPopulation(int patience) {
                 ml_reject_count++;
                 if (LOG) {
                     std::cout << "[ML] Offspring rejected before VND ("
-                        << ML_MODEL << "). Score=" << score << "\n";
+                        << ml_model_name << "). Score=" << score << "\n";
                 }
                 return best_solution;
             }
         }
         else {
-            std::cerr << "[ML ERROR] Unknown ML_MODEL = '" << ML_MODEL << "'\n";
+            std::cerr << "[ML ERROR] Unknown ml_model = '" << ml_model_name << "'\n";
         }
     }
 
@@ -334,7 +334,7 @@ List* Population::nextPopulation(int patience) {
     populationManagement();
 
     offspring->post_vnd_fitness_at_birth = offspring->getFitness();
-    if (ML_ENABLE && ML_MODEL == "COX") {
+    if (ml_enable_ && ml_model_name == "COX") {
         for (List* s : population) {
 
             if (s->has_cox_lp) continue;

@@ -119,8 +119,7 @@ void Data::writeSolutionLog(List* s) {
         }
 
         // unique filename for this solution
-        static long long counter = 0;
-        std::string fname = "sol-" + std::to_string(counter++) + ".json";
+        std::string fname = "sol-" + std::to_string(log_counter_++) + ".json";
 
         std::ofstream out(logdir + fname);
 

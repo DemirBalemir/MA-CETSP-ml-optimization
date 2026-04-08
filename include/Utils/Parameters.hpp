@@ -33,10 +33,22 @@ public:
     double fit_beta;
     int dist_th;
     int neighbor_size;
+
+    // ---- island / ML fields ----
+    int         n_islands  = N_ISLANDS;   // total number of parallel islands
+    int         island_id  = 0;           // this island's index (set by parallel runner)
+    std::string ml_model   = ML_MODEL;    // "COX", "RSF", or "GBSA"
+    bool        ml_enable  = ML_ENABLE;   // enable/disable ML filter
+    std::string model_dir;                // path to per-island model directory (derived)
+
     Parameters(int argc, char **argv);
     Parameters() = default;
     ~Parameters() = default;
     void print() const;
+
+    // Create a copy configured for a specific island index.
+    // Called by the parallel runner in main.cpp.
+    Parameters make_island(int id, const std::string& model) const;
 };
 
 

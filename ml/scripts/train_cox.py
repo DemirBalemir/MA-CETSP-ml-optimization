@@ -15,6 +15,12 @@ def get_project_root() -> Path:
 
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--model_dir", default=None,
+                    help="Override output model directory (for parallel islands)")
+    args, _ = ap.parse_known_args()
+
     project_root = get_project_root()
 
     # ------------------------------------------
@@ -96,7 +102,10 @@ def main():
     print("[INFO] Cox model fitted.")
     print(f"[INFO] C-index: {cph.concordance_index_:.4f}")
 
-    models_dir = project_root / "ml" / "models"
+    if args.model_dir:
+        models_dir = Path(args.model_dir)
+    else:
+        models_dir = project_root / "ml" / "models"
     models_dir.mkdir(parents=True, exist_ok=True)
 
     # ------------------------------------------

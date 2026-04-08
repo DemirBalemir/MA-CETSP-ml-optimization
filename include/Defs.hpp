@@ -17,6 +17,7 @@ const int INSTANCE_INDEX = 0;           // which instance file
 const int ITERATION = 200;             // max iteration
 const double MAX_TIME = 36000;          // max running time
 const int POPULATION_SIZE = 20;         // population size
+const int N_ISLANDS = 1;               // number of parallel islands (1 = single-island, original behaviour)
 const int DISTANCE_THRESHOLD = 5;       // min distance in population
 const double FIT_BETA = 0.96;           // fitness function distance coef
 const int NEIGHBOR_SIZE = 50;           // neighbors size of a target
