@@ -2,10 +2,11 @@ from pathlib import Path
 import pickle
 import json
 import numpy as np
+import pandas as pd
 from sklearn.model_selection import train_test_split
 from sksurv.ensemble import RandomSurvivalForest
 
-from loader import load_all_logs, get_default_log_root
+from loader import load_all_logs, load_run_dir, get_default_log_root
 from features import build_feature_dataset
 from threshold_utils import compute_threshold
 
@@ -19,14 +20,26 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--model_dir", default=None,
                     help="Override output model directory (for parallel islands)")
+    ap.add_argument("--log_dir", default=None,
+                    help="Island-specific log folder (train only on this island's solutions)")
     args, _ = ap.parse_known_args()
 
     project_root = get_project_root()
 
     # ---- 1) Load logs ----
-    log_root = get_default_log_root()
-    print(f"[INFO] Loading logs from {log_root}")
-    df_logs = load_all_logs(log_root)
+    if args.log_dir:
+        log_dir_path = Path(args.log_dir)
+        print(f"[INFO] Loading island logs from {log_dir_path}")
+        rows = load_run_dir(log_dir_path)
+        if rows:
+            df_logs = pd.DataFrame(rows)
+        else:
+            print("[WARN] Island log dir is empty, falling back to all logs")
+            df_logs = load_all_logs(get_default_log_root())
+    else:
+        log_root = get_default_log_root()
+        print(f"[INFO] Loading logs from {log_root}")
+        df_logs = load_all_logs(log_root)
 
     # ---- 2) Feature extraction ----
     df = build_feature_dataset(df_logs)

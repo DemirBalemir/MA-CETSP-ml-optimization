@@ -5,6 +5,7 @@
  **/
 
 #include "Algo.hpp"
+#include <filesystem>
 
 
 Algo::Algo(Parameters* params) : population(params), data(params) {
@@ -81,7 +82,9 @@ void Algo::run() {
                 population.training_completed_at = iter;
 
                 if (population.ml_model) {
-                    population.ml_model->reset_cox_cache();
+                    // invalidate() clears Cox cache AND kills the Python server
+                    // so the next prediction call restarts it with the fresh model
+                    population.ml_model->invalidate();
                 }
 
                 // Back-fill Cox scores for current population
@@ -177,17 +180,27 @@ void Algo::run_ml_training() {
         return;
     }
 
-    // Pass per-island model directory so islands don't overwrite each other's models
+    // Build absolute path to this island's log directory so the training script
+    // reads only THIS island's solutions (avoids parallel-island file races).
+    namespace fs = std::filesystem;
+    std::string log_dir = fs::weakly_canonical(
+        fs::current_path() / LOCAL_RES_DIR / "ml_logs" /
+        (FILENAMES[params->instance_index] + "-" + params->timestamp)
+    ).string();
+
+    // Pass per-island model dir (absolute) and log dir so islands are fully isolated.
     std::string cmd = python_exec
                     + " \"" + script + "\""
-                    + " --model_dir \"" + params->model_dir + "\"";
+                    + " --model_dir \"" + params->model_dir + "\""
+                    + " --log_dir \"" + log_dir + "\"";
 
-    std::cout << island_prefix_ << "[ML] " << cmd << "\n";
+    std::cout << island_prefix_ << "[ML] cmd: " << cmd << "\n";
 
     int result = system(cmd.c_str());
     if (result != 0) {
-        std::cerr << island_prefix_ << "[ML ERROR] Training failed (exit=" << result << ")\n";
+        std::cerr << island_prefix_ << "[ML ERROR] Training failed (exit=" << result
+                  << ") — check Python output above for details\n";
     } else {
-        std::cout << island_prefix_ << "[ML] Training completed.\n";
+        std::cout << island_prefix_ << "[ML] Training completed successfully.\n";
     }
 }

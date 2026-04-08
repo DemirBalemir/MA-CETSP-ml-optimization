@@ -24,6 +24,10 @@ public:
     // Call this after retraining so fresh models are loaded on the next prediction.
     void reset_cox_cache();
 
+    // Stops the Python prediction server so it is restarted fresh on the
+    // next prediction call (picks up newly trained model files).
+    void invalidate();
+
 private:
     std::string model_dir_;   // per-island model directory
     std::string ml_model_;    // runtime model type

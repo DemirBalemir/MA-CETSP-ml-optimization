@@ -56,7 +56,12 @@ Parameters::Parameters(int argc, char **argv) {
     // island_id stays 0 for single-island runs; set by make_island() otherwise
     island_id  = 0;
     timestamp  = std::to_string(std::time(nullptr));
-    model_dir  = "../../ml/models/";  // default: same as before
+    // Use absolute path so training/prediction scripts always find the right directory
+    // regardless of which working directory the exe is launched from.
+    model_dir  = std::filesystem::weakly_canonical(
+                     std::filesystem::current_path() / "../../ml/models/").string();
+    if (!model_dir.empty() && model_dir.back() != '/' && model_dir.back() != '\\')
+        model_dir += '/';
 }
 
 Parameters Parameters::make_island(int id, const std::string& model) const {
@@ -68,9 +73,14 @@ Parameters Parameters::make_island(int id, const std::string& model) const {
     p.timestamp = this->timestamp + "_i" + std::to_string(id);
     // per-island model directory; island 0 in a single-island run keeps the default path
     if (n_islands > 1 || id > 0) {
-        p.model_dir = "../../ml/models/island_" + std::to_string(id) + "/";
+        namespace fs = std::filesystem;
+        fs::path base = fs::weakly_canonical(
+            fs::current_path() / "../../ml/models/" / ("island_" + std::to_string(id)));
+        p.model_dir = base.string();
+        if (!p.model_dir.empty() && p.model_dir.back() != '/' && p.model_dir.back() != '\\')
+            p.model_dir += '/';
         // ensure the directory exists
-        std::filesystem::create_directories(p.model_dir);
+        fs::create_directories(p.model_dir);
     }
     return p;
 }

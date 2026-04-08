@@ -205,6 +205,19 @@ void SurvivalModel::reset_cox_cache()
 }
 
 // ---------------------------------------------------------------------------
+// Public: invalidate  — force-restart the Python server on next prediction
+// ---------------------------------------------------------------------------
+void SurvivalModel::invalidate()
+{
+    stop_python_process();
+    // Cox cache also needs to be refreshed so new coefficients are read
+    cox_beta.clear();
+    cox_norm.clear();
+    cox_loaded      = false;
+    cox_norm_loaded = false;
+}
+
+// ---------------------------------------------------------------------------
 // Cox native prediction
 // ---------------------------------------------------------------------------
 double SurvivalModel::predict_cox_score(
