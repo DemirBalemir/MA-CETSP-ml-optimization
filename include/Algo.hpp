@@ -25,13 +25,17 @@ private:
     int iteration;
     int patience_threshold;
     int instance_index;
-    std::string timestamp;  // timestamp
+    std::string timestamp;
+    double best_value_ = std::numeric_limits<double>::max();
+    std::string island_prefix_;   // "[Island N] " prepended to log lines
+
 public:
     Algo(Parameters* params);
     ~Algo();
     void run();
-    void run_ml_training();
-
+    bool run_ml_training();  // returns true on success
+    double get_best_value()   const { return best_value_; }
+    int    get_reject_count() const { return population.ml_reject_count; }
 };
 
 #endif //CETSP_ALGO_HPP

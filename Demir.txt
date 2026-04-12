@@ -1,6 +1,9 @@
 ----------RUN COMMAND-------------------------
 cd C:\Users\Demir\researchproject\MA-CETSP\build\Release
 .\MA-CETSP.exe
+// --islands n for running parallel on islands
+
+
 
 --------------BUILD COMMAND------------------------
 

@@ -1,0 +1,7 @@
+[INFO] Loading island logs from C:\Users\Demir\researchproject\MA-CETSP\solutions\ml_logs\bonus1000\island_1
+[INFO] Dataset size: 150 samples
+[INFO] Validation set: 30 samples for threshold search
+[INFO] RSF training completed.
+[INFO] Optimal rejection percentile: 65%  (objective=0.1002)  threshold=68.488296
+[INFO] Saved RSF model -> C:\Users\Demir\researchproject\MA-CETSP\ml\models\island_1\rsf_model.pkl
+[INFO] Saved RSF meta  -> C:\Users\Demir\researchproject\MA-CETSP\ml\models\island_1\rsf_meta.json

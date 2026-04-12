@@ -2,10 +2,11 @@ from pathlib import Path
 import pickle
 import json
 import numpy as np
+import pandas as pd
 from sklearn.model_selection import train_test_split
 from sksurv.ensemble import GradientBoostingSurvivalAnalysis
 
-from loader import load_all_logs, get_default_log_root
+from loader import load_all_logs, load_run_dir, get_default_log_root
 from features import build_feature_dataset
 from threshold_utils import compute_threshold
 
@@ -15,12 +16,42 @@ def get_project_root() -> Path:
 
 
 def main():
+    import argparse, sys
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--model_dir", default=None,
+                    help="Override output model directory (for parallel islands)")
+    ap.add_argument("--log_dir", default=None,
+                    help="Island-specific log folder (train only on this island's solutions)")
+    ap.add_argument("--logfile", default=None,
+                    help="Redirect stdout+stderr to this file (avoids shell-redirect quoting issues)")
+    args, _ = ap.parse_known_args()
+
+    _logfile_handle = None
+    if args.logfile:
+        _logfile_handle = open(args.logfile, "w", buffering=1)
+        sys.stdout = _logfile_handle
+        sys.stderr = _logfile_handle
+
     project_root = get_project_root()
 
     # ---- 1) Load logs ----
-    log_root = get_default_log_root()
-    print(f"[INFO] Loading logs from {log_root}")
-    df_logs = load_all_logs(log_root)
+    if args.log_dir:
+        log_dir_path = Path(args.log_dir)
+        print(f"[INFO] Loading island logs from {log_dir_path}")
+        if log_dir_path.exists() and log_dir_path.is_dir():
+            rows = load_run_dir(log_dir_path)
+            if rows:
+                df_logs = pd.DataFrame(rows)
+            else:
+                print("[WARN] Island log dir is empty, falling back to all logs")
+                df_logs = load_all_logs(get_default_log_root())
+        else:
+            print(f"[WARN] Island log dir not found: {log_dir_path}, falling back to all logs")
+            df_logs = load_all_logs(get_default_log_root())
+    else:
+        log_root = get_default_log_root()
+        print(f"[INFO] Loading logs from {log_root}")
+        df_logs = load_all_logs(log_root)
 
     # ---- 2) Feature extraction ----
     df = build_feature_dataset(df_logs)
@@ -91,12 +122,15 @@ def main():
           f"(objective={obj:.4f})  threshold={threshold:.6f}")
 
     # ---- 7) Save model and meta ----
-    model_dir = project_root / "ml" / "models"
+    if args.model_dir:
+        model_dir = Path(args.model_dir)
+    else:
+        model_dir = project_root / "ml" / "models"
     model_dir.mkdir(exist_ok=True, parents=True)
 
     with open(model_dir / "gbsa_model.pkl", "wb") as f:
         pickle.dump((gbsa, list(X.columns)), f)
-    print(f"[INFO] Saved GBSA model → {model_dir / 'gbsa_model.pkl'}")
+    print(f"[INFO] Saved GBSA model -> {model_dir / 'gbsa_model.pkl'}")
 
     meta = {
         "threshold":            threshold,
@@ -106,7 +140,7 @@ def main():
     }
     with open(model_dir / "gbsa_meta.json", "w") as f:
         json.dump(meta, f, indent=2)
-    print(f"[INFO] Saved GBSA meta  → {model_dir / 'gbsa_meta.json'}")
+    print(f"[INFO] Saved GBSA meta  -> {model_dir / 'gbsa_meta.json'}")
 
 
 if __name__ == "__main__":

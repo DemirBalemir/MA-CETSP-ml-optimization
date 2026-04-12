@@ -8,6 +8,7 @@
 
 Data::Data(Parameters* params) {
     this->instance_index = params->instance_index;
+    this->island_id_ = params->island_id;
     this->filename = FILENAMES[params->instance_index];
     this->timestamp = params->timestamp;
     this->result_filename = "";
@@ -106,21 +107,15 @@ void Data::write(List* solution, int iter, std::string running_time) {
 }
 void Data::writeSolutionLog(List* s) {
     try {
-        // directory for ML logs
-        std::string log_root = res_dir + "ml_logs/";
-        if (!std::filesystem::exists(log_root)) {
-            std::filesystem::create_directories(log_root);
-        }
-
-        // create directory for this instance / timestamp
-        std::string logdir = log_root + filename + "-" + timestamp + "/";
-        if (!std::filesystem::exists(logdir)) {
-            std::filesystem::create_directories(logdir);
-        }
+        // directory for ML logs: ml_logs/<instance>/island_<id>/run-<timestamp>/
+        std::string logdir = res_dir + "ml_logs/"
+                           + filename + "/"
+                           + "island_" + std::to_string(island_id_) + "/"
+                           + "run-" + timestamp + "/";
+        std::filesystem::create_directories(logdir);
 
         // unique filename for this solution
-        static long long counter = 0;
-        std::string fname = "sol-" + std::to_string(counter++) + ".json";
+        std::string fname = "sol-" + std::to_string(log_counter_++) + ".json";
 
         std::ofstream out(logdir + fname);
 
