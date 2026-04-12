@@ -16,13 +16,21 @@ def get_project_root() -> Path:
 
 
 def main():
-    import argparse
+    import argparse, sys
     ap = argparse.ArgumentParser()
     ap.add_argument("--model_dir", default=None,
                     help="Override output model directory (for parallel islands)")
     ap.add_argument("--log_dir", default=None,
                     help="Island-specific log folder (train only on this island's solutions)")
+    ap.add_argument("--logfile", default=None,
+                    help="Redirect stdout+stderr to this file (avoids shell-redirect quoting issues)")
     args, _ = ap.parse_known_args()
+
+    _logfile_handle = None
+    if args.logfile:
+        _logfile_handle = open(args.logfile, "w", buffering=1)
+        sys.stdout = _logfile_handle
+        sys.stderr = _logfile_handle
 
     project_root = get_project_root()
 
@@ -122,7 +130,7 @@ def main():
 
     with open(model_dir / "gbsa_model.pkl", "wb") as f:
         pickle.dump((gbsa, list(X.columns)), f)
-    print(f"[INFO] Saved GBSA model → {model_dir / 'gbsa_model.pkl'}")
+    print(f"[INFO] Saved GBSA model -> {model_dir / 'gbsa_model.pkl'}")
 
     meta = {
         "threshold":            threshold,
@@ -132,7 +140,7 @@ def main():
     }
     with open(model_dir / "gbsa_meta.json", "w") as f:
         json.dump(meta, f, indent=2)
-    print(f"[INFO] Saved GBSA meta  → {model_dir / 'gbsa_meta.json'}")
+    print(f"[INFO] Saved GBSA meta  -> {model_dir / 'gbsa_meta.json'}")
 
 
 if __name__ == "__main__":

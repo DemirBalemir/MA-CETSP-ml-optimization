@@ -36,6 +36,7 @@ public:
     std::string getResultFilename();                                    // get result filename
     void writeSolutionLog(List* s);
     int instance_index;                         // instance index
+    int island_id_ = 0;                         // island index (set in constructor)
 
 private:
     long long log_counter_ = 0;                 // per-instance counter (replaces static local)

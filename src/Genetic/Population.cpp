@@ -137,7 +137,7 @@ List* Population::initPopulation() {
         if (!solution) continue;
 
         insertSolution(solution);
-        if (ml_enable_ && ml_model_name == "COX" && !solution->has_cox_lp) {
+        if (ml_enable_ && ml_model_name == "COX" && !solution->has_cox_lp && training_completed_at >= 0) {
             auto coords = solution->pre_vnd_coords;
             if (coords.empty()) {
                 Node* p = solution->head();
@@ -463,6 +463,8 @@ void Population::populationManagement() {
                 continue;
             if (dying->birth_iter < 0)
                 continue;
+            if (dying->already_logged)
+                continue;  // already logged as censored at training time
             // Assign death iteration
             dying->death_iter = current_iter;
 

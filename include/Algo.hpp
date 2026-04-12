@@ -34,7 +34,8 @@ public:
     ~Algo();
     void run();
     bool run_ml_training();  // returns true on success
-    double get_best_value() const { return best_value_; }
+    double get_best_value()   const { return best_value_; }
+    int    get_reject_count() const { return population.ml_reject_count; }
 };
 
 #endif //CETSP_ALGO_HPP

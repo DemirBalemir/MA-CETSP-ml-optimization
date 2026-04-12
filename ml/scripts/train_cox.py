@@ -15,13 +15,21 @@ def get_project_root() -> Path:
 
 
 def main():
-    import argparse
+    import argparse, sys
     ap = argparse.ArgumentParser()
     ap.add_argument("--model_dir", default=None,
                     help="Override output model directory (for parallel islands)")
     ap.add_argument("--log_dir", default=None,
                     help="Island-specific log folder (train only on this island's solutions)")
+    ap.add_argument("--logfile", default=None,
+                    help="Redirect stdout+stderr to this file (avoids shell-redirect quoting issues)")
     args, _ = ap.parse_known_args()
+
+    _logfile_handle = None
+    if args.logfile:
+        _logfile_handle = open(args.logfile, "w", buffering=1)
+        sys.stdout = _logfile_handle
+        sys.stderr = _logfile_handle
 
     project_root = get_project_root()
 
@@ -79,7 +87,7 @@ def main():
     dataset_dir.mkdir(parents=True, exist_ok=True)
     dataset_path = dataset_dir / "cox_dataset.csv"
     df.to_csv(dataset_path, index=False)
-    print(f"[INFO] Saved clean dataset → {dataset_path}")
+    print(f"[INFO] Saved clean dataset -> {dataset_path}")
 
     # ------------------------------------------
     # 5) Hold-out split for threshold search
@@ -134,12 +142,12 @@ def main():
     }
     with open(models_dir / "cox_norm.json", "w") as f:
         json.dump(norm, f, indent=2)
-    print("[INFO] Saved Cox normalization stats → cox_norm.json")
+    print("[INFO] Saved Cox normalization stats -> cox_norm.json")
 
     coeffs = dict(zip(cph.params_.index.tolist(), cph.params_.values.tolist()))
     with open(models_dir / "cox_coeffs.json", "w") as f:
         json.dump(coeffs, f, indent=2)
-    print(f"[INFO] Saved Cox coefficients → cox_coeffs.json")
+    print(f"[INFO] Saved Cox coefficients -> cox_coeffs.json")
 
     # ------------------------------------------
     # 8) Adaptive threshold search
@@ -160,7 +168,7 @@ def main():
     }
     with open(models_dir / "cox_meta.json", "w") as f:
         json.dump(cox_meta, f, indent=2)
-    print(f"[INFO] Saved Cox meta → cox_meta.json")
+    print(f"[INFO] Saved Cox meta -> cox_meta.json")
 
 
 if __name__ == "__main__":

@@ -28,6 +28,7 @@ public:
     std::vector<std::pair<double, double>> pre_vnd_coords;
     bool was_inserted = false;
     bool censored = false;
+    bool already_logged = false;  // true after censored log at training time — skip death log
     double pre_vnd_value = -1;
     double post_vnd_value = -1;
     double cox_lp = 0.0;

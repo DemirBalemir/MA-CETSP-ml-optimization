@@ -35,6 +35,7 @@ void Algo::run() {
     int  patience = 0;
     bool improved  = false;
     bool ml_trained = false;
+    bool ml_training_attempted = false;  // set true on first trigger, prevents re-firing
     std::chrono::duration<double> best_running_time{};
 
     List* best_solution = population.initPopulation();
@@ -56,24 +57,31 @@ void Algo::run() {
         auto end_iter = std::chrono::high_resolution_clock::now();
 
         // ==== ADAPTIVE ML TRAINING TRIGGER ====
-        if (params->ml_enable && !ml_trained && iter >= ML_MIN_TRAINING_ITER) {
+        // Fires at most once: on first stagnation/ceiling condition.
+        // If training fails, the model just stays disabled — no re-triggering.
+        if (params->ml_enable && !ml_trained && !ml_training_attempted
+                && iter >= ML_MIN_TRAINING_ITER) {
             bool stagnation = patience >= static_cast<int>(patience_threshold * ML_PATIENCE_FRACTION);
             bool ceiling    = iter >= ML_MAX_TRAINING_ITER;
 
             if (stagnation || ceiling) {
+                ml_training_attempted = true;  // never re-enter this block
+
                 std::cout << island_prefix_
                           << "[ML] Training triggered at iter " << iter
                           << " (patience=" << patience
                           << ", stagnation=" << stagnation
                           << ", ceiling=" << ceiling << ")\n";
 
-                // Log surviving population members (censored)
+                // Log surviving population members (censored).
+                // Mark them so populationManagement won't log them again on death.
                 for (List* s : population.population) {
                     if (!s->was_inserted) continue;
                     if (s->birth_iter < 0) continue;
-                    s->death_iter    = iter;
-                    s->censored      = true;
-                    s->final_fitness = s->getValue();
+                    s->death_iter        = iter;
+                    s->censored          = true;
+                    s->already_logged    = true;  // prevent double-logging on actual death
+                    s->final_fitness     = s->getValue();
                     data.writeSolutionLog(s);
                 }
 
@@ -83,11 +91,8 @@ void Algo::run() {
                     ml_trained = true;
                     population.training_completed_at = iter;
                 } else {
-                    // Training failed — reset patience and try again at ceiling
                     std::cerr << island_prefix_
-                              << "[ML] Training failed; will retry at ceiling iter "
-                              << ML_MAX_TRAINING_ITER << "\n";
-                    patience = 0;
+                              << "[ML] Training failed — ML filter disabled for this run.\n";
                 }
 
                 if (population.ml_model) {
@@ -189,30 +194,50 @@ bool Algo::run_ml_training() {
         return false;
     }
 
-    // Build absolute path to this island's log directory so the training script
-    // reads only THIS island's solutions (avoids parallel-island file races).
+    // Build absolute path to this island's log directory.
+    // We pass the island-level dir (not the run-level) so the training script
+    // accumulates data from ALL historical runs for this island.
     namespace fs = std::filesystem;
     fs::path log_dir = fs::weakly_canonical(
         fs::current_path() / LOCAL_RES_DIR / "ml_logs" /
-        (FILENAMES[params->instance_index] + "-" + params->timestamp)
+        FILENAMES[params->instance_index] /
+        ("island_" + std::to_string(params->island_id))
     );
 
-    // Redirect all training output (stdout + stderr) to a per-island log file
-    // so it isn't lost in interleaved multi-island console output.
-    std::string training_log = params->model_dir + "training_log.txt";
+    // Normalise helpers
+    auto to_fwd = [](std::string s) {
+        std::replace(s.begin(), s.end(), '\\', '/'); return s; };
+    auto to_bwd = [](std::string s) {
+        std::replace(s.begin(), s.end(), '/', '\\'); return s; };
 
-    std::string cmd = python_exec
-                    + " \"" + script + "\""
-                    + " --model_dir \"" + params->model_dir + "\""
-                    + " --log_dir \"" + log_dir.string() + "\""
-                    + " > \"" + training_log + "\" 2>&1";
+    std::string model_dir_fwd = to_fwd(params->model_dir);
+    std::string log_dir_fwd   = to_fwd(log_dir.string());
+    std::string training_log  = model_dir_fwd + "training_log.txt";
 
-    std::cout << island_prefix_ << "[ML] log_dir=" << log_dir.string() << "\n";
-    std::cout << island_prefix_ << "[ML] model_dir=" << params->model_dir << "\n";
+    // Write a .bat file so cmd.exe quoting issues are avoided entirely.
+    // The batch file is placed in the island's model dir (no spaces in path).
+    std::string bat_path = to_bwd(model_dir_fwd) + "train.bat";
+    {
+        std::string py_bwd     = to_bwd(
+            "C:/Users/Demir/AppData/Local/Programs/Python/Python310/python.exe");
+        std::string script_bwd = to_bwd(script);
 
-    int result = system(cmd.c_str());
+        std::ofstream bat(bat_path);
+        bat << "@echo off\r\n";
+        bat << "\"" << py_bwd << "\""
+            << " \"" << script_bwd << "\""
+            << " --model_dir \"" << model_dir_fwd << "\""
+            << " --log_dir \""   << log_dir_fwd   << "\""
+            << " --logfile \""   << training_log  << "\"\r\n";
+    }
 
-    // Always print the training log so errors are visible regardless of interleaving
+    std::cout << island_prefix_ << "[ML] log_dir="   << log_dir_fwd   << "\n";
+    std::cout << island_prefix_ << "[ML] model_dir=" << model_dir_fwd << "\n";
+
+    // Execute the batch file directly (path has no spaces, no outer quotes needed)
+    int result = system(bat_path.c_str());
+
+    // Print the training log (written by Python itself) after the process exits.
     std::cout << island_prefix_ << "[ML] ---- training output ----\n";
     std::ifstream log_in(training_log);
     if (log_in) {
@@ -220,7 +245,7 @@ bool Algo::run_ml_training() {
         while (std::getline(log_in, line))
             std::cout << island_prefix_ << "  " << line << "\n";
     } else {
-        std::cout << island_prefix_ << "  (no log file — system() may have failed)\n";
+        std::cout << island_prefix_ << "  (no log file created)\n";
     }
     std::cout << island_prefix_ << "[ML] ---- end training output ----\n";
 

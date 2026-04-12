@@ -337,23 +337,21 @@ void SurvivalModel::load_cox_norm()
 // Threshold loaders  (all read from model_dir_)
 // ---------------------------------------------------------------------------
 
-double SurvivalModel::load_cox_threshold()
+// Helper: read entire file and extract "threshold" value from JSON.
+static double read_threshold_from_file(const std::string& path, double fallback)
 {
-    std::string path = model_dir_ + "cox_meta.json";
     std::ifstream f(path);
-    if (!f.is_open()) {
-        std::cerr << "[ML ERROR] Could not open Cox meta: " << path << "\n";
-        return ML_THRESHOLD;
-    }
+    if (!f.is_open()) return fallback;
 
-    std::string json;
-    std::getline(f, json);
+    // Read whole file (threshold may be on any line)
+    std::string json((std::istreambuf_iterator<char>(f)),
+                      std::istreambuf_iterator<char>());
 
     size_t pos = json.find("\"threshold\"");
-    if (pos == std::string::npos) return ML_THRESHOLD;
+    if (pos == std::string::npos) return fallback;
 
     size_t colon   = json.find(':', pos);
-    if (colon == std::string::npos) return ML_THRESHOLD;
+    if (colon == std::string::npos) return fallback;
     size_t val_end = json.find_first_of(",}", colon + 1);
     if (val_end == std::string::npos) val_end = json.size();
 
@@ -361,57 +359,32 @@ double SurvivalModel::load_cox_threshold()
     value.erase(std::remove_if(value.begin(), value.end(), ::isspace), value.end());
 
     try { return std::stod(value); }
-    catch (...) { return ML_THRESHOLD; }
+    catch (...) { return fallback; }
+}
+
+double SurvivalModel::load_cox_threshold()
+{
+    std::string path = model_dir_ + "cox_meta.json";
+    double val = read_threshold_from_file(path, ML_THRESHOLD);
+    if (val == ML_THRESHOLD)
+        std::cerr << "[ML ERROR] Could not read threshold from: " << path << "\n";
+    return val;
 }
 
 double SurvivalModel::load_rsf_threshold()
 {
     std::string path = model_dir_ + "rsf_meta.json";
-    std::ifstream f(path);
-    if (!f.is_open()) {
-        std::cerr << "[ML ERROR] Could not open RSF meta: " << path << "\n";
-        return 1e9;
-    }
-
-    std::string json;
-    std::getline(f, json);
-
-    size_t pos = json.find("\"threshold\"");
-    if (pos == std::string::npos) return 1e9;
-
-    size_t colon   = json.find(':', pos);
-    size_t val_end = json.find_first_of(",}", colon + 1);
-    if (val_end == std::string::npos) val_end = json.size();
-
-    std::string value = json.substr(colon + 1, val_end - (colon + 1));
-    value.erase(std::remove_if(value.begin(), value.end(), ::isspace), value.end());
-
-    try { return std::stod(value); }
-    catch (...) { return 1e9; }
+    double val = read_threshold_from_file(path, 1e9);
+    if (val >= 1e9)
+        std::cerr << "[ML ERROR] Could not read threshold from: " << path << "\n";
+    return val;
 }
 
 double SurvivalModel::load_gbsa_threshold()
 {
     std::string path = model_dir_ + "gbsa_meta.json";
-    std::ifstream f(path);
-    if (!f.is_open()) {
-        std::cerr << "[ML ERROR] Could not open GBSA meta: " << path << "\n";
-        return 1e9;
-    }
-
-    std::string json;
-    std::getline(f, json);
-
-    size_t pos = json.find("\"threshold\"");
-    if (pos == std::string::npos) return 1e9;
-
-    size_t colon   = json.find(':', pos);
-    size_t val_end = json.find_first_of(",}", colon + 1);
-    if (val_end == std::string::npos) val_end = json.size();
-
-    std::string value = json.substr(colon + 1, val_end - (colon + 1));
-    value.erase(std::remove_if(value.begin(), value.end(), ::isspace), value.end());
-
-    try { return std::stod(value); }
-    catch (...) { return 1e9; }
+    double val = read_threshold_from_file(path, 1e9);
+    if (val >= 1e9)
+        std::cerr << "[ML ERROR] Could not read threshold from: " << path << "\n";
+    return val;
 }

@@ -23,11 +23,18 @@ int main(int argc, char *argv[]) {
         Parameters p = base.make_island(0, base.ml_model);
         Algo algo(&p);
         algo.run();
+        std::cout << "\n========== RUN SUMMARY ==========\n"
+                  << "  Island 0"
+                  << "  model="    << p.ml_model
+                  << "  best="     << algo.get_best_value()
+                  << "  rejected=" << algo.get_reject_count() << "\n"
+                  << "==================================\n";
         return 0;
     }
 
     // ---- multi-island: launch one thread per island ----
     std::vector<double>      best_values(n, std::numeric_limits<double>::max());
+    std::vector<int>         reject_counts(n, 0);
     std::vector<std::string> model_used(n);
     std::mutex               cout_mutex;
 
@@ -48,8 +55,9 @@ int main(int argc, char *argv[]) {
         Algo algo(&p);
         algo.run();
 
-        best_values[id] = algo.get_best_value();
-        model_used[id]  = model;
+        best_values[id]  = algo.get_best_value();
+        reject_counts[id] = algo.get_reject_count();
+        model_used[id]   = model;
     };
 
     std::vector<std::thread> threads;
@@ -65,8 +73,9 @@ int main(int argc, char *argv[]) {
     double best_val    = std::numeric_limits<double>::max();
     for (int i = 0; i < n; ++i) {
         std::cout << "  Island " << i
-                  << "  model=" << model_used[i]
-                  << "  best=" << best_values[i] << "\n";
+                  << "  model="    << model_used[i]
+                  << "  best="     << best_values[i]
+                  << "  rejected=" << reject_counts[i] << "\n";
         if (best_values[i] < best_val) {
             best_val    = best_values[i];
             best_island = i;
@@ -74,8 +83,9 @@ int main(int argc, char *argv[]) {
     }
     std::cout << "------------------------------------------\n"
               << "  GLOBAL BEST: island=" << best_island
-              << "  model=" << model_used[best_island]
-              << "  value=" << best_val << "\n"
+              << "  model="    << model_used[best_island]
+              << "  value="    << best_val
+              << "  rejected=" << reject_counts[best_island] << "\n"
               << "==========================================\n";
 
     return 0;

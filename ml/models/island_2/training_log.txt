@@ -1,0 +1,8 @@
+[INFO] Loading island logs from C:\Users\Demir\researchproject\MA-CETSP\solutions\ml_logs\bonus1000\island_2
+[INFO] Dataset size: 150 samples
+[INFO] Validation set: 30 samples for threshold search
+[INFO] Training GBSA model...
+[INFO] GBSA training completed!
+[INFO] Optimal rejection percentile: 55%  (objective=0.2241)  threshold=0.371627
+[INFO] Saved GBSA model -> C:\Users\Demir\researchproject\MA-CETSP\ml\models\island_2\gbsa_model.pkl
+[INFO] Saved GBSA meta  -> C:\Users\Demir\researchproject\MA-CETSP\ml\models\island_2\gbsa_meta.json
