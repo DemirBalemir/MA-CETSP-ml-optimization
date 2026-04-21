@@ -9,7 +9,7 @@
 class SurvivalModel {
 public:
     // model_dir : path to the island's model directory (e.g. "../../ml/models/island_0/")
-    // ml_model  : "COX", "RSF", or "GBSA"
+    // ml_model  : "COX", "RSF", "GBSA", "DEEPSURV", or "SSVM"
     explicit SurvivalModel(const std::string& model_dir, const std::string& ml_model);
     ~SurvivalModel();
 
@@ -19,6 +19,8 @@ public:
     double load_cox_threshold();
     double load_rsf_threshold();
     double load_gbsa_threshold();
+    double load_deepsurv_threshold();
+    double load_ssvm_threshold();
 
     // Resets Cox coefficient cache and stops any running Python server process.
     // Call this after retraining so fresh models are loaded on the next prediction.

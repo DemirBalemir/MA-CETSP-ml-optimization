@@ -27,6 +27,7 @@ private:
     int instance_index;
     std::string timestamp;
     double best_value_ = std::numeric_limits<double>::max();
+    double total_time_ = 0.0;
     std::string island_prefix_;   // "[Island N] " prepended to log lines
 
 public:
@@ -36,6 +37,7 @@ public:
     bool run_ml_training();  // returns true on success
     double get_best_value()   const { return best_value_; }
     int    get_reject_count() const { return population.ml_reject_count; }
+    double get_total_time()   const { return total_time_; }
 };
 
 #endif //CETSP_ALGO_HPP

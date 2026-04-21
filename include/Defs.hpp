@@ -35,7 +35,7 @@ const int    ML_MIN_TRAINING_ITER = ITERATION / 5;         // floor  : 20 % of b
 const int    ML_MAX_TRAINING_ITER = (ITERATION * 3) / 4;   // ceiling: 75 % of budget
 const double ML_PATIENCE_FRACTION = 0.4;                   // trigger at 40 % of max patience
 
-const std::string ML_MODEL = "RSF"; // "COX", "RSF", or "GBSA"
+const std::string ML_MODEL = "DEEPSURV"; // "COX", "RSF", "GBSA", "DEEPSURV", "SSVM"
 const bool ML_ENABLE = true;
 const double ML_THRESHOLD = 3;
 

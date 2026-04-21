@@ -7,8 +7,8 @@
 #include <iostream>
 
 // Models cycled across islands when n_islands > 1.
-// Island 0 → COX, 1 → RSF, 2 → GBSA, 3 → COX, ...
-static const std::vector<std::string> ISLAND_MODEL_CYCLE = {"COX", "RSF", "GBSA"};
+// Island 0 → COX, 1 → RSF, 2 → GBSA, 3 → DEEPSURV, 4 → SSVM, 5 → COX, ...
+static const std::vector<std::string> ISLAND_MODEL_CYCLE = {"COX", "RSF", "GBSA", "DEEPSURV", "SSVM"};
 
 int main(int argc, char *argv[]) {
     std::cout << "Memetic Algo for CETSP\n\n";
@@ -27,6 +27,7 @@ int main(int argc, char *argv[]) {
                   << "  Island 0"
                   << "  model="    << p.ml_model
                   << "  best="     << algo.get_best_value()
+                  << "  time="     << algo.get_total_time() << "s"
                   << "  rejected=" << algo.get_reject_count() << "\n"
                   << "==================================\n";
         return 0;
@@ -34,6 +35,7 @@ int main(int argc, char *argv[]) {
 
     // ---- multi-island: launch one thread per island ----
     std::vector<double>      best_values(n, std::numeric_limits<double>::max());
+    std::vector<double>      total_times(n, 0.0);
     std::vector<int>         reject_counts(n, 0);
     std::vector<std::string> model_used(n);
     std::mutex               cout_mutex;
@@ -55,9 +57,10 @@ int main(int argc, char *argv[]) {
         Algo algo(&p);
         algo.run();
 
-        best_values[id]  = algo.get_best_value();
+        best_values[id]   = algo.get_best_value();
+        total_times[id]   = algo.get_total_time();
         reject_counts[id] = algo.get_reject_count();
-        model_used[id]   = model;
+        model_used[id]    = model;
     };
 
     std::vector<std::thread> threads;
@@ -68,24 +71,32 @@ int main(int argc, char *argv[]) {
     for (auto& t : threads) t.join();
 
     // ---- collect results ----
+    // Note: islands run concurrently so total_times reflect wall-clock per island,
+    // not additive sequential time. The wall-clock elapsed is ~max(total_times).
     std::cout << "\n========== PARALLEL RUN SUMMARY ==========\n";
-    int    best_island = 0;
-    double best_val    = std::numeric_limits<double>::max();
+    int    best_island  = 0;
+    double best_val     = std::numeric_limits<double>::max();
+    double max_walltime = 0.0;
     for (int i = 0; i < n; ++i) {
         std::cout << "  Island " << i
                   << "  model="    << model_used[i]
                   << "  best="     << best_values[i]
+                  << "  time="     << total_times[i] << "s"
                   << "  rejected=" << reject_counts[i] << "\n";
         if (best_values[i] < best_val) {
             best_val    = best_values[i];
             best_island = i;
         }
+        if (total_times[i] > max_walltime)
+            max_walltime = total_times[i];
     }
     std::cout << "------------------------------------------\n"
               << "  GLOBAL BEST: island=" << best_island
               << "  model="    << model_used[best_island]
               << "  value="    << best_val
+              << "  time="     << total_times[best_island] << "s"
               << "  rejected=" << reject_counts[best_island] << "\n"
+              << "  Wall-clock (longest island): " << max_walltime << "s\n"
               << "==========================================\n";
 
     return 0;

@@ -171,6 +171,10 @@ double SurvivalModel::predict_survival_score(const std::string& json_features)
         script = SCRIPTS_DIR + "predict_rsf.py";
     } else if (ml_model_ == "GBSA") {
         script = SCRIPTS_DIR + "predict_gbsa.py";
+    } else if (ml_model_ == "DEEPSURV") {
+        script = SCRIPTS_DIR + "predict_deepsurv.py";
+    } else if (ml_model_ == "SSVM") {
+        script = SCRIPTS_DIR + "predict_ssvm.py";
     } else {
         std::cerr << "[ML ERROR] Unknown ml_model: " << ml_model_ << "\n";
         return 0.0;
@@ -383,6 +387,24 @@ double SurvivalModel::load_rsf_threshold()
 double SurvivalModel::load_gbsa_threshold()
 {
     std::string path = model_dir_ + "gbsa_meta.json";
+    double val = read_threshold_from_file(path, 1e9);
+    if (val >= 1e9)
+        std::cerr << "[ML ERROR] Could not read threshold from: " << path << "\n";
+    return val;
+}
+
+double SurvivalModel::load_deepsurv_threshold()
+{
+    std::string path = model_dir_ + "deepsurv_meta.json";
+    double val = read_threshold_from_file(path, 1e9);
+    if (val >= 1e9)
+        std::cerr << "[ML ERROR] Could not read threshold from: " << path << "\n";
+    return val;
+}
+
+double SurvivalModel::load_ssvm_threshold()
+{
+    std::string path = model_dir_ + "ssvm_meta.json";
     double val = read_threshold_from_file(path, 1e9);
     if (val >= 1e9)
         std::cerr << "[ML ERROR] Could not read threshold from: " << path << "\n";

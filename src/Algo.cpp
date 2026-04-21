@@ -161,6 +161,7 @@ void Algo::run() {
     }
 
     auto end_run = std::chrono::high_resolution_clock::now();
+    total_time_  = std::chrono::duration<double>(end_run - start_run).count();
 
     if (!LOG) data.write(best_solution, best_iter,
                          std::to_string(best_running_time.count()));
@@ -170,7 +171,7 @@ void Algo::run() {
               << " model=" << params->ml_model
               << " best=" << best_solution->getValue()
               << " best_iter=" << best_iter
-              << " total_t=" << std::chrono::duration<double>(end_run - start_run).count()
+              << " total_t=" << total_time_
               << " ml_rejects=" << population.ml_reject_count
               << "\n";
 }
@@ -188,6 +189,10 @@ bool Algo::run_ml_training() {
         script = "C:/Users/Demir/researchproject/MA-CETSP/ml/scripts/train_rsf.py";
     } else if (params->ml_model == "GBSA") {
         script = "C:/Users/Demir/researchproject/MA-CETSP/ml/scripts/train_gbsa.py";
+    } else if (params->ml_model == "DEEPSURV") {
+        script = "C:/Users/Demir/researchproject/MA-CETSP/ml/scripts/train_deepsurv.py";
+    } else if (params->ml_model == "SSVM") {
+        script = "C:/Users/Demir/researchproject/MA-CETSP/ml/scripts/train_ssvm.py";
     } else {
         std::cerr << island_prefix_ << "[ML ERROR] Unknown ml_model: "
                   << params->ml_model << "\n";

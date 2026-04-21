@@ -278,14 +278,18 @@ List* Population::nextPopulation(int patience) {
                 return best_solution;
             }
         }
-        else if (ml_model_name == "RSF" || ml_model_name == "GBSA") {
+        else if (ml_model_name == "RSF" || ml_model_name == "GBSA" ||
+                 ml_model_name == "DEEPSURV" || ml_model_name == "SSVM") {
 
             double threshold = 0.0;
-            if (ml_model_name == "RSF") {
+            if (ml_model_name == "RSF")
                 threshold = ml_model->load_rsf_threshold();
-            } else {
+            else if (ml_model_name == "GBSA")
                 threshold = ml_model->load_gbsa_threshold();
-            }
+            else if (ml_model_name == "DEEPSURV")
+                threshold = ml_model->load_deepsurv_threshold();
+            else if (ml_model_name == "SSVM")
+                threshold = ml_model->load_ssvm_threshold();
 
             // ---- convert to JSON ----
             std::string json = GeometryFeatures::to_json(feats);
