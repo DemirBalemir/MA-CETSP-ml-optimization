@@ -15,7 +15,7 @@ param(
 
 $EXE    = Join-Path $PSScriptRoot "build\Release\MA-CETSP.exe"
 $OUTDIR = Join-Path $PSScriptRoot "solutions\experiment_results"
-$SEEDS  = @(1, 11, 21, 31, 41, 51, 61, 71, 81, 91)
+$SEEDS  = @(1, 11, 21, 31, 41)
 
 New-Item -ItemType Directory -Force -Path $OUTDIR | Out-Null
 

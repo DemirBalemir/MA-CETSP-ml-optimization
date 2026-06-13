@@ -69,7 +69,7 @@ Parameters::Parameters(int argc, char **argv) {
     // patience-based scheme is our response to that open problem — the
     // training horizon now adapts to when the search actually stagnates
     // rather than being pegged to a fixed iteration count.
-    patience        = std::max(iteration / 5, 50);  // floor at 50 to avoid too-eager stops on tiny budgets
+    patience        = std::max(iteration / 10, 50);  // 10% of budget; follows base MA-CETSP paper (Lei & Hao 2024)
     max_time        = parser.get<double>("max_time");
     fit_beta        = parser.get<double>("fit_beta");
     dist_th         = parser.get<int>("dist_th");
