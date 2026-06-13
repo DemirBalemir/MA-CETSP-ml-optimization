@@ -20,7 +20,8 @@ Population::Population(Parameters* params)
     random(nullptr),
     best_solution(nullptr),
     crossover(nullptr),
-    ml_model(new SurvivalModel(params->model_dir, params->ml_model)),
+    ml_model(new SurvivalModel(params->model_dir, params->ml_model,
+                               params->python_exe, params->scripts_dir)),
     ml_model_name(params->ml_model),
     ml_enable_(params->ml_enable)
 {
@@ -221,6 +222,7 @@ List* Population::nextPopulation(int patience) {
         }
         else {
             parents = chooseParent();
+            delete offspring;
             offspring = crossover->run(parents.first, parents.second);
         }
         dist1 = Distance::run(offspring, parents.first);
@@ -249,72 +251,104 @@ List* Population::nextPopulation(int patience) {
     // ================= ML FILTER =================
     if (ml_enable_ && training_completed_at >= 0 && current_iter > training_completed_at) {
 
-        // ---- feature extraction ----
-        auto feats = GeometryFeatures::extract(raw_coords);
-        feats["pre_vnd_cost"] = pre_cost;
+        // ---- rolling rejection-rate cap ─────────────────────────────────
+        // Count every ML-eligible offspring.  Every ML_ROLLING_WINDOW
+        // attempts, measure the window rejection rate.  If it exceeds
+        // ML_MAX_ROLLING_REJECT_RATE, suspend filtering for one more window
+        // so the population can recover diversity before we re-check.
+        ml_win_attempts_++;
+        if (ml_win_attempts_ >= ML_ROLLING_WINDOW) {
+            double rate = static_cast<double>(ml_win_rejects_) / ml_win_attempts_;
+            ml_suspended_ = (rate > ML_MAX_ROLLING_REJECT_RATE);
+            if (LOG)
+                std::cout << "[ML-CAP] window_rate=" << (rate * 100.0)
+                          << "% cap=" << (ML_MAX_ROLLING_REJECT_RATE * 100.0)
+                          << "% suspended=" << (ml_suspended_ ? "yes" : "no") << "\n";
+            ml_win_attempts_ = 0;
+            ml_win_rejects_  = 0;
+        }
 
-        if (ml_model_name == "COX") {
+        if (!ml_suspended_) {
+            // ---- feature extraction ----
+            auto feats = GeometryFeatures::extract(raw_coords);
+            feats["pre_vnd_cost"] = pre_cost;
 
-            double threshold = ml_model->load_cox_threshold();
+            if (ml_model_name == "COX") {
 
-            // IMPORTANT: this must be exp(beta^T x)
-            double score = predict_cox_score(feats);
+                double threshold = ml_model->load_cox_threshold();
 
-            offspring->cox_lp = score;
-            offspring->has_cox_lp = true;
+                // IMPORTANT: this must be exp(beta^T x)
+                double score = predict_cox_score(feats);
 
-            if (LOG) {
-                std::cout << "[ML-COX] score=" << score
-                    << " threshold=" << threshold << "\n";
-            }
+                offspring->cox_lp = score;
+                offspring->has_cox_lp = true;
 
-            // === EXACT OLD BEHAVIOR ===
-            if (score > threshold) {
-                ml_reject_count++;
                 if (LOG) {
-                    std::cout << "[ML] Offspring rejected before VND (COX). "
-                        << "score=" << score << "\n";
+                    std::cout << "[ML-COX] score=" << score
+                        << " threshold=" << threshold << "\n";
                 }
-                return best_solution;
+
+                if (score > threshold) {
+                    ml_win_rejects_++;
+                    ml_reject_count++;
+                    if (LOG) {
+                        std::cout << "[ML] Offspring rejected before VND (COX). "
+                            << "score=" << score << "\n";
+                    }
+                    delete offspring;
+                    return best_solution;
+                }
             }
-        }
-        else if (ml_model_name == "RSF" || ml_model_name == "GBSA" ||
-                 ml_model_name == "DEEPSURV" || ml_model_name == "SSVM") {
+            else if (ml_model_name == "RSF" || ml_model_name == "GBSA" ||
+                     ml_model_name == "DEEPSURV" || ml_model_name == "SSVM" ||
+                     ml_model_name == "WEIBULLAFT" || ml_model_name == "KNN" ||
+                     ml_model_name == "ELASTICNET" || ml_model_name == "MTLR") {
 
-            double threshold = 0.0;
-            if (ml_model_name == "RSF")
-                threshold = ml_model->load_rsf_threshold();
-            else if (ml_model_name == "GBSA")
-                threshold = ml_model->load_gbsa_threshold();
-            else if (ml_model_name == "DEEPSURV")
-                threshold = ml_model->load_deepsurv_threshold();
-            else if (ml_model_name == "SSVM")
-                threshold = ml_model->load_ssvm_threshold();
+                double threshold = 0.0;
+                if (ml_model_name == "RSF")
+                    threshold = ml_model->load_rsf_threshold();
+                else if (ml_model_name == "GBSA")
+                    threshold = ml_model->load_gbsa_threshold();
+                else if (ml_model_name == "DEEPSURV")
+                    threshold = ml_model->load_deepsurv_threshold();
+                else if (ml_model_name == "SSVM")
+                    threshold = ml_model->load_ssvm_threshold();
+                else if (ml_model_name == "WEIBULLAFT")
+                    threshold = ml_model->load_weibullaft_threshold();
+                else if (ml_model_name == "KNN")
+                    threshold = ml_model->load_knn_threshold();
+                else if (ml_model_name == "ELASTICNET")
+                    threshold = ml_model->load_elasticnet_threshold();
+                else if (ml_model_name == "MTLR")
+                    threshold = ml_model->load_mtlr_threshold();
 
-            // ---- convert to JSON ----
-            std::string json = GeometryFeatures::to_json(feats);
+                // ---- convert to JSON ----
+                std::string json = GeometryFeatures::to_json(feats);
 
-            // ---- ML predict via Python ----
-            double score = ml_model->predict_survival_score(json);
+                // ---- ML predict via Python ----
+                double score = ml_model->predict_survival_score(json);
 
-            if (LOG) {
-                std::cout << "[ML-" << ml_model_name << "] score=" << score
-                    << " threshold=" << threshold << "\n";
-            }
-
-            // ---- reject low-survival offspring ----
-            if (score > threshold) {
-                ml_reject_count++;
                 if (LOG) {
-                    std::cout << "[ML] Offspring rejected before VND ("
-                        << ml_model_name << "). Score=" << score << "\n";
+                    std::cout << "[ML-" << ml_model_name << "] score=" << score
+                        << " threshold=" << threshold << "\n";
                 }
-                return best_solution;
+
+                // ---- reject low-survival offspring ----
+                if (score > threshold) {
+                    ml_win_rejects_++;
+                    ml_reject_count++;
+                    if (LOG) {
+                        std::cout << "[ML] Offspring rejected before VND ("
+                            << ml_model_name << "). Score=" << score << "\n";
+                    }
+                    delete offspring;
+                    return best_solution;
+                }
             }
-        }
-        else {
-            std::cerr << "[ML ERROR] Unknown ml_model = '" << ml_model_name << "'\n";
-        }
+            else {
+                std::cerr << "[ML ERROR] Unknown ml_model = '" << ml_model_name << "'\n";
+            }
+        } // !ml_suspended_
     }
 
 
@@ -335,9 +369,10 @@ List* Population::nextPopulation(int patience) {
 
     // ================= INSERT & SURVIVAL MGMT =================
     insertSolution(offspring);
-    populationManagement();
-
+    bool offspring_was_inserted = offspring->was_inserted;
     offspring->post_vnd_fitness_at_birth = offspring->getFitness();
+    populationManagement();
+    if (!offspring_was_inserted) delete offspring;
     if (ml_enable_ && ml_model_name == "COX") {
         for (List* s : population) {
 
@@ -426,13 +461,15 @@ void Population::updateDistances() {
 void Population::populationManagement() {
     std::unordered_map<List*, std::vector<double>> rank;
 
+    double rank_denom = (population.size() > 1) ? (double)(population.size() - 1) : 1.0;
+
     // value rank
     std::sort(population.begin(), population.end(), [](List* s1, List* s2) {
         return s1->getValue() < s2->getValue();
         });
 
     for (int i = 0; i < population.size(); ++i) {
-        rank[population[i]].emplace_back(100.0 * i / (population.size() - 1));
+        rank[population[i]].emplace_back(100.0 * i / rank_denom);
     }
 
     // distance rank
@@ -441,7 +478,7 @@ void Population::populationManagement() {
         });
 
     for (int i = 0; i < population.size(); ++i) {
-        rank[population[i]].emplace_back(100.0 * i / (population.size() - 1));
+        rank[population[i]].emplace_back(100.0 * i / rank_denom);
     }
 
     for (int i = 0; i < population.size(); ++i) {
@@ -485,7 +522,9 @@ void Population::populationManagement() {
             }
         }
 
-        // Actually delete them
+        // Delete evicted solutions before shrinking the vector
+        for (int i = population_size; i < (int)population.size(); ++i)
+            delete population[i];
         population.resize(population_size);
 
         // The rest stays the same
@@ -509,7 +548,7 @@ void Population::randomSwap(List* s) {
     while (steps-- > 0) {
         int i = random->randomInt(s->size() - 1) + 1;
         int j = random->randomInt(s->size() - 1) + 1;
-        while (i == j && abs(i - j) == 1) {
+        while (i == j || abs(i - j) == 1) {
             i = random->randomInt(s->size() - 1) + 1;
             j = random->randomInt(s->size() - 1) + 1;
         }

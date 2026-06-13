@@ -41,15 +41,16 @@ def load_run_dir(path: Path) -> list[dict]:
     Accepts two layouts:
     - Island dir:  path/run-<timestamp>/sol-*.json   (new nested structure)
     - Flat dir:    path/sol-*.json                   (legacy / single run)
+
+    For the nested layout only the MOST RECENT run-* subdir is loaded so
+    that every experiment run trains on the same amount of data regardless
+    of how many previous runs exist in the folder.
     """
     run_subdirs = sorted(path.glob("run-*/"))
     if run_subdirs:
-        # New layout: island dir containing run-* subdirectories
-        rows = []
-        for run_dir in run_subdirs:
-            if run_dir.is_dir():
-                rows.extend(_load_single_run_dir(run_dir))
-        return rows
+        # Only use the latest run to keep training data equal across seeds
+        latest = run_subdirs[-1]
+        return _load_single_run_dir(latest)
     else:
         # Legacy / single-run flat layout
         return _load_single_run_dir(path)

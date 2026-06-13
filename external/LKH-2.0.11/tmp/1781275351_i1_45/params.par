@@ -1,0 +1,7 @@
+PROBLEM_FILE = C:/Users/Demir/researchproject/MA-CETSP/external/LKH-2.0.11/tmp/1781275351_i1_45/problem.tsp
+TOUR_FILE = C:/Users/Demir/researchproject/MA-CETSP/external/LKH-2.0.11/tmp/1781275351_i1_45/result.txt
+INITIAL_TOUR_FILE = C:/Users/Demir/researchproject/MA-CETSP/external/LKH-2.0.11/tmp/1781275351_i1_45/tour.txt
+MOVE_TYPE = 5
+RUNS = 1
+TRACE_LEVEL = 0
+MAX_TRIALS = 10

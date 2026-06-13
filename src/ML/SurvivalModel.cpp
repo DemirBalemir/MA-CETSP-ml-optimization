@@ -14,18 +14,18 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-static const std::string PYTHON_EXE =
-    "C:/Users/Demir/AppData/Local/Programs/Python/Python310/python.exe";
-
-static const std::string SCRIPTS_DIR =
-    "C:/Users/Demir/researchproject/MA-CETSP/ml/scripts/";
+// Paths are no longer static constants — they come from Parameters (python_exe_, scripts_dir_)
+// so the binary runs on any machine without recompilation.
 
 // ---------------------------------------------------------------------------
 // Constructor / Destructor
 // ---------------------------------------------------------------------------
 SurvivalModel::SurvivalModel(const std::string& model_dir,
-                             const std::string& ml_model)
-    : model_dir_(model_dir), ml_model_(ml_model)
+                             const std::string& ml_model,
+                             const std::string& python_exe,
+                             const std::string& scripts_dir)
+    : model_dir_(model_dir), ml_model_(ml_model),
+      python_exe_(python_exe), scripts_dir_(scripts_dir)
 {
     // Ensure model directory exists
     std::filesystem::create_directories(model_dir_);
@@ -67,7 +67,7 @@ bool SurvivalModel::start_python_process(const std::string& script_path)
     SetHandleInformation(stdout_read, HANDLE_FLAG_INHERIT, 0);
 
     // Pass the per-island model directory to the server script
-    std::string cmd = "\"" + PYTHON_EXE + "\" \"" + script_path + "\""
+    std::string cmd = "\"" + python_exe_ + "\" \"" + script_path + "\""
                       + " --model_dir \"" + model_dir_ + "\"";
 
     STARTUPINFOA si{};
@@ -168,13 +168,21 @@ double SurvivalModel::predict_survival_score(const std::string& json_features)
 {
     std::string script;
     if (ml_model_ == "RSF") {
-        script = SCRIPTS_DIR + "predict_rsf.py";
+        script = scripts_dir_ + "predict_rsf.py";
     } else if (ml_model_ == "GBSA") {
-        script = SCRIPTS_DIR + "predict_gbsa.py";
+        script = scripts_dir_ + "predict_gbsa.py";
     } else if (ml_model_ == "DEEPSURV") {
-        script = SCRIPTS_DIR + "predict_deepsurv.py";
+        script = scripts_dir_ + "predict_deepsurv.py";
     } else if (ml_model_ == "SSVM") {
-        script = SCRIPTS_DIR + "predict_ssvm.py";
+        script = scripts_dir_ + "predict_ssvm.py";
+    } else if (ml_model_ == "WEIBULLAFT") {
+        script = scripts_dir_ + "predict_weibullaft.py";
+    } else if (ml_model_ == "KNN") {
+        script = scripts_dir_ + "predict_knn.py";
+    } else if (ml_model_ == "ELASTICNET") {
+        script = scripts_dir_ + "predict_elasticnet.py";
+    } else if (ml_model_ == "MTLR") {
+        script = scripts_dir_ + "predict_mtlr.py";
     } else {
         std::cerr << "[ML ERROR] Unknown ml_model: " << ml_model_ << "\n";
         return 0.0;
@@ -405,6 +413,42 @@ double SurvivalModel::load_deepsurv_threshold()
 double SurvivalModel::load_ssvm_threshold()
 {
     std::string path = model_dir_ + "ssvm_meta.json";
+    double val = read_threshold_from_file(path, 1e9);
+    if (val >= 1e9)
+        std::cerr << "[ML ERROR] Could not read threshold from: " << path << "\n";
+    return val;
+}
+
+double SurvivalModel::load_weibullaft_threshold()
+{
+    std::string path = model_dir_ + "weibullaft_meta.json";
+    double val = read_threshold_from_file(path, 1e9);
+    if (val >= 1e9)
+        std::cerr << "[ML ERROR] Could not read threshold from: " << path << "\n";
+    return val;
+}
+
+double SurvivalModel::load_knn_threshold()
+{
+    std::string path = model_dir_ + "knn_meta.json";
+    double val = read_threshold_from_file(path, 1e9);
+    if (val >= 1e9)
+        std::cerr << "[ML ERROR] Could not read threshold from: " << path << "\n";
+    return val;
+}
+
+double SurvivalModel::load_elasticnet_threshold()
+{
+    std::string path = model_dir_ + "elasticnet_meta.json";
+    double val = read_threshold_from_file(path, 1e9);
+    if (val >= 1e9)
+        std::cerr << "[ML ERROR] Could not read threshold from: " << path << "\n";
+    return val;
+}
+
+double SurvivalModel::load_mtlr_threshold()
+{
+    std::string path = model_dir_ + "mtlr_meta.json";
     double val = read_threshold_from_file(path, 1e9);
     if (val >= 1e9)
         std::cerr << "[ML ERROR] Could not read threshold from: " << path << "\n";

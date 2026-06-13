@@ -1,7 +1,7 @@
 {
-  "threshold": 1.0008910637640378,
-  "rejection_percentile": 50,
-  "objective": 0.24238026124818587,
-  "concordance_index": 0.6036274509803922,
-  "n_samples": 150
+  "threshold": 1.051937988131796,
+  "rejection_percentile": 65,
+  "objective": 0.11631016042780748,
+  "concordance_index": 0.5651951842393287,
+  "n_samples": 249
 }

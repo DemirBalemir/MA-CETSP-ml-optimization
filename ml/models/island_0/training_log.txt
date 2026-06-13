@@ -1,16 +1,12 @@
-[INFO] Loading island logs from C:\Users\Demir\researchproject\MA-CETSP\solutions\ml_logs\bonus1000\island_0
-[INFO] Loaded 150 raw solutions
+[INFO] Loading island logs from C:\Users\Demir\researchproject\MA-CETSP\solutions\ml_logs\car_door_45\island_0
+[INFO] Loaded 249 raw solutions
 [INFO] Dropped 0 rows with NaN
 [INFO] Saved clean dataset -> C:\Users\Demir\researchproject\MA-CETSP\ml\dataset\cox_dataset.csv
-[INFO] Dataset size: 150 samples
-C:\Users\Demir\AppData\Local\Programs\Python\Python310\lib\site-packages\lifelines\fitters\coxph_fitter.py:1614: ConvergenceWarning: Newton-Raphson failed to converge sufficiently. Please see the following tips in the lifelines documentation: https://lifelines.readthedocs.io/en/latest/Examples.html#problems-with-convergence-in-the-cox-proportional-hazard-model
-  warnings.warn(
-[INFO] Validation set: 30 samples for threshold search
-C:\Users\Demir\AppData\Local\Programs\Python\Python310\lib\site-packages\lifelines\fitters\coxph_fitter.py:1614: ConvergenceWarning: Newton-Raphson failed to converge sufficiently. Please see the following tips in the lifelines documentation: https://lifelines.readthedocs.io/en/latest/Examples.html#problems-with-convergence-in-the-cox-proportional-hazard-model
-  warnings.warn(
+[INFO] Dataset size: 249 samples
+[INFO] Validation set: 50 samples for threshold search
 [INFO] Cox model fitted.
-[INFO] C-index: 0.6036
+[INFO] C-index: 0.5652
 [INFO] Saved Cox normalization stats -> cox_norm.json
 [INFO] Saved Cox coefficients -> cox_coeffs.json
-[INFO] Optimal rejection percentile: 50%  (objective=0.2424)  threshold=1.000891
+[INFO] Optimal rejection percentile: 65%  (objective=0.1163)  threshold=1.051938
 [INFO] Saved Cox meta -> cox_meta.json

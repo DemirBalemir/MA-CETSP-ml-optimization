@@ -11,8 +11,10 @@
 // }
 
 LocalSearch::LocalSearch(Parameters *params) : greed(params->greed) {
-    this->lkh_random_num = params->random_num;
-    this->improvement = params->improvement;
+    this->lkh_random_num  = params->random_num;
+    this->improvement     = params->improvement;
+    this->lkh_exe_        = params->lkh_exe;
+    this->lkh_tmp_root_   = params->lkh_tmp_root;
 }
 
 LocalSearch::~LocalSearch() {}
@@ -25,7 +27,7 @@ void LocalSearch::setContext(Random *random, Centers &centers, Neighbor* neighbo
     if (lkh_random_num == 0) {
         lkh_random_num = random->randomInt(INT_MAX);
     }
-    lkh.setContext(timestamp, lkh_random_num);
+    lkh.setContext(timestamp, lkh_random_num, lkh_exe_, lkh_tmp_root_);
     greed.setContext(centers);
 }
 

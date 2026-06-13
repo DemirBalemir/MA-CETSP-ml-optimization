@@ -1,0 +1,7 @@
+[INFO] Loading island logs from C:\Users\Demir\researchproject\MA-CETSP\solutions\ml_logs\car_door_45\island_7
+[INFO] Dataset size: 221 samples
+[INFO] Validation set: 45 samples for threshold search
+[INFO] ElasticNet training completed.
+[INFO] Optimal rejection percentile: 50%  (objective=0.1106)  threshold=0.065912
+[INFO] Saved ElasticNet model -> C:\Users\Demir\researchproject\MA-CETSP\ml\models\island_7\elasticnet_model.pkl
+[INFO] Saved ElasticNet meta  -> C:\Users\Demir\researchproject\MA-CETSP\ml\models\island_7\elasticnet_meta.json

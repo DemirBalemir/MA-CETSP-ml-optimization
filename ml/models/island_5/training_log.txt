@@ -1,0 +1,7 @@
+[INFO] Loading island logs from C:\Users\Demir\researchproject\MA-CETSP\solutions\ml_logs\car_door_45\island_5
+[INFO] Dataset size: 190 samples
+[INFO] Validation set: 38 samples for threshold search
+[INFO] WeibullAFT training completed.
+[INFO] Optimal rejection percentile: 50%  (objective=0.2959)  threshold=-12.556948
+[INFO] Saved WeibullAFT model -> C:\Users\Demir\researchproject\MA-CETSP\ml\models\island_5\weibullaft_model.pkl
+[INFO] Saved WeibullAFT meta  -> C:\Users\Demir\researchproject\MA-CETSP\ml\models\island_5\weibullaft_meta.json

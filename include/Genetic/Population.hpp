@@ -61,6 +61,11 @@ public:
     int current_iter = -1;
     int ml_reject_count = 0;
     int training_completed_at = -1;  // set by Algo after training fires; -1 = not yet trained
+
+    // rolling rejection-rate cap state
+    int  ml_win_attempts_ = 0;   // ML-eligible offspring seen in current window
+    int  ml_win_rejects_  = 0;   // rejections in current window
+    bool ml_suspended_    = false; // true → filter suspended this window
     Data* data = nullptr;
     SurvivalModel* ml_model;
 

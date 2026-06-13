@@ -1,0 +1,40 @@
+NAME : lhk.1044520.tour
+COMMENT : Length = 1044520
+COMMENT : Found by LKH [Keld Helsgaun] Sat Jun 13 00:00:50 2026
+TYPE : TOUR
+DIMENSION : 32
+TOUR_SECTION
+1
+7
+3
+6
+4
+5
+2
+21
+22
+20
+17
+14
+15
+16
+19
+13
+18
+12
+10
+23
+11
+9
+24
+25
+8
+29
+26
+28
+27
+30
+31
+32
+-1
+EOF

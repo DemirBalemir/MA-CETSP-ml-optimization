@@ -148,6 +148,10 @@ void Data::writeSolutionLog(List* s) {
         out << "}\n";
 
         out.close();
+
+        // Track death events (non-censored) separately — used by Algo to decide
+        // when enough survival signal has been collected to trigger ML training.
+        if (!s->censored) ++event_count_;
     }
     catch (std::exception e) {
         std::cout << "ERROR : writeSolutionLog" << std::endl;

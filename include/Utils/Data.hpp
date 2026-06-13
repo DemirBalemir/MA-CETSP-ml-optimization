@@ -38,8 +38,11 @@ public:
     int instance_index;                         // instance index
     int island_id_ = 0;                         // island index (set in constructor)
 
+    int getEventCount() const { return event_count_; }
+
 private:
     long long log_counter_ = 0;                 // per-instance counter (replaces static local)
+    int       event_count_ = 0;                 // number of non-censored deaths logged so far
 };
 
 #endif //CETSP_DATA_HPP

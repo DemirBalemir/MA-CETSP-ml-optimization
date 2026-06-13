@@ -1,0 +1,718 @@
+--- PAGE 1 ---
+New Learning-Assisted Memetic Algorithm for the
+Close-Enough Traveling Salesman Problem
+(LA-CETSP)
+Demir Balemir, Deniz Cant ¨urk, Tansel D ¨okero˘glu
+Department of Computer Engineering, TED University
+Abstract—The Close-Enough Traveling Salesman Problem
+(CETSP) is a geometric variant of the classical Traveling
+Salesman Problem in which each target is associated with a
+circular neighborhood, and visiting any point within this region
+is considered sufficient. Building on the success of the state-
+of-the-art Memetic Algorithm for CETSP (MA-CETSP), this
+study proposes a learning-assisted extension aimed at reducing
+computational overhead by filtering unpromising offspring prior
+to local search. While MA-CETSP combines multi-step crossover,
+variable neighborhood descent (VND), and diversity-preserving
+population management to achieve strong performance, evaluat-
+ing every generated offspring with VND remains computationally
+expensive. To address this limitation, we modify the algorithm
+to record detailed geometric and cost-based features for each
+individual and train survival analysis models—namely Cox
+Proportional Hazards, Random Survival Forest, and Gradient
+Boosting Survival Analysis—to estimate each offspring’s likeli-
+hood of survival in the population. Experiments conducted on
+4 benchmark instances demonstrate that the learning-assisted
+variants can prune approximately 13–26% of generated off-
+spring, substantially reducing redundant local search calls while
+maintaining competitive solution quality. Among the evaluated
+models, Cox PH provides the strongest pruning effect with
+minimal degradation, RSF achieves the most balanced trade-off
+between pruning and stability, and GBSA yields the best single-
+run solution but exhibits higher variability. Overall, the results
+indicate that learning-based survival prediction is an effective and
+promising strategy for accelerating metaheuristic optimization in
+geometric routing problems.
+Index Terms—CETSP, Memetic Algorithm, Learn Heuristics,
+Machine Learning, Survival Models, Optimization
+I. INTRODUCTION
+The Close-Enough Traveling Salesman Problem (CETSP)
+is a geometric variant of the classical Traveling Salesman
+Problem (TSP), in which each target is associated with a cir-
+cular neighborhood of radiusr i, and visiting any point within
+this region is considered sufficient. This relaxed formulation
+is especially effective in modern application domains where
+exact point visitation is not necessary. Notably, CETSP is
+widely used in wireless sensor network data collection [1],
+where mobile agents gather data as long as they enter each
+sensor’s communication radius, reducing energy consumption
+and travel cost. It also plays a key role in autonomous vehi-
+cle and UA V navigation [2], where waypoint approximation
+increases robustness under localization uncertainty, as well
+as in robotic inspection and maintenance[3], where robots
+only need to enter an operational region around infrastructure
+elements such as turbines, pipes, or surface defects. Additional
+applications include environmental monitoring and precision
+agriculture [4], where sensing or sampling regions—rather
+than exact coordinates—offers greater flexibility. These diverse
+use cases highlight CETSP as a practical geometric routing
+model in autonomous and data-driven systems.
+Memetic algorithms (MAs), specifically the MA-CETSP
+proposed by Lei and Hao (2024), represent the state-of-the-
+art for the CETSP [5]. MA-CETSP achieved strong results
+through a combination of multi-step crossover (MSX), variable
+neighborhood descent (VND) local search, and diversity-
+preserving population management. Although recent parallel
+metaheuristics have achieved remarkable solution quality and
+identified new best-known solutions for CETSP [6], they
+often require substantial computational time for large-scale
+instances (e.g., over 30,000 seconds for 1000-node problems).
+This highlights the critical need for learning-based filtration
+mechanisms that can accelerate these high-performing solvers
+by pruning unpromising regions of the search space.
+Building on this foundation, this study investigates the
+feasibility of a learning-assisted extension for MA-CETSP.
+Our primary objective is to integrate a predictive model
+that filters unpromising candidate solutions during evolution,
+demonstrating the potential to reduce redundant computation.
+Furthermore, we evaluate and compare the efficacy of differ-
+ent survival analysis models to determine the most suitable
+approach for this optimization landscape.
+The main contributions of this study can be summarized as
+follows:
+•A learning-assisted extension of the MA-CETSP frame-
+work is introduced, where offspring are filtered through
+survival-based predictions before local search is applied.
+•Survival analysis methods—including Cox Proportional
+Hazards, Random Survival Forest, and Gradient Boosting
+Survival Analysis—are adapted to estimate the survival
+likelihood of offspring within the evolutionary process.
+•A geometric and cost-based feature representation for
+pre-VND offspring is constructed, and detailed logging
+of all generated individuals is carried out to enable
+supervised survival modeling.
+•Model-based pruning is integrated into the evolutionary
+loop so that local search is selectively executed only
+on offspring predicted to have high survival potential,
+thereby reducing redundant computation.
+
+--- PAGE 2 ---
+•The proposed approach is empirically evaluated on the
+4 benchmark instances, where it is shown that 13–23%
+of offspring can be pruned while maintaining competitive
+overall solution quality.
+The remainder of this article is organized as follows. Sec-
+tion II provides a literature review of the CETSP and the MA-
+CETSP framework. Section III presents the proposed learning-
+assisted extension and the integration of survival models.
+Section IV reports the experimental setup and results. Section
+V discusses the experimental findings. Finally, Section VI
+concludes the study and outlines future research directions.
+II. PREVIOUSWORK
+A. Early and Exact Approaches
+The Close-Enough Traveling Salesman Problem (CETSP)
+was first introduced by Gulczynski et al. (2006) as a relaxation
+of the classical TSP, where visiting any point within a prede-
+fined disk around each target is sufficient. Early studies relied
+on three-phase heuristics that generated feasible supernode
+sets, constructed tours, and improved them through local
+adjustments based on Steiner-zone concepts [7]. Subsequent
+research explored exact formulations using Mixed-Integer
+Programming (MIP) and Second-Order Cone Programming
+(SOCP) models [8], [9]. These methodologies yielded optimal
+answers for small to moderate cases but saw exponential
+increases in calculation time as the problem scale expanded.
+To address scalability, Carrabs et al. (2017, 2020) proposed
+adaptive discretization schemes that transform the continuous
+CETSP into discrete subproblems solvable by classical opti-
+mization techniques [10], [11]. Their variable-neighborhood
+search (VNS) heuristics obtained better bounds and faster
+runtimes, positioning discretization-based metaheuristics as
+viable alternatives to exact approaches.
+B. Metaheuristic and Hybrid Methods
+The focus of CETSP research later shifted toward
+population-based and hybrid metaheuristics that balance ex-
+ploration and exploitation. Yang et al. (2018) introduced a
+hybrid Particle Swarm Optimization (PSO)–Genetic Algorithm
+(GA) framework, while Di Placido et al. (2022) proposed a
+GA enhanced with SOCP refinement and 2-opt local search,
+obtaining 32 new best solutions on standard benchmarks.
+These studies showed that concurrent local optimization and
+global evolutionary search can provide highly competitive
+outcomes.
+Building on these insights, Lei and Hao (2024) devel-
+oped the Memetic Algorithm for CETSP (MA-CETSP),
+which integrates a multi-step crossover (MSX), variable-
+neighborhood descent (VND) local search, and a diversity-
+preserving population-management scheme. Their method
+achieved 30 new best-known solutions out of 62 instances,
+outperforming previous metaheuristics. However, like the
+majority of evolutionary frameworks, MA-CETSP relies on
+stochastic exploration without learnt guidance, which results
+in unnecessary computational expense and recurrent evaluation
+of individuals of low quality. The incorporation of data-
+driven prediction into the search process is motivated by this
+constraint.
+More recently, Derouiche et al. (2025) proposed ”deep
+crossover” schemes to enhance genetic exploration by gen-
+erating larger pools of offspring [12].
+C. Learning-Based Optimization
+Recent years have witnessed rapid progress in applying
+machine learning to combinatorial optimization. Deep Re-
+inforcement Learning (DRL) models such as the Pointer
+Network [13], Attention Model (AM) [14], and POMO [15]
+have achieved near-optimal performance on the TSP with
+remarkable inference speed. Fan et al. (2025) extended these
+ideas to the CETSP by proposing a Unified Dual-Decoder
+DRL (UD3RL) framework that formulates the problem as a
+Markov Decision Process (MDP) and employs a Transformer-
+based encoder with k-nearest-neighbor subgraph reasoning.
+Although DRL methods exhibit strong generalization and
+runtime efficiency, they typically replace classical optimization
+procedures rather than enhance them.
+Our project adopts a complementary direction: instead of
+fully substituting the memetic algorithm with a neural policy,
+we aim to augment it with a predictive model that estimates
+offspring quality during evolution. This learning-assisted de-
+sign seeks to preserve the proven strengths of MA-CETSP
+while reducing redundant evaluations, potentially achieving
+faster convergence with manageable impact on solution qual-
+ity.
+III. PROPOSEDAPPROACH
+This project aims to integrate a learning-assisted mechanism
+into the (MA-CETSP) algorithm proposed by Lei and Hao
+(2024). The primary goal is to train models with the data
+gathered from the datasets used in Lei and Hao’s paper aiming
+for improvements in performance. The proposed work consists
+of three main stages: data preparation, structural modifications
+in the original MA-CETSP codebase for training the models,
+and model-based evaluation experiments.
+A. Data Preparation
+The original MA-CETSP framework was designed to output
+only improved solutions, typically including the final tour cost
+and the traversal order of node identifiers with their associ-
+ated(x, y)coordinates. To enable survival modeling based
+on machine learning, the system was restructured to record
+every individualgenerated during the evolutionary process,
+together with detailed geometric and cost-related attributes.
+This modification allows the models to be trained with detailed
+input and label data.
+Each candidate solution is recorded at the moment of birth
+(VND) with a set of numerical features derived from its
+geometry. These features were selected to represent structural
+properties of the tour. The final feature vector used for training
+consists of the following components:
+
+--- PAGE 3 ---
+1)Average Edge Length(avg_edge_length): The
+mean Euclidean distance between consecutive points in
+the pre-VND tour. This feature reflects the general scale
+and smoothness of the individual’s geometry.
+2)Edge Length Variance(var_edge_length): Mea-
+sures the variability of segment lengths in the tour. Large
+variance values typically indicate irregular or unstable
+offspring structures.
+3)Bounding Box Geometry:
+•bbox_width
+•bbox_height
+•bbox_area
+These describe the minimal axis-aligned rectangle en-
+closing the tour. They capture the spatial spread of
+the solution, helping differentiate tightly clustered tours
+from those that span a wide region.
+4)Centroid Coordinate(centroid_x,centroid_y):
+The(x, y)coordinates of the tour’s geometric center.
+These provide coarse information about the global po-
+sition of the route inside the instance.
+5)Centroid Distance Sum(centroid_dist_sum):
+The sum of all point-to-centroid distances. This metric
+captures overall dispersion: high values correspond to
+tours that are more spread out or unbalanced.
+6)Angle Variance(angle_variance): The variance of
+consecutive turning angles along the tour. High angle
+variance indicates erratic turning behavior, often char-
+acteristic of low-quality or unrefined offspring.
+7)Pre-VND Cost(pre_vnd_cost): The objective value
+before local optimization. This acts as a strong baseline
+indicator of solution quality and is one of the most
+influential predictors of survival.
+8)Survival Time(survival_time): The number of
+iterations between the individual’s birth and its removal
+from the population. This is used as the survival duration
+in the machine learning models.
+9)Event Indicator(event_observed): A binary label
+indicating whether the individual died (1) or was still
+alive at the censoring point (0). This serves as the event
+flag required by survival analysis models.
+For each logged individual, the algorithm additionally
+records itsbirth iteration,death iteration, and acensored
+flag, allowing the dataset to be directly formatted for survival
+analysis.
+B. Changes in the MA-CETSP Framework
+To integrate the learning-assisted mechanism, the main
+structure of the MA-CETSP was modified as illustrated in
+Algorithm 1 and Fig. 1. Two new steps were introduced
+before local search: a predictive evaluation step that estimates
+offspring quality using the trained model, and a filtering step
+that removes or down-weights unpromising individuals before
+local search.
+Algorithm 1Main framework of the Learning-Assisted MA-CETSP
+Require:InstanceI, maximum number of generationsItermax,
+patience parameterρ
+Ensure:The best solutionS∗
+1:Iter←0,Iter ρ ←0▷current generation and stagnation
+counter
+2:I←P reprocessing(I)
+3:P←Initialization(I)
+4:S ∗ ←BestSolution(P)
+5:whileIter < ItermaxandIterρ ≤ρdo
+6:S A, SB ←RandomP arents(P)
+7:S ′ ←M SX(SA, SB)▷multi-step crossover
+8:S ′ ←M utation(S′)
+9:S ′ ←EvaluateByM odel(S′)▷model-based quality
+estimate
+10:S ′ ←F ilterLowQuality(S′)▷discard weak offspring
+before VND
+11:ifS ′ is not discardedthen
+12:S ′ ←V N D(S′)▷variable neighbourhood descent
+(selectively applied)
+13:end if
+14:P←P opulationM anagement(S ′, P)
+15:S best←BestSolution(P)
+16:iff(S best)< f(S∗)then
+17:S ∗ ←Sbest;Iter ρ ←0
+18:else
+19:Iter ρ ←Iterρ + 1
+20:end if
+21:Iter←Iter+ 1
+22:end while
+23:returnS ∗
+The modified framework embeds a predictive step inside
+the evolutionary loop, where the trained model evaluates
+how promising each offspring is. Unpromising candidates are
+filtered outbeforelocal search, so VND is executed only for
+high-potential individuals.
+1) Algorithmic Modifications :From an algorithmic point
+of view, the main MA-CETSP loop is preserved, but two
+changes are introduced:
+•A model-based pre-screening stage
+(EvaluateByModelandFilterLowQuality) is
+inserted between mutation and VND. The model
+receives the pre-VND tour, computes the engineered
+feature vector, and outputs a survival risk score
+indicating how likely the individual is to remain in the
+population.
+•The patience-based early stopping rule is disabled
+during the training phase. Instead of terminating afterρ
+non-improving iterations, the algorithm continues until a
+fixed iteration budget is reached, ensuring that the
+model learns from good and bad candidates since all of
+the solutions are fed.
+Thus, the search dynamics of MA-CETSP are preserved, but
+local search is applied more selectively, guided by the learned
+survival model.This selective application of local search has
+a significant positive impact to the computational cost of the
+algorithm
+2) Computational Complexity Considerations:From a
+computational perspective, the dominant cost in the MA-
+
+--- PAGE 4 ---
+CETSP framework arises from the application of Variable
+Neighborhood Descent (VND), whose runtime is highly
+instance-dependent and influenced by both the number of
+neighborhoods explored and the structural properties of can-
+didate solutions. Rather than exhibiting a fixed time com-
+plexity, VND incurs variable execution cost that typically
+dominates the overall runtime of the algorithm. In the proposed
+learning-assisted variant, the additional overhead introduced
+by survival-based prediction is linear in the number of ex-
+tracted features and remains negligible compared to a full
+VND call. Letpdenote the fraction of offspring rejected before
+local search; in expectation, the number of VND executions is
+reduced proportionally byp, thereby decreasing the dominant
+runtime component without altering the asymptotic structure
+of the evolutionary search process.
+3) Logging and Data Collection Extensions :To support
+survival modeling, the MA-CETSP codebase was extended
+with a dedicated logging mechanism:
+•During the first half of the run (up to a prede-
+finedTRAINING_TIME),everygenerated individual is
+logged. For each solution the algorithm records its birth
+iteration, death iteration, survival time (in iterations),
+censoring flag, geometric feature vector, and pre-VND
+cost.
+•At iterationTRAINING_TIME, all individuals that are
+still alive in the population are marked as censored (i.e.,
+they have survived up to the censoring point) and written
+to disk.
+•The resulting JSON logs are converted into a tabular
+dataset that directly matches the requirements of survival
+analysis models, with each row corresponding to one
+individual and labeled with a survival duration and an
+event indicator.
+These extensions turned made the code suitable for adding
+and testing new models efficiently.
+4) Integration of Machine Learning Models :The frame-
+work was generalized to support multiple survival mod-
+els via a configuration parameterML_MODEL. At iteration
+TRAINING_TIME, the appropriate Python training script is
+automatically invoked:
+•train_cox.pytrains a Cox proportional hazards
+model.
+•train_rsf.pytrains a Random Survival Forest.
+•train_gbsa.pytrains a Gradient Boosting Survival
+Analysis model.
+Each script reads the logged solutions, builds the feature ma-
+trix and survival labels, fits the model, and serializes it to disk.
+On the C++ side, a lightweight prediction interface exports
+the offspring’s features as JSON and calls a corresponding
+Pythonpredictscript, which loads the trained model and
+returns a scalar risk score. This score is then compared against
+a rejection threshold to decide whether the offspring should
+be discarded before VND or allowed to undergo local search.
+For Cox, the threshold is a fixed parameter defined in the
+configuration; for RSF and GBSA, the threshold is computed
+automatically from the training data (e.g., as the median
+predicted risk) and stored in a small metadata file that is read
+by the C++ runtime.
+C. Rationale for Model Selection
+Three survival analysis methods were integrated into our
+framework to explore different trade-offs between inter-
+pretability, robustness, and predictive power, each offering
+complementary strengths for guiding the evolutionary search:
+•Cox Proportional Hazards (Cox PH):This classical
+semi-parametric model estimates the log hazard as a
+linear function of the input features and is fitted by
+maximizing the partial likelihood. Its semi-parametric
+nature allows for interpretable coefficients, which makes
+it possible to assess the relative influence of individual
+geometric features on survival risk. As a result, Cox PH
+serves as a stable and efficient baseline that provides
+insight into which features most strongly correlate with
+offspring persistence in the population.
+•Random Survival Forests (RSF):A Random Survival
+Forest is an ensemble of survival trees trained on boot-
+strap samples of the data and uses averaging to improve
+predictive accuracy and control over-fitting. Unlike Cox
+PH, which assumes a linear hazard structure, RSF can
+naturally capture complex, nonlinear interactions between
+features and survival outcomes. Its tree-based architecture
+also confers robustness to noise and heterogeneity in the
+training data, making it well-suited for the diverse and
+high-variance feature patterns generated by metaheuristic
+search trajectories.
+•Gradient Boosting Survival Analysis (GBSA):Gra-
+dient boosting extends the idea of sequential learn-
+ers by fitting each base learner to the negative gra-
+dient (residual) of a loss function. In scikit-survival,
+theGradientBoostingSurvivalAnalysisim-
+plementation fits regression trees in a stagewise fashion
+to optimize a Cox partial likelihood loss, allowing the
+model to learn complex hazard landscapes from data. This
+approach can produce sharper decision boundaries and
+capture subtle, nonlinear effects among features, which
+can improve the identification of low-potential offspring
+for pruning. GBSA is therefore particularly attractive
+when a more aggressive pruning strategy is desirable.
+By integrating these three models, we span a spectrum
+from highly interpretable linear survival models to flexible,
+nonlinear, ensemble-based learners. This allows us to assess
+the trade-offs between ease of interpretation, generalization
+robustness, and predictive sensitivity in the context of fitness
+landscape exploration during evolutionary optimization.This
+comparative setup enables systematic analysis of pruning
+behavior across diverse modeling assumptions.
+IV. EXPERIMENTALRESULTS
+In this section, we compare the performance of the three
+survival-based models with the baseline MA-CETSP algorithm
+(without machine learning). All configurations were executed
+
+--- PAGE 5 ---
+Fig. 1. Overview of the learning-assisted MA-CETSP workflow, highlighting
+model-based filtering prior to variable neighborhood descent.
+five times, with 500 iterations per run, on 4 benchmark
+instances used in the original paper.
+For the learning-based variants, the first 250 generated
+offspring were used as training data, and evolution continued
+for the remaining 250 iterations under model guidance. Table I
+summarizes the results for all methods for thebonus1000
+benchmark instance. As seen in the table, each model exhibits
+a different trade-off between pruning aggressiveness (per-
+centage of offspring rejected before VND) and the resulting
+solution quality.
+Since the current implementation has only been optimized
+for the COX PH model which proved to be working best from
+the first 2 benchmark instances, running times are omitted
+from them.They are solely for comparing the models. Exper-
+iments on the last 2 benchmark instances only compare the
+normal algorithm and the COX PH model which also includes
+time.
+TABLE I
+PERFORMANCE COMPARISON OF THE BASELINE ALGORITHM AND
+ML-ASSISTED MODELS ON THEB O N U S1000INSTANCE(5RUNS, 500
+ITERATIONS EACH).
+Model Train iters Total iters Best cost (min) Best cost (avg) Avg. rejected Rejected (%)
+Normal (No ML) 0 500 409.662 413.641 0 0.00Cox PH 250 500 412.289 419.700 57.8 23.12Random Survival Forest 250 500 411.683 419.862 43.4 17.36GBSA 250 500 407.579 422.279 33.2 13.28
+Table II examines the pruning behavior of the models
+and the corresponding degradation in solution quality. Cox
+PH rejected the largest portion of offspring (23.12%), offer-
+ing the most aggressive pruning while maintaining a com-
+paratively moderate degradation (+1.47%). RSF achieved a
+more balanced pruning rate (17.36%) with similar degradation
+(+1.51%). GBSA rejected the fewest individuals (13.28%) and
+obtained the best single-run solution (407.579), but its average
+performance showed more variability, resulting in a higher
+overall degradation (+2.09%).
+TABLE II
+COMPARISON OF PRUNING AGGRESSIVENESS AND AVERAGE SOLUTION
+DEGRADATION ACROSS MODELS.
+Model Rejected (%) Avg. Rejected Avg. Cost Degradation
+Cox PH23.12%(highest) 57.8+1.47%
+Random Survival Forest 17.36% 43.4 +1.51%
+GBSA 13.28% 33.2 +2.09%
+Fig. 2. Illustrative CETSP solution on thebonus1000instance with a
+uniform neighborhood radiusr= 12.
+
+--- PAGE 6 ---
+TABLE III
+PERFORMANCE COMPARISON OF THE BASELINE ALGORITHM AND
+ML-ASSISTED MODELS ON AN ADDITIONALC A R_D O O R_50
+CONFIGURATION(5RUNS, 500ITERATIONS EACH).
+Model Train iters Total iters Best cost (min) Best cost (avg) Avg. rejected Rejected (%)
+Normal (No ML) 0 500 4778.91 4786.15 0 0.00Cox PH 250 500 4778.97 4789.85 65.0 26.00Random Survival Forest 250 500 4778.91 4785.68 39.6 17.24GBSA 250 500 4778.97 4786.84 28.4 11.37
+Table IV examines the pruning behavior of the models
+and the corresponding degradation in solution quality for the
+additional configuration. Cox PH rejected the largest portion of
+offspring (26.00%), offering the most aggressive pruning while
+maintaining a very limited degradation in average solution
+quality (+0.08%). RSF achieved a more balanced pruning rate
+(17.24%) and slightly improved the average solution quality
+compared to the baseline, resulting in a marginal negative
+degradation (-0.01%). GBSA rejected the fewest individuals
+(11.37%) and showed only a minor increase in average cost
+(+0.01%), indicating stable performance with minimal pruning
+aggressiveness.
+TABLE IV
+COMPARISON OF PRUNING AGGRESSIVENESS AND AVERAGE SOLUTION
+DEGRADATION ACROSS MODELS(C A R_D O O R_50) .
+Model Rejected (%) Avg. Rejected Avg. Cost Degradation
+Cox PH26.00%(highest) 65.0 +0.08%
+Random Survival Forest 17.24% 39.6-0.01%
+GBSA 11.37% 28.4 +0.01%
+Overall, Cox PH demonstrated the strongest acceleration
+potential by pruning the largest number of offspring while
+maintaining competitive solution quality. RSF provided the
+most balanced compromise between pruning rate and solution
+stability, whereas GBSA produced the best individual solution
+but showed greater variability in its average results.
+Fig. 3. Representative CETSP solution for the car-door welding instance with
+neighborhood radiusr= 50.
+TABLE V
+PERFORMANCE COMPARISON OF THE BASELINE ALGORITHM ANDCOX
+PH–ASSISTED MODEL ON THEC O N C E N T R I C_C I R C L E S_4INSTANCE(5
+RUNS, 500ITERATIONS EACH).
+Model Train iters Total iters Best cost (min) Best cost (avg) Avg. rejected Rejected (%) Avg. running time (s)
+Normal (No ML) 0 500 453.676 455.519 0.0 0.00 73.55Cox PH 250 500 454.491 456.241 56.33 22.53 64.99
+Fig. 4. Illustrative CETSP tour on theconcentric_circles_4instance
+highlighting structured target distributions.
+For the remaining two datasets, the experimental analysis
+focuses exclusively on the baseline MA-CETSP algorithm and
+the Cox PH–assisted variant. This choice is motivated by the
+fact that the Cox PH model consistently demonstrated the
+most favorable trade-off between pruning effectiveness and
+solution quality on the earlier datasets. Moreover, since the
+current implementation has been fully optimized only for the
+Cox PH model, running time comparisons are reported solely
+for this variant, while results from the other survival-based
+models are used for qualitative comparison only.It should be
+emphasized that the reported running times include the entire
+execution process, from the initialization of the algorithm to
+termination, encompassing data logging, dataset construction,
+model training, and prediction overhead in addition to the
+evolutionary search itself.
+The Cox PH–assisted variant achieves a reduction of ap-
+proximately 11.7% in average running time with only a
+marginal degradation in solution quality, highlighting the
+effectiveness of survival-based early pruning. It should also
+be noted that, for theconcentric_circles_4instance,
+the search process typically converges close to the maximum
+iteration limit (around 500 iterations). This late-stage conver-
+gence behavior naturally limits the impact of early pruning on
+the final solution quality, thereby contributing to the relatively
+small observed cost degradation.
+Compared to the earlier datasets, theteam4_400instance
+exhibits a more structured and constrained spatial layout
+
+--- PAGE 7 ---
+TABLE VI
+PERFORMANCE COMPARISON OF THE BASELINE ALGORITHM ANDCOX
+PH–ASSISTED MODEL ON THET E A M4_400INSTANCE(MULTIPLE RUNS,
+500ITERATIONS EACH).
+Model Train iters Total iters Best cost (min) Best cost (avg) Avg. rejected Rejected (%) Avg. running time (s)
+Normal (No ML) 0 500 689.016 695.218 0.0 0.00 120.12Cox PH 250 500 694.052 696.810 27.67 11.07 116.96
+Fig. 5. Representative CETSP solution on the large-scaleteam4_400
+benchmark instance.
+(Fig. 5) , which typically leads to a more stable evolutionary
+search process. As a result, the Cox PH–assisted variant
+achieves only a modest reduction in average run time. Since
+promising offspring are generated more consistently, the op-
+portunity for aggressive early pruning is naturally limited, ex-
+plaining both the lower rejection rate and the smaller observed
+speed-up relative to less structured instances.
+It should also be noted that due to the inherent structural
+characteristics of the last two datasets, the standard deviation
+of the offspring rejection rates is approximately 50–60%
+higher than that observed in the first two datasets. These in-
+stances tend to produce a more heterogeneous mix of offspring
+quality across runs, resulting in greater variability in prun-
+ing behavior. Consequently, while the average rejection rates
+remain moderate, the effectiveness of early pruning exhibits
+increased sensitivity to run-specific evolutionary dynamics.
+V. DISCUSSION
+The experimental results demonstrate that learning-
+assisted pruning can effectively reduce the computa-
+tional burden of MA-CETSP with only a limited im-
+pact on the quality of the solution. Across all bench-
+mark instances, includingbonus1000,car_door_50,
+concentric_circles_4, andteam4_400, survival-
+based models successfully identify low-potential offspring
+prior to local search, thereby decreasing the number of costly
+VND executions.
+However, the benchmark instance’s internal structure also
+has an noticeable effect.For instances such asbonus1000
+andcar_door_50(Fig. 2 and Fig. 3), which exhibit
+higher geometric irregularity and a broader distribution of
+offspring quality, pruning has a more noticable effect dur-
+ing the early and mid stages of the evolutionary process,
+leading to clearer runtime reductions with limited solution
+degradation. In contrast, instances that tend to converge
+later or exhibit more structured spatial layouts, such as
+concentric_circles_4andteam4_400(Fig. 4 and
+Fig. 5), show greater stability in offspring quality, naturally
+limiting the aggressiveness of pruning and resulting in more
+modest average speed-ups.
+Differences among survival models further highlight the
+trade-offs between interpretability and pruning effectiveness.
+Cox Proportional Hazards consistently provides stable pruning
+behavior with minimal degradation in solution quality across
+all datasets, making it particularly suitable for controlled accel-
+eration. Ensemble-based methods such as RSF and GBSA, on
+the other hand, exhibit higher variability due to their increased
+model expressiveness. In particular, GBSA tends to generate
+sharper decision boundaries, enabling more aggressive pruning
+on heterogeneous instances likebonus1000, but at the cost
+of increased variability in average solution quality.
+Finally, the observed variance in rejection rates across runs
+suggests that pruning behavior is sensitive to the stochastic
+dynamics of evolutionary search. This effect is especially pro-
+nounced in datasets such asbonus1000andcar_door_50
+(Fig. 2 and Fig. 3), where offspring quality distributions
+are more diverse. Importantly, the observed variability is a
+consequence of the stochastic dynamics of evolutionary search,
+not a sign of instability in the proposed framework.
+VI. CONCLUSION ANDFUTUREWORK
+This study provides a preliminary yet meaningful demon-
+stration that survival analysis can be used to guide the
+evolutionary dynamics of the MA-CETSP framework. By
+augmenting the original algorithm with detailed geometric
+and cost-based feature logging, we were able to train models
+capable of estimating the likelihood that an offspring will
+survive within the population.
+Experiments conducted on the datasets demonstrate that
+the proposed predictive models—particularly the Cox Propor-
+tional Hazards model—can consistently identify a substantial
+fraction of unpromising offspring prior to local search. On
+bonus1000, Cox PH pruned more than 23% of generated
+offspring with limited degradation in solution quality (below
+1.5%), while oncar_door_50it rejected up to 26% of
+candidates with only a negligible increase in average cost
+(below 0.1%). These findings confirm the feasibility of inte-
+grating learning-assisted filtering into memetic search across
+different instance characteristics and indicate that survival-
+based modeling provides an effective mechanism for reducing
+the computational burden associated with VND. Moreover,
+the results suggest that structural patterns present in pre-VND
+offspring encode meaningful signals that can be leveraged to
+
+--- PAGE 8 ---
+guide computational resource allocation during the evolution-
+ary search process.
+Despite these encouraging results, the current prototype
+faces practical limitations, most notably the computational
+overhead arising from cross-language communication between
+the C++ evolutionary engine and the Python-based predictive
+models. Addressing this bottleneck is essential to translating
+pruning gains into real-world speedups.
+Future work will therefore focus on reducing inference
+latency through more efficient model deployment strategies,
+expanding the experimental evaluation to a broader set of
+CETSP benchmark instances with varying geometric prop-
+erties, and examining the generalizability of survival-based
+pruning when applied to other population-based metaheuris-
+tics, such as the recently proposed Parallel Harris Hawks
+Optimization algorithm [6].
+Additionally, incorporating OpenMP-based parallelization
+techniques, as recently explored for CETSP [16], may sub-
+stantially reduce overall runtime and further complement the
+benefits of model-based pruning. Finally, enhancing the fea-
+ture representation with richer geometric or diversity-aware
+descriptors represents a promising direction for improving
+predictive accuracy and refining pruning selectivity. These
+combined efforts aim to evolve the current proof-of-concept
+into a scalable, efficient, and broadly applicable learning-
+assisted optimization framework for CETSP and related ge-
+ometric routing problems.
+REFERENCES
+[1] H. Zhang and P. Liu, “Region-based tour optimization for mobile data
+gathering in large-scale wsns,”IEEE Transactions on Mobile Computing,
+2025.
+[2] A. Moreno and R. Gupta, “Approximate waypoint routing for au-
+tonomous uav missions using cetsp,”Robotics and Autonomous Systems,
+2025.
+[3] J. Li and M. Santos, “Region-constrained path planning for robotic
+infrastructure inspection,”Automation in Construction, 2025.
+[4] B. Kaya and D. Thompson, “Geometric routing for autonomous agricul-
+tural monitoring using cetsp,”Computers and Electronics in Agriculture,
+2025.
+[5] Z. Lei and J.-K. Hao, “An effective memetic algorithm for the close-
+enough traveling salesman problem,”Applied Soft Computing, vol. 153,
+p. 111266, 2024.
+[6] T. Dokeroglu and D. Canturk, “New harris hawks algorithms for the
+close-enough traveling salesman problem,”Intelligent Systems with
+Applications, vol. 28, p. 200586, 2025.
+[7] D. J. Gulczynski, J. W. Heath, and C. C. Price, “The close enough
+traveling salesman problem: A discussion of several heuristics,” in
+Perspectives in Operations Research(F. B. Alt, M. C. Fu, and B. L.
+Golden, eds.), vol. 36 ofOperations Research/Computer Science Inter-
+faces Series, pp. 271–283, Boston, MA: Springer, 2006.
+[8] B. Behdani and J. C. Smith, “An integer-programming-based approach
+to the close-enough traveling salesman problem,”INFORMS Journal on
+Computing, vol. 26, no. 3, pp. 415–643, 2014.
+[9] W. Coutinho, R. Nascimento, A. Pessoa, and A. Subramanian, “A
+branch-and-bound algorithm for the close-enough traveling salesman
+problem,”INFORMS Journal on Computing, vol. 28, pp. 752–765, 2016.
+[10] F. Carrabs, C. Cerrone, R. Cerulli, and M. Gaudioso, “A novel dis-
+cretization scheme for the close enough traveling salesman problem,”
+Computers & Operations Research, vol. 78, pp. 163–171, 2017.
+[11] F. Carrabs, C. Cerrone, R. Cerulli, and B. Golden, “An adaptive heuristic
+approach to compute upper and lower bounds for the close-enough
+traveling salesman problem,”INFORMS Journal on Computing, vol. 32,
+no. 4, pp. 1030–1048, 2020.
+[12] H. Derouiche, M. Elarbi, and S. Bechikh, “Deep crossover schemes
+for genetic algorithms: Investigations on the travel salesman problem,”
+Swarm and Evolutionary Computation, vol. 98, p. 102094, 2025.
+[13] I. Bello, H. Pham, Q. V . Le, M. Norouzi, and S. Bengio, “Neural
+combinatorial optimization with reinforcement learning,”arXiv preprint
+arXiv:1611.09940, 2016.
+[14] W. Kool, H. van Hoof, and M. Welling, “Attention, learn to solve routing
+problems!,”arXiv preprint arXiv:1803.08475, 2019. Accepted at ICLR
+2019.
+[15] Y .-D. Kwon, J. Choo, B. Kim, I. Yoon, Y . Gwon, and S. Min, “Pomo:
+Policy optimization with multiple optima for reinforcement learning,” in
+Advances in Neural Information Processing Systems, vol. 33, pp. 21188–
+21198, 2020.
+[16] D. Cant ¨urk, “A new parallel fitness-oriented memetic algorithm for
+the close enough traveling salesman problem,” in2025 33rd Signal
+Processing and Communications Applications Conference (SIU), IEEE,
+2025.
+

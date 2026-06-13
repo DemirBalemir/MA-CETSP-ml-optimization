@@ -1,0 +1,22 @@
+{
+  "in_features": 10,
+  "num_nodes": [
+    64,
+    64
+  ],
+  "num_durations": 20,
+  "batch_norm": true,
+  "dropout": 0.1,
+  "feature_cols": [
+    "avg_edge_length",
+    "var_edge_length",
+    "bbox_width",
+    "bbox_height",
+    "bbox_area",
+    "centroid_x",
+    "centroid_y",
+    "centroid_dist_sum",
+    "angle_variance",
+    "pre_vnd_cost"
+  ]
+}

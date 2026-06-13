@@ -26,17 +26,10 @@ LKH::~LKH() {
     }
 }
 
-void LKH::setContext(std::string timestamp, int random_value) {
-    if (ENV == "LOCAL") {
-        lkh_exe  = LOCAL_LKH_EXE;
-        // Use a timestamp+random sub-directory so parallel islands never share
-        // the same params.par / problem.tsp / tour.txt files.
-        root_dir = LOCAL_LKH_TMP_ROOT + timestamp + "_" + std::to_string(random_value) + "/";
-    }
-    else if (ENV == "SERVER") {
-        lkh_exe  = SERVER_LKH_EXE;
-        root_dir = SERVER_LKH_TMP_ROOT + "_" + timestamp + "_" + std::to_string(random_value) + "/";
-    }
+void LKH::setContext(std::string timestamp, int random_value,
+                     const std::string& lkh_exe_path, const std::string& lkh_tmp_root) {
+    lkh_exe  = lkh_exe_path;
+    root_dir = lkh_tmp_root + timestamp + "_" + std::to_string(random_value) + "/";
 
     params_file = root_dir + "params.par";
     problem_file = root_dir + "problem.tsp";

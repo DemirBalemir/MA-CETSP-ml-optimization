@@ -8,9 +8,12 @@
 
 class SurvivalModel {
 public:
-    // model_dir : path to the island's model directory (e.g. "../../ml/models/island_0/")
-    // ml_model  : "COX", "RSF", "GBSA", "DEEPSURV", or "SSVM"
-    explicit SurvivalModel(const std::string& model_dir, const std::string& ml_model);
+    // model_dir   : path to the island's model directory (e.g. "../../ml/models/island_0/")
+    // ml_model    : "COX", "RSF", "GBSA", "DEEPSURV", "SSVM", "WEIBULLAFT", "KNN", "ELASTICNET", or "MTLR"
+    // python_exe  : path to python interpreter (portable — no hardcoded user path)
+    // scripts_dir : path to ml/scripts/ directory
+    explicit SurvivalModel(const std::string& model_dir, const std::string& ml_model,
+                           const std::string& python_exe, const std::string& scripts_dir);
     ~SurvivalModel();
 
     double predict_survival_score(const std::string& json_features);
@@ -21,6 +24,10 @@ public:
     double load_gbsa_threshold();
     double load_deepsurv_threshold();
     double load_ssvm_threshold();
+    double load_weibullaft_threshold();
+    double load_knn_threshold();
+    double load_elasticnet_threshold();
+    double load_mtlr_threshold();
 
     // Resets Cox coefficient cache and stops any running Python server process.
     // Call this after retraining so fresh models are loaded on the next prediction.
@@ -33,6 +40,8 @@ public:
 private:
     std::string model_dir_;   // per-island model directory
     std::string ml_model_;    // runtime model type
+    std::string python_exe_;  // path to python interpreter
+    std::string scripts_dir_; // path to ml/scripts/ directory
 
     // ---- Cox native state ----
     struct CoxNormStat { double mean; double std; };

@@ -7,8 +7,15 @@
 #include <iostream>
 
 // Models cycled across islands when n_islands > 1.
-// Island 0 → COX, 1 → RSF, 2 → GBSA, 3 → DEEPSURV, 4 → SSVM, 5 → COX, ...
-static const std::vector<std::string> ISLAND_MODEL_CYCLE = {"COX", "RSF", "GBSA", "DEEPSURV", "SSVM"};
+// Island 0 → COX, 1 → RSF, 2 → GBSA, 3 → DEEPSURV, 4 → SSVM,
+//         5 → WEIBULLAFT, 6 → KNN, 7 → ELASTICNET, 8 → MTLR, 9 → BASELINE (no ML)
+// "BASELINE" is a sentinel: the island runs with ml_enable=false so it serves
+// as a built-in ablation control without a separate experiment.
+static const std::vector<std::string> ISLAND_MODEL_CYCLE = {
+    "COX", "RSF", "GBSA", "DEEPSURV", "SSVM",
+    "WEIBULLAFT", "KNN", "ELASTICNET", "MTLR",
+    "BASELINE"   // island 9: ML disabled — direct per-run ablation control
+};
 
 int main(int argc, char *argv[]) {
     std::cout << "Memetic Algo for CETSP\n\n";
@@ -46,12 +53,19 @@ int main(int argc, char *argv[]) {
             ? ISLAND_MODEL_CYCLE[id % ISLAND_MODEL_CYCLE.size()]
             : base.ml_model;
 
-        Parameters p = base.make_island(id, model);
+        // "BASELINE" sentinel → ML disabled, use default model name for the slot
+        const bool is_baseline = (model == "BASELINE");
+        Parameters p = base.make_island(id, is_baseline ? "COX" : model);
+        if (is_baseline) {
+            p.ml_enable = false;
+            p.ml_model  = "BASELINE";   // kept for logging; filter is off
+        }
 
         {
             std::lock_guard<std::mutex> lk(cout_mutex);
-            std::cout << "[Island " << id << "] starting — model=" << model
-                      << "  seed=" << p.seed << "\n";
+            std::cout << "[Island " << id << "] starting — model=" << p.ml_model
+                      << "  seed=" << p.seed
+                      << (is_baseline ? "  [NO-ML baseline]" : "") << "\n";
         }
 
         Algo algo(&p);
@@ -60,7 +74,7 @@ int main(int argc, char *argv[]) {
         best_values[id]   = algo.get_best_value();
         total_times[id]   = algo.get_total_time();
         reject_counts[id] = algo.get_reject_count();
-        model_used[id]    = model;
+        model_used[id]    = p.ml_model;
     };
 
     std::vector<std::thread> threads;

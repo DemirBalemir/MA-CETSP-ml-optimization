@@ -41,7 +41,7 @@ net = tt.practical.MLPVanilla(
     dropout=config["dropout"],
     output_bias=False,
 )
-net.load_state_dict(torch.load(model_dir / "deepsurv_net.pt", map_location="cpu"))
+net.load_state_dict(torch.load(model_dir / "deepsurv_net.pt", map_location="cpu", weights_only=True))
 net.eval()
 
 

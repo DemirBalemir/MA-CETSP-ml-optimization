@@ -29,7 +29,8 @@ private:
 public:
     LKH();
     ~LKH();
-    void setContext(std::string timestamp, int random_value);
+    void setContext(std::string timestamp, int random_value,
+                    const std::string& lkh_exe, const std::string& lkh_tmp_root);
     List* run(List* solution, bool adapted);
 };
 #endif //CETSP_LKH_HPP

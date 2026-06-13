@@ -1,0 +1,23 @@
+NAME : lhk.56601.tour
+COMMENT : Length = 56601
+COMMENT : Found by LKH [Keld Helsgaun] Fri Jun 12 20:50:17 2026
+TYPE : TOUR
+DIMENSION : 15
+TOUR_SECTION
+1
+12
+15
+6
+9
+8
+13
+10
+5
+4
+7
+2
+11
+3
+14
+-1
+EOF

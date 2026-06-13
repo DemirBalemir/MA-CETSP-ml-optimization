@@ -57,21 +57,57 @@ void Algo::run() {
         auto end_iter = std::chrono::high_resolution_clock::now();
 
         // ==== ADAPTIVE ML TRAINING TRIGGER ====
-        // Fires at most once: on first stagnation/ceiling condition.
-        // If training fails, the model just stays disabled — no re-triggering.
-        if (params->ml_enable && !ml_trained && !ml_training_attempted
-                && iter >= ML_MIN_TRAINING_ITER) {
-            bool stagnation = patience >= static_cast<int>(patience_threshold * ML_PATIENCE_FRACTION);
-            bool ceiling    = iter >= ML_MAX_TRAINING_ITER;
+        //
+        // Trigger logic (fires at most once per run):
+        //
+        //   Primary condition — requires BOTH:
+        //     (a) iter >= ML_TRAIN_FRAC_MIN * budget      → enough search history
+        //     (b) data.getEventCount() >= ML_MIN_EVENTS   → enough death-signal
+        //   AND at least ONE of:
+        //     (c) stagnation: patience >= ML_PATIENCE_FRACTION * patience_threshold
+        //     (d) soft ceiling: iter >= ML_TRAIN_FRAC_MAX * budget
+        //
+        //   Hard fallback — overrides (b) at ML_TRAIN_FRAC_HARD * budget so that
+        //   training is never indefinitely postponed on stable populations where
+        //   few evictions (deaths) occur.
+        //
+        // Budget fractions are computed from params->iteration at runtime so the
+        // trigger scales correctly for any -r value (200, 1000, 5000, …).
+        // Previously these were compile-time constants tied to ITERATION=200,
+        // which caused training to always fire at iter 150 regardless of -r.
+        {
+        const int ml_min_iter  = static_cast<int>(params->iteration * ML_TRAIN_FRAC_MIN);
+        const int ml_max_iter  = static_cast<int>(params->iteration * ML_TRAIN_FRAC_MAX);
+        const int ml_hard_iter = static_cast<int>(params->iteration * ML_TRAIN_FRAC_HARD);
 
-            if (stagnation || ceiling) {
+        if (params->ml_enable && !ml_trained && !ml_training_attempted
+                && iter >= ml_min_iter) {
+
+            int  n_events    = data.getEventCount();
+            bool enough_data = n_events >= ML_MIN_EVENTS;
+            bool stagnation  = patience >= static_cast<int>(patience_threshold * ML_PATIENCE_FRACTION);
+            bool soft_ceil   = iter >= ml_max_iter;
+            bool hard_ceil   = iter >= ml_hard_iter;
+
+            bool primary  = enough_data && (stagnation || soft_ceil);
+            bool fallback = hard_ceil;   // fires even without enough events
+
+            if (primary || fallback) {
+                if (!enough_data) {
+                    std::cout << island_prefix_
+                              << "[ML WARN] Hard-ceiling fallback: only " << n_events
+                              << " events logged (< " << ML_MIN_EVENTS
+                              << "). Model quality may be limited.\n";
+                }
                 ml_training_attempted = true;  // never re-enter this block
 
                 std::cout << island_prefix_
                           << "[ML] Training triggered at iter " << iter
-                          << " (patience=" << patience
+                          << " (events=" << n_events
+                          << ", patience=" << patience
                           << ", stagnation=" << stagnation
-                          << ", ceiling=" << ceiling << ")\n";
+                          << ", soft_ceil=" << soft_ceil
+                          << ", hard_ceil=" << hard_ceil << ")\n";
 
                 // Log surviving population members (censored).
                 // Mark them so populationManagement won't log them again on death.
@@ -125,6 +161,7 @@ void Algo::run() {
                 patience = 0;
             }
         }
+        } // end ML training trigger scope
 
         if (improved) {
             best_iter         = iter;
@@ -145,11 +182,39 @@ void Algo::run() {
                   << " total_t=" << std::chrono::duration<double>(end_iter - start_run).count()
                   << "\n";
 
-        // Early stopping only active AFTER training has fired
-        if (ml_trained && patience >= patience_threshold) {
+        // ==== EARLY STOPPING ====
+        //
+        // Fires when patience >= patience_threshold consecutive iterations
+        // produce no improvement (patience_threshold = iteration / 5, set in
+        // Parameters.cpp).
+        //
+        // Design (Seçenek B — stagnation-first):
+        //   The ML training trigger already uses patience as its primary
+        //   signal: it fires at ML_PATIENCE_FRACTION (40 %) of the patience
+        //   budget.  So the typical timeline is:
+        //
+        //     iter 0                 → search starts
+        //     patience ≥ 0.40 × PT  → ML trains, patience resets to 0
+        //     patience ≥ PT again   → early stop  (post-ML stagnation)
+        //
+        //   If ML is disabled or training fails, early stopping fires purely
+        //   on patience — no ml_trained guard.  This ensures fast-converging
+        //   instances (e.g. car_door_25 from LA-CETSP, which saturates ~200
+        //   iters regardless of budget) do not waste compute on a 5000-iter
+        //   budget when the search has clearly stopped improving.
+        //
+        // Motivation / reference:
+        //   LA-CETSP (Balemir et al.) used a fixed 500-iter budget for all
+        //   instances, which over-allocated time to easy instances and under-
+        //   allocated to hard ones.  Patience-based stopping lets each island
+        //   terminate as soon as its model+search combination converges,
+        //   making wall-clock time a fairer reflection of true difficulty.
+        if (patience >= patience_threshold) {
             std::cout << island_prefix_
                       << "[STOP] no improvement for " << patience_threshold
-                      << " iterations (post-training)\n";
+                      << " iterations"
+                      << (ml_trained ? " (post-ML)" : " (ML pending/disabled)")
+                      << "\n";
             break;
         }
 
@@ -171,6 +236,7 @@ void Algo::run() {
               << " model=" << params->ml_model
               << " best=" << best_solution->getValue()
               << " best_iter=" << best_iter
+              << " effective_iter=" << iter
               << " total_t=" << total_time_
               << " ml_rejects=" << population.ml_reject_count
               << "\n";
@@ -179,21 +245,18 @@ void Algo::run() {
 bool Algo::run_ml_training() {
     std::cout << island_prefix_ << "[ML] Starting training (" << params->ml_model << ")...\n";
 
-    std::string python_exec =
-        "\"C:/Users/Demir/AppData/Local/Programs/Python/Python310/python.exe\"";
-
+    const std::string& sd = params->scripts_dir;  // e.g. "C:/…/ml/scripts/"
     std::string script;
-    if (params->ml_model == "COX") {
-        script = "C:/Users/Demir/researchproject/MA-CETSP/ml/scripts/train_cox.py";
-    } else if (params->ml_model == "RSF") {
-        script = "C:/Users/Demir/researchproject/MA-CETSP/ml/scripts/train_rsf.py";
-    } else if (params->ml_model == "GBSA") {
-        script = "C:/Users/Demir/researchproject/MA-CETSP/ml/scripts/train_gbsa.py";
-    } else if (params->ml_model == "DEEPSURV") {
-        script = "C:/Users/Demir/researchproject/MA-CETSP/ml/scripts/train_deepsurv.py";
-    } else if (params->ml_model == "SSVM") {
-        script = "C:/Users/Demir/researchproject/MA-CETSP/ml/scripts/train_ssvm.py";
-    } else {
+    if      (params->ml_model == "COX")        script = sd + "train_cox.py";
+    else if (params->ml_model == "RSF")        script = sd + "train_rsf.py";
+    else if (params->ml_model == "GBSA")       script = sd + "train_gbsa.py";
+    else if (params->ml_model == "DEEPSURV")   script = sd + "train_deepsurv.py";
+    else if (params->ml_model == "SSVM")       script = sd + "train_ssvm.py";
+    else if (params->ml_model == "WEIBULLAFT") script = sd + "train_weibullaft.py";
+    else if (params->ml_model == "KNN")        script = sd + "train_knn.py";
+    else if (params->ml_model == "ELASTICNET") script = sd + "train_elasticnet.py";
+    else if (params->ml_model == "MTLR")       script = sd + "train_mtlr.py";
+    else {
         std::cerr << island_prefix_ << "[ML ERROR] Unknown ml_model: "
                   << params->ml_model << "\n";
         return false;
@@ -223,8 +286,7 @@ bool Algo::run_ml_training() {
     // The batch file is placed in the island's model dir (no spaces in path).
     std::string bat_path = to_bwd(model_dir_fwd) + "train.bat";
     {
-        std::string py_bwd     = to_bwd(
-            "C:/Users/Demir/AppData/Local/Programs/Python/Python310/python.exe");
+        std::string py_bwd     = to_bwd(params->python_exe);
         std::string script_bwd = to_bwd(script);
 
         std::ofstream bat(bat_path);

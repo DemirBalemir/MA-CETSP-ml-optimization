@@ -94,7 +94,6 @@ def build_feature_dataset(df_logs: pd.DataFrame) -> pd.DataFrame:
         # Also adding the label and other numeric columns:
         feats["pre_vnd_cost"] = float(row["pre_vnd_cost"])
         feats["survival_time"] = int(row["survival_time"])
-        feats["survival_time"] = int(row["survival_time"])
         feats["censored"] = bool(row["censored"])
         feats["instance_index"] = int(row["instance_index"])
 

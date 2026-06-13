@@ -137,7 +137,7 @@ def main():
     X = df.drop(columns=["survival_time", "event_observed"])
 
     norm = {
-        col: {"mean": float(cph._norm_mean[col]), "std": float(cph._norm_std[col])}
+        col: {"mean": float(X[col].mean()), "std": float(X[col].std())}
         for col in X.columns
     }
     with open(models_dir / "cox_norm.json", "w") as f:

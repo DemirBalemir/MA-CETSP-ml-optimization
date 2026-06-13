@@ -25,17 +25,64 @@ const double EPSILON = 1e-4;            // approximation in geometry and local s
 const double DELTA = 1e-3;              // approximation in accepting best solution
 const double PI = 3.14159265358979323846;
 
-// ---- Adaptive ML training trigger (replaces fixed TRAINING_TIME) ----
-// Training fires on the first iteration where ALL of:
-//   1. iter >= ML_MIN_TRAINING_ITER        (enough logged solutions)
-//   2. patience >= patience_threshold * ML_PATIENCE_FRACTION   OR   iter >= ML_MAX_TRAINING_ITER
-// Early stopping (patience >= patience_threshold) is suppressed before
-// training fires so the model sees the full solution distribution.
-const int    ML_MIN_TRAINING_ITER = ITERATION / 5;         // floor  : 20 % of budget
-const int    ML_MAX_TRAINING_ITER = (ITERATION * 3) / 4;   // ceiling: 75 % of budget
-const double ML_PATIENCE_FRACTION = 0.4;                   // trigger at 40 % of max patience
+// ---- Adaptive ML training trigger ----
+//
+// MOTIVATION: survival analysis models require a sufficient number of observed
+// *death events* (non-censored solutions evicted from the population) before
+// the learned risk scores carry any discriminative signal.  Using wall-clock
+// iterations as the sole trigger ignores how many deaths have actually occurred,
+// which varies with population dynamics and instance difficulty.
+//
+// TRAINING FIRES when ALL three conditions hold:
+//   1. iter  >= ML_TRAIN_FRAC_MIN * params->iteration   (budget floor: 20 %)
+//   2. data.getEventCount() >= ML_MIN_EVENTS             (death-signal floor)
+//   3. patience >= patience_threshold * ML_PATIENCE_FRACTION   (stagnation)
+//        OR iter >= ML_TRAIN_FRAC_MAX * params->iteration      (budget ceiling)
+//
+// A hard fallback fires at ML_TRAIN_FRAC_HARD regardless of event count so
+// that training is never skipped on stable populations with few evictions.
+//
+// REFERENCES (for EPV / sample-size justification):
+//   - Peduzzi et al. (1995), J Clin Epidemiol 48(12):1503-1510.
+//     "Events per variable" (EPV) rule: ≥10 events per predictor for Cox PH.
+//   - Riley et al. (2019), Stat Med 38(7):1276-1296.
+//     Minimum sample size for time-to-event prediction models.
+//   - Jin (2005), Soft Comput 9(1):3-12.
+//     Survey of fitness approximation in EAs: recommends a burn-in phase of
+//     10-20 % of the evaluation budget before activating any surrogate.
+//   - Lim et al. (2010), IEEE Trans Evol Comput 14(3):329-355.
+//     Surrogate-assisted EAs: budget fraction for initial model building.
+//   - Karafotias et al. (2015), IEEE Trans Evol Comput 19(2):167-187.
+//     Parameter control / online learning in EAs: exploration vs exploitation.
+//
+// DESIGN CHOICE — equal conditions across models:
+//   All island models (COX, RSF, GBSA, DeepSurv, …) share the same trigger so
+//   every model trains on the same amount of data.  This ensures a fair
+//   apples-to-apples comparison in the paper.  The EPV threshold (100 events,
+//   ~10 features × EPV=10) is the most demanding model's lower bound; simpler
+//   models (Cox, WeibullAFT) benefit from the extra data at no cost.
 
-const std::string ML_MODEL = "DEEPSURV"; // "COX", "RSF", "GBSA", "DEEPSURV", "SSVM"
+const int    ML_MIN_EVENTS        = 100;   // min death events before training (EPV ≥ 10 × n_features)
+const double ML_TRAIN_FRAC_MIN    = 0.20;  // earliest training: 20 % of iteration budget consumed
+const double ML_TRAIN_FRAC_MAX    = 0.25;  // soft ceiling: trigger if stagnation hasn't fired by 25 %
+const double ML_TRAIN_FRAC_HARD   = 0.50;  // hard fallback: train unconditionally at 50 % (stable pop.)
+const double ML_PATIENCE_FRACTION = 0.40;  // stagnation signal: 40 % of patience budget exhausted
+
+// ---- Runtime rejection-rate cap ----
+//
+// After ML training fires, the rejection rate observed in production can
+// exceed the rate calibrated on the validation set (covariate shift: early
+// offspring differ from post-training offspring).  On some seeds this drift
+// causes >40 % rejection, destroying population diversity and halting search.
+//
+// The cap works with a sliding window: every ML_ROLLING_WINDOW ML-eligible
+// offspring we measure the fraction rejected.  If it exceeds
+// ML_MAX_ROLLING_REJECT_RATE the filter is suspended for the next window,
+// allowing diversity to recover.  The check repeats every window.
+const int    ML_ROLLING_WINDOW          = 50;   // window length (# ML-eligible offspring)
+const double ML_MAX_ROLLING_REJECT_RATE = 0.30; // suspend if window reject rate > 30 %
+
+const std::string ML_MODEL = "MTLR"; // "COX", "RSF", "GBSA", "DEEPSURV", "SSVM", "WEIBULLAFT", "KNN", "ELASTICNET", "MTLR"
 const bool ML_ENABLE = true;
 const double ML_THRESHOLD = 3;
 
@@ -59,10 +106,12 @@ const std::string SERVER_LKH_EXE = "";
 const std::string SERVER_LKH_TMP_ROOT = "";
 
 // local
-const std::string LOCAL_DATA_DIR = "../../datasets/";
-const std::string LOCAL_RES_DIR = "../../solutions/";
-const std::string LOCAL_LKH_EXE = "C:/Users/Demir/researchproject/MA-CETSP/external/LKH-2.0.11/LKH.exe";
-const std::string LOCAL_LKH_TMP_ROOT = "C:/Users/Demir/researchproject/MA-CETSP/external/LKH-2.0.11/tmp/";
+const std::string LOCAL_DATA_DIR    = "../../datasets/";
+const std::string LOCAL_RES_DIR     = "../../solutions/";
+const std::string LOCAL_LKH_EXE     = "../../external/LKH-2.0.11/LKH.exe";
+const std::string LOCAL_LKH_TMP_ROOT= "../../external/LKH-2.0.11/tmp/";
+const std::string LOCAL_PYTHON_EXE  = "python";
+const std::string LOCAL_SCRIPTS_DIR = "../../ml/scripts/";
 
 const std::string ML_MODEL_DIR =
 (ENV == "LOCAL")

@@ -1,7 +1,7 @@
-[INFO] Loading island logs from C:\Users\Demir\researchproject\MA-CETSP\solutions\ml_logs\bonus1000\island_4
-[INFO] Dataset size: 142 samples
-[INFO] Validation set: 29 samples for threshold search
+[INFO] Loading island logs from C:\Users\Demir\researchproject\MA-CETSP\solutions\ml_logs\car_door_45\island_4
+[INFO] Dataset size: 239 samples
+[INFO] Validation set: 48 samples for threshold search
 [INFO] SSVM training completed.
-[INFO] Optimal rejection percentile: 50%  (objective=0.1686)  threshold=-1.050963
+[INFO] Optimal rejection percentile: 60%  (objective=0.1558)  threshold=-4.449185
 [INFO] Saved SSVM model -> C:\Users\Demir\researchproject\MA-CETSP\ml\models\island_4\ssvm_model.pkl
 [INFO] Saved SSVM meta  -> C:\Users\Demir\researchproject\MA-CETSP\ml\models\island_4\ssvm_meta.json

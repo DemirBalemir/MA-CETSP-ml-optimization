@@ -41,6 +41,12 @@ public:
     bool        ml_enable  = ML_ENABLE;   // enable/disable ML filter
     std::string model_dir;                // path to per-island model directory (derived)
 
+    // ---- portable path overrides (pass via cmdline to run on any machine) ----
+    std::string python_exe;               // path to python interpreter
+    std::string scripts_dir;              // path to ml/scripts/ directory
+    std::string lkh_exe;                  // path to LKH executable
+    std::string lkh_tmp_root;             // path to LKH tmp directory
+
     Parameters(int argc, char **argv);
     Parameters() = default;
     ~Parameters() = default;

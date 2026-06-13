@@ -1,0 +1,11 @@
+[INFO] Loading island logs from C:\Users\Demir\researchproject\MA-CETSP\solutions\ml_logs\kroD100_or2\island_0
+[INFO] Dataset size: 25 samples
+[WARN] Too few samples for hold-out split; using default percentile
+[INFO] Training MTLR model...
+[INFO] MTLR training completed.
+[INFO] Optimal rejection percentile: 80%  (objective=nan)  threshold=0.989785
+[INFO] Saved MTLR weights   -> C:\Users\Demir\researchproject\MA-CETSP\ml\models\mtlr_net.pt
+[INFO] Saved MTLR labtrans  -> C:\Users\Demir\researchproject\MA-CETSP\ml\models\mtlr_labtrans.pkl
+[INFO] Saved MTLR scaler    -> C:\Users\Demir\researchproject\MA-CETSP\ml\models\mtlr_scaler.pkl
+[INFO] Saved MTLR config    -> C:\Users\Demir\researchproject\MA-CETSP\ml\models\mtlr_config.json
+[INFO] Saved MTLR meta      -> C:\Users\Demir\researchproject\MA-CETSP\ml\models\mtlr_meta.json

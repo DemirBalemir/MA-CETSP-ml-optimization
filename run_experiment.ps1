@@ -9,12 +9,12 @@
 
 param(
     [int[]]$Instances  = @(0),
-    [int]  $Islands    = 4,
+    [int]  $Islands    = 10,   # 9 ML models + 1 BASELINE (no-ML) island
     [int]  $Iterations = 200
 )
 
-$EXE    = "C:\Users\Demir\researchproject\MA-CETSP\build\Release\MA-CETSP.exe"
-$OUTDIR = "C:\Users\Demir\researchproject\MA-CETSP\solutions\experiment_results"
+$EXE    = Join-Path $PSScriptRoot "build\Release\MA-CETSP.exe"
+$OUTDIR = Join-Path $PSScriptRoot "solutions\experiment_results"
 $SEEDS  = @(1, 11, 21, 31, 41, 51, 61, 71, 81, 91)
 
 New-Item -ItemType Directory -Force -Path $OUTDIR | Out-Null
@@ -35,7 +35,8 @@ Write-Host ""
 function Run-Instance {
     param([int]$Instance)
 
-    $instDir     = "$OUTDIR\instance$Instance"
+    $ts      = Get-Date -Format "yyyyMMdd_HHmmss"
+    $instDir = "$OUTDIR\instance${Instance}_${ts}"
     New-Item -ItemType Directory -Force -Path $instDir | Out-Null
     $SummaryFile = "$instDir\summary.txt"
 
@@ -54,10 +55,12 @@ function Run-Instance {
         $script:globalRun++
         $runLog = "$instDir\run${runNum}_seed${seed}.log"
 
-        Write-Host "[Instance $Instance | Run $runNum/$($SEEDS.Count) | Overall $_globalRun/$totalRuns] seed=$seed ..." -ForegroundColor Cyan
+        Write-Host "[Instance $Instance | Run $runNum/$($SEEDS.Count) | Overall $script:globalRun/$totalRuns] seed=$seed ..." -ForegroundColor Cyan
 
+        Push-Location (Split-Path $EXE -Parent)
         & $EXE -i $Instance -s $seed --islands $Islands -r $Iterations 2>&1 |
             Out-File -FilePath $runLog -Encoding utf8
+        Pop-Location
 
         $lines = Get-Content $runLog
 
@@ -111,7 +114,8 @@ function Run-Instance {
             $block += "  rejected=$($isl.Rejected)`n"
         }
         $block += "  --`n"
-        $block += "  GLOBAL BEST  model=$globalModel  value=$($globalBest.ToString('F3'))  time=${globalTime}s  wall-clock=${wallClock}s`n`n"
+        $bestStr = if ($globalBest -ne $null) { $globalBest.ToString('F3') } else { "N/A" }
+        $block += "  GLOBAL BEST  model=$globalModel  value=$bestStr  time=${globalTime}s  wall-clock=${wallClock}s`n`n"
 
         $block | Add-Content -Path $SummaryFile -Encoding utf8
 
@@ -134,7 +138,7 @@ function Run-Instance {
             ($_.Islands | Where-Object { $_.Model -eq $model }).Time
         } | Where-Object { $_ -ne $null }
 
-        $wins = ($allRuns | Where-Object { $_.GlobalModel -eq $model }).Count
+        $wins = @($allRuns | Where-Object { $_.GlobalModel -eq $model }).Count
 
         $meanBest = ($bests | Measure-Object -Average).Average
         $minBest  = ($bests | Measure-Object -Minimum).Minimum

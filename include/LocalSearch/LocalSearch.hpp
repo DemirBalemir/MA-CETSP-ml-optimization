@@ -30,6 +30,8 @@ private:
     Solver solver;
     std::string improvement;
     int lkh_random_num;
+    std::string lkh_exe_;
+    std::string lkh_tmp_root_;
     void jointOpt(List* s);
     void randomTwoOpt(List* s);
     void bestImproveApproxRelocate(List* s);
