@@ -1,6 +1,7 @@
 .vs/
 .claude/
 build/
+!build/Release/MA-CETSP.exe
 out/
 experiment results/*
 !experiment results/.gitkeep
