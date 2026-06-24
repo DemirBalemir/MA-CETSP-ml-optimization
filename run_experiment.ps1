@@ -1,5 +1,5 @@
 # ============================================================
-#  Experiment runner — N seeded runs per instance, 4 parallel islands
+#  Experiment runner - N seeded runs per instance, 4 parallel islands
 #  Usage:
 #    Single instance:
 #      powershell -ExecutionPolicy Bypass -File run_experiment.ps1 -Instances 0
@@ -17,6 +17,31 @@ $EXE    = Join-Path $PSScriptRoot "build\Release\MA-CETSP.exe"
 $OUTDIR = Join-Path $PSScriptRoot "solutions\experiment_results"
 $SEEDS  = @(1, 11, 21, 31, 41)
 
+# ---- auto-detect Python with sksurv + lifelines -------------------------
+$PYTHON_EXE = $null
+$candidates = @(
+    "python", "python3",
+    "$env:USERPROFILE\AppData\Local\Programs\Python\Python310\python.exe",
+    "$env:USERPROFILE\AppData\Local\Programs\Python\Python311\python.exe",
+    "$env:USERPROFILE\AppData\Local\Programs\Python\Python312\python.exe",
+    "$env:USERPROFILE\AppData\Local\Programs\Python\Python313\python.exe",
+    "C:\ProgramData\Anaconda3\python.exe",
+    "C:\ProgramData\miniconda3\python.exe",
+    "$env:USERPROFILE\anaconda3\python.exe",
+    "$env:USERPROFILE\miniconda3\python.exe"
+)
+foreach ($py in $candidates) {
+    try {
+        $null = & $py -c "import sksurv, lifelines" 2>$null
+        if ($LASTEXITCODE -eq 0) { $PYTHON_EXE = $py; break }
+    } catch {}
+}
+if (-not $PYTHON_EXE) {
+    Write-Host "[WARN] No Python with sksurv+lifelines found - ML models will be disabled!" -ForegroundColor Red
+    $PYTHON_EXE = "python"
+}
+# -------------------------------------------------------------------------
+
 New-Item -ItemType Directory -Force -Path $OUTDIR | Out-Null
 
 $totalRuns = $Instances.Count * $SEEDS.Count
@@ -28,6 +53,7 @@ Write-Host " Seeds      : $($SEEDS -join ', ')" -ForegroundColor Yellow
 Write-Host " Islands    : $Islands" -ForegroundColor Yellow
 Write-Host " Iterations : $Iterations" -ForegroundColor Yellow
 Write-Host " Total runs : $totalRuns" -ForegroundColor Yellow
+Write-Host " Python     : $PYTHON_EXE" -ForegroundColor Yellow
 Write-Host "============================================================" -ForegroundColor Yellow
 Write-Host ""
 
@@ -58,7 +84,7 @@ function Run-Instance {
         Write-Host "[Instance $Instance | Run $runNum/$($SEEDS.Count) | Overall $script:globalRun/$totalRuns] seed=$seed ..." -ForegroundColor Cyan
 
         Push-Location (Split-Path $EXE -Parent)
-        & $EXE -i $Instance -s $seed --islands $Islands -r $Iterations 2>&1 |
+        & $EXE -i $Instance -s $seed --islands $Islands -r $Iterations --python_exe $PYTHON_EXE 2>&1 |
             Out-File -FilePath $runLog -Encoding utf8
         Pop-Location
 

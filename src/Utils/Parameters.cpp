@@ -81,11 +81,29 @@ Parameters::Parameters(int argc, char **argv) {
     scripts_dir     = parser.get<std::string>("scripts_dir");
     lkh_exe         = parser.get<std::string>("lkh_exe");
     lkh_tmp_root    = parser.get<std::string>("lkh_tmp");
-    // ensure trailing slash on directory paths
-    if (!scripts_dir.empty() && scripts_dir.back() != '/' && scripts_dir.back() != '\\')
-        scripts_dir += '/';
-    if (!lkh_tmp_root.empty() && lkh_tmp_root.back() != '/' && lkh_tmp_root.back() != '\\')
-        lkh_tmp_root += '/';
+    // Convert relative paths to absolute based on cwd at launch time (always build/Release/).
+    // model_dir is already canonicalised below; do the same for scripts_dir and lkh_tmp_root
+    // so Python subprocess calls and LKH file I/O work regardless of launch directory.
+    namespace fs = std::filesystem;
+    auto to_abs_dir = [](std::string p) -> std::string {
+        if (p.empty()) return p;
+        fs::path fp(p);
+        if (fp.is_relative())
+            fp = fs::weakly_canonical(fs::current_path() / fp);
+        std::string s = fp.string();
+        if (s.back() != '/' && s.back() != '\\') s += '/';
+        return s;
+    };
+    auto to_abs_file = [](std::string p) -> std::string {
+        if (p.empty()) return p;
+        fs::path fp(p);
+        if (fp.is_relative())
+            fp = fs::weakly_canonical(fs::current_path() / fp);
+        return fp.string();
+    };
+    scripts_dir  = to_abs_dir(scripts_dir);
+    lkh_tmp_root = to_abs_dir(lkh_tmp_root);
+    lkh_exe      = to_abs_file(lkh_exe);
 
     // island_id stays 0 for single-island runs; set by make_island() otherwise
     island_id  = 0;
