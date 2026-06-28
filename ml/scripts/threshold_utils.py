@@ -44,6 +44,31 @@ CANDIDATE_PERCENTILES = list(range(50, 96, 5))   # 50, 55, 60, …, 95
 VAL_FRACTION          = 0.20                      # 20 % held-out
 MIN_SAMPLES           = 30                        # fallback below this
 DEFAULT_PERCENTILE    = 80
+
+# Soft-cap objective (replaces the old `rejection_rate * survival_gap`).
+# The old objective multiplied by rejection_rate, but on the validation set
+# rejection_rate is mechanically (100-pct)/100 — a built-in pull toward LOW
+# percentiles (over-rejection) that ignores real model quality.  Instead we
+# reward discrimination (survival_gap) and only allow rejection up to a target,
+# penalising anything beyond it.  Percentile RANGE is NOT restricted (so RSF/
+# GBSA, which need lower percentiles, keep all candidates) — only the rejection
+# *rate* is softly capped.
+TARGET_REJECT_RATE = 0.20   # aim to reject ~20 % (safe margin below the 30 % cap)
+OVER_PENALTY       = 2.0    # weight on rejection beyond the target
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def _soft_cap_objective(rejection_rate: float, survival_gap: float) -> float:
+    """Discrimination reward, ramped in up to TARGET_REJECT_RATE, then penalised.
+
+    - `ramp` (0→1 as rejection goes 0→target) avoids collapsing to ~zero
+      rejection: some filtering is needed to earn the full survival_gap credit.
+    - `over` penalises rejecting beyond the target, which is what previously
+      drove COX/SSVM/GBSA to ~30-46 % rejection and the quality degradation.
+    """
+    ramp = min(1.0, rejection_rate / TARGET_REJECT_RATE) if TARGET_REJECT_RATE > 0 else 1.0
+    over = max(0.0, rejection_rate - TARGET_REJECT_RATE)
+    return survival_gap * ramp - OVER_PENALTY * over
 # ─────────────────────────────────────────────────────────────────────────────
 
 
@@ -96,7 +121,7 @@ def search_optimal_percentile(
         # normalised gap: > 0 means accepted survive longer (good)
         survival_gap = (mean_acc - mean_rej) / mean_all
 
-        objective = rejection_rate * survival_gap
+        objective = _soft_cap_objective(rejection_rate, survival_gap)
 
         if objective > best_obj:
             best_obj  = objective
@@ -140,7 +165,7 @@ def compute_threshold(
         mean_acc  = float(val_survival[accepted].mean()) if accepted.any() else 0.0
         mean_rej  = float(val_survival[rejected].mean()) if rejected.any() else 0.0
         rej_rate  = float(rejected.mean())
-        obj       = rej_rate * (mean_acc - mean_rej) / mean_all
+        obj       = _soft_cap_objective(rej_rate, (mean_acc - mean_rej) / mean_all)
 
     threshold = float(np.percentile(full_risks, pct))
     return threshold, pct, obj

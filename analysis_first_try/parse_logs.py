@@ -32,7 +32,7 @@ RE_LOG = re.compile(
 )
 RE_TRAIN = re.compile(
     r"\[Island (\d+)\] \[ML\] Training triggered at iter (\d+) "
-    r"\(events=(\d+), patience=(\d+), stagnation=(\d+), soft_ceil=(\d+), hard_ceil=(\d+)\)"
+    r"\(events=(\d+), patience=(\d+), enough_data=(\d+), hard_ceil=(\d+)\)"
 )
 RE_STARTING = re.compile(
     r"\[Island (\d+)\].*?(?:starting|Starting training)\s*[—\-]*\s*(?:model=)?(\w+)"
@@ -130,7 +130,11 @@ def parse_log(log_path: Path, instance_name: str, run_id: int, seed: int):
             # ── training events ──────────────────────────────────────────────
             m = RE_TRAIN.search(line)
             if m:
-                isl, it, evts, pat, stag, soft, hard = m.groups()
+                # New trigger format: (events, patience, enough_data, hard_ceil).
+                # `stagnation`/`soft_ceil` columns are kept for schema compatibility;
+                # `stagnation` now carries enough_data (data-driven primary trigger),
+                # `soft_ceil` is retired (always 0).
+                isl, it, evts, pat, enough, hard = m.groups()
                 training_events.append({
                     "instance": instance_name,
                     "run": run_id,
@@ -139,8 +143,8 @@ def parse_log(log_path: Path, instance_name: str, run_id: int, seed: int):
                     "train_iter": int(it),
                     "events": int(evts),
                     "patience": int(pat),
-                    "stagnation": int(stag),
-                    "soft_ceil": int(soft),
+                    "stagnation": int(enough),
+                    "soft_ceil": 0,
                     "hard_ceil": int(hard),
                 })
                 continue

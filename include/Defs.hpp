@@ -33,14 +33,18 @@ const double PI = 3.14159265358979323846;
 // iterations as the sole trigger ignores how many deaths have actually occurred,
 // which varies with population dynamics and instance difficulty.
 //
-// TRAINING FIRES when ALL three conditions hold:
+// TRAINING FIRES (decoupled from the patience/stagnation signal) when BOTH:
 //   1. iter  >= ML_TRAIN_FRAC_MIN * params->iteration   (budget floor: 20 %)
 //   2. data.getEventCount() >= ML_MIN_EVENTS             (death-signal floor)
-//   3. patience >= patience_threshold * ML_PATIENCE_FRACTION   (stagnation)
-//        OR iter >= ML_TRAIN_FRAC_MAX * params->iteration      (budget ceiling)
 //
 // A hard fallback fires at ML_TRAIN_FRAC_HARD regardless of event count so
 // that training is never skipped on stable populations with few evictions.
+//
+// NOTE: training intentionally no longer reads `patience`.  `patience` is the
+// shared early-stop + adaptive-mutation counter and must advance identically
+// for the baseline and every ML island (see src/Algo.cpp).  Firing on the
+// budget floor (rather than on stagnation) also trains while the solution log
+// still holds a diverse good/bad offspring mix.
 //
 // REFERENCES (for EPV / sample-size justification):
 //   - Peduzzi et al. (1995), J Clin Epidemiol 48(12):1503-1510.
@@ -64,9 +68,9 @@ const double PI = 3.14159265358979323846;
 
 const int    ML_MIN_EVENTS        = 100;   // min death events before training (EPV ≥ 10 × n_features)
 const double ML_TRAIN_FRAC_MIN    = 0.20;  // earliest training: 20 % of iteration budget consumed
-const double ML_TRAIN_FRAC_MAX    = 0.25;  // soft ceiling: trigger if stagnation hasn't fired by 25 %
 const double ML_TRAIN_FRAC_HARD   = 0.50;  // hard fallback: train unconditionally at 50 % (stable pop.)
-const double ML_PATIENCE_FRACTION = 0.40;  // stagnation signal: 40 % of patience budget exhausted
+// ML_TRAIN_FRAC_MAX / ML_PATIENCE_FRACTION removed: training is now decoupled
+// from the stagnation/patience signal (see comment above and src/Algo.cpp).
 
 // ---- Runtime rejection-rate cap ----
 //
@@ -159,7 +163,7 @@ const std::vector<std::string> FILENAMES = {
     // instances with different overlap ratio 0.1
     "d493_or10",                   // 34
     "dsj1000_or10",                // 35
-    "kroD100_or10",                // 36
+    "kroD100_or10",                // 36 
     "lin318_or10",                 // 37
     "pcb442_or10",                 // 38
     "rat195_or10",                 // 39

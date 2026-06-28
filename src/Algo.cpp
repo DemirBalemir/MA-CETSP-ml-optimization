@@ -48,7 +48,15 @@ void Algo::run() {
         auto start_iter = std::chrono::high_resolution_clock::now();
 
         population.current_iter = iter;
+        const int reject_before = population.ml_reject_count;
         best_solution = population.nextPopulation(patience);
+        // An offspring filtered out by the ML model never reached VND, so it is
+        // NOT evidence that the search has converged — it is just the filter doing
+        // its job.  Such iterations are treated as NEUTRAL for early stopping
+        // (they neither reset nor advance patience), so an aggressive filter can
+        // no longer trigger a premature stop.  Patience thus measures genuine
+        // search stagnation (VND'd offspring that failed to improve) only.
+        const bool ml_rejected = population.ml_reject_count > reject_before;
 
         improved           = best_solution->getValue() - best_solution_value < -DELTA;
         best_solution_value = best_solution->getValue();
@@ -60,24 +68,26 @@ void Algo::run() {
         //
         // Trigger logic (fires at most once per run):
         //
-        //   Primary condition — requires BOTH:
-        //     (a) iter >= ML_TRAIN_FRAC_MIN * budget      → enough search history
-        //     (b) data.getEventCount() >= ML_MIN_EVENTS   → enough death-signal
-        //   AND at least ONE of:
-        //     (c) stagnation: patience >= ML_PATIENCE_FRACTION * patience_threshold
-        //     (d) soft ceiling: iter >= ML_TRAIN_FRAC_MAX * budget
+        //   The training trigger is DECOUPLED from the stagnation/patience signal.
+        //   `patience` is the shared early-stop + adaptive-mutation counter
+        //   (see Population::nextPopulation) and must advance IDENTICALLY for the
+        //   baseline island and every ML island — so training never reads or
+        //   resets it.  Instead training fires on a fixed schedule:
         //
-        //   Hard fallback — overrides (b) at ML_TRAIN_FRAC_HARD * budget so that
-        //   training is never indefinitely postponed on stable populations where
-        //   few evictions (deaths) occur.
+        //     Primary  — fires as soon as BOTH floors are met:
+        //       (a) iter >= ML_TRAIN_FRAC_MIN * budget    → budget floor (guarded)
+        //       (b) data.getEventCount() >= ML_MIN_EVENTS → enough death-signal
         //
-        // Budget fractions are computed from params->iteration at runtime so the
-        // trigger scales correctly for any -r value (200, 1000, 5000, …).
-        // Previously these were compile-time constants tied to ITERATION=200,
-        // which caused training to always fire at iter 150 regardless of -r.
+        //     Hard fallback — overrides (b) at ML_TRAIN_FRAC_HARD * budget so that
+        //       a stable population (few deaths) is never postponed indefinitely.
+        //
+        //   Firing early (right at the budget floor, while the solution log still
+        //   holds a diverse mix of good/censored and bad/short-lived offspring)
+        //   keeps the training set diverse AND leaves maximum runway for the
+        //   filter to act.  Budget fractions scale with params->iteration so the
+        //   trigger works for any -r value (200, 1000, 5000, …).
         {
         const int ml_min_iter  = static_cast<int>(params->iteration * ML_TRAIN_FRAC_MIN);
-        const int ml_max_iter  = static_cast<int>(params->iteration * ML_TRAIN_FRAC_MAX);
         const int ml_hard_iter = static_cast<int>(params->iteration * ML_TRAIN_FRAC_HARD);
 
         if (params->ml_enable && !ml_trained && !ml_training_attempted
@@ -85,12 +95,10 @@ void Algo::run() {
 
             int  n_events    = data.getEventCount();
             bool enough_data = n_events >= ML_MIN_EVENTS;
-            bool stagnation  = patience >= static_cast<int>(patience_threshold * ML_PATIENCE_FRACTION);
-            bool soft_ceil   = iter >= ml_max_iter;
             bool hard_ceil   = iter >= ml_hard_iter;
 
-            bool primary  = enough_data && (stagnation || soft_ceil);
-            bool fallback = hard_ceil;   // fires even without enough events
+            bool primary  = enough_data;          // budget floor already guarded above
+            bool fallback = hard_ceil;            // fires even without enough events
 
             if (primary || fallback) {
                 if (!enough_data) {
@@ -105,8 +113,7 @@ void Algo::run() {
                           << "[ML] Training triggered at iter " << iter
                           << " (events=" << n_events
                           << ", patience=" << patience
-                          << ", stagnation=" << stagnation
-                          << ", soft_ceil=" << soft_ceil
+                          << ", enough_data=" << enough_data
                           << ", hard_ceil=" << hard_ceil << ")\n";
 
                 // Log surviving population members (censored).
@@ -158,7 +165,11 @@ void Algo::run() {
                     }
                 }
 
-                patience = 0;
+                // NOTE: patience is deliberately NOT reset here.  It is the shared
+                // early-stop + adaptive-mutation counter (Population::nextPopulation)
+                // and must advance identically for the baseline and every ML island.
+                // Resetting it gave ML islands an unfair "second wind" (lower
+                // mutation + extended search), which confounded the speed comparison.
             }
         }
         } // end ML training trigger scope
@@ -169,9 +180,10 @@ void Algo::run() {
             best_running_time = end_iter - start_run;
             if (LOG) data.write(best_solution, iter,
                 std::to_string(best_running_time.count()));
-        } else {
-            ++patience;
+        } else if (!ml_rejected) {
+            ++patience;          // genuine stagnation: VND ran but did not improve
         }
+        // (else: ML-rejected iteration — neutral, patience unchanged)
 
         std::cout << island_prefix_
                   << "[LOG] iter=" << iter
@@ -185,23 +197,20 @@ void Algo::run() {
         // ==== EARLY STOPPING ====
         //
         // Fires when patience >= patience_threshold consecutive iterations
-        // produce no improvement (patience_threshold = iteration / 5, set in
-        // Parameters.cpp).
+        // produce no improvement (patience_threshold set in Parameters.cpp).
         //
-        // Design (Seçenek B — stagnation-first):
-        //   The ML training trigger already uses patience as its primary
-        //   signal: it fires at ML_PATIENCE_FRACTION (40 %) of the patience
-        //   budget.  So the typical timeline is:
+        // Design (model-independent stopping):
+        //   `patience` advances purely on search stagnation and is NEVER touched
+        //   by the ML training trigger.  Every island — the baseline and all 9 ML
+        //   models — therefore stops on one and the same rule, so a speed/quality
+        //   comparison between them is apples-to-apples.  If ML helps, it shows up
+        //   as reaching better cost (or the same cost sooner) before the identical
+        //   stagnation stop — not as an artificially extended run.
         //
-        //     iter 0                 → search starts
-        //     patience ≥ 0.40 × PT  → ML trains, patience resets to 0
-        //     patience ≥ PT again   → early stop  (post-ML stagnation)
-        //
-        //   If ML is disabled or training fails, early stopping fires purely
-        //   on patience — no ml_trained guard.  This ensures fast-converging
-        //   instances (e.g. car_door_25 from LA-CETSP, which saturates ~200
-        //   iters regardless of budget) do not waste compute on a 5000-iter
-        //   budget when the search has clearly stopped improving.
+        //   This also makes the budget genuinely adaptive: a fast-converging
+        //   instance (e.g. car_door_25 from LA-CETSP, ~200 iters regardless of
+        //   budget) stops early instead of wasting a 5000-iter budget, while a
+        //   hard instance (e.g. bonus1000) keeps improving and runs to the cap.
         //
         // Motivation / reference:
         //   LA-CETSP (Balemir et al.) used a fixed 500-iter budget for all
@@ -212,8 +221,8 @@ void Algo::run() {
         if (patience >= patience_threshold) {
             std::cout << island_prefix_
                       << "[STOP] no improvement for " << patience_threshold
-                      << " iterations"
-                      << (ml_trained ? " (post-ML)" : " (ML pending/disabled)")
+                      << " iterations (model="
+                      << (ml_trained ? params->ml_model : "none") << ")"
                       << "\n";
             break;
         }
