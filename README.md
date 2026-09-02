@@ -128,7 +128,7 @@ their rejection does not advance the stagnation counter.
 
 ```
 MA-CETSP/
-├── Article.pdf                   # The complete manuscript PDF (19 pages, cas-dc format)
+├── Article.pdf                   # Complete manuscript PDF (20 pages, APA 7 references)
 ├── src/                          # C++ Solver implementation
 │   ├── Algo.cpp                  # Main memetic search loop & stopping logic
 │   ├── Genetic/                  # Population management, crossover, mutation
@@ -276,7 +276,11 @@ cd paper
 latexmk -pdf main.tex
 ```
 
-Or, from the repository root, create the output directory and compile with Tectonic:
+References use **APA 7** (`biblatex-apa` with **Biber**). Overleaf and `latexmk`
+detect Biber automatically. The legacy `cas-model2-names.bst` is not used.
+
+Or, from the repository root, create the output directory and compile with Tectonic
+with a compatible Biber executable on `PATH` (see [paper/README.md](paper/README.md)):
 ```sh
 python -c "from pathlib import Path; Path('output/pdf').mkdir(parents=True, exist_ok=True)"
 tectonic -X compile paper/main.tex --outdir output/pdf --untrusted

@@ -66,7 +66,7 @@ def prepare():
     credit = without_comments(text[start:end])
     text = text[:start] + text[end:]
     start = text.index(r'\section*{Data availability}')
-    end = text.index(r'\bibliographystyle', start)
+    end = text.index(r'\printbibliography', start)
     original_data = without_comments(text[start:end])
     anonymous_data = r'''\section*{Data availability}
 The solver, survival-modelling pipeline, diagnostic scripts, retained measurement
@@ -108,7 +108,8 @@ result-level reproduction from refitting models on the original logs.
         clean_pdf(PAPER / 'figures' / name, DEST / 'figures' / name)
     (DEST / 'README.txt').write_text(
         'Anonymous LaTeX manuscript\n\n'
-        'Main file: main.tex. Compile with pdfLaTeX and BibTeX, or Tectonic.\n'
+        'Main file: main.tex. APA 7 references require biblatex-apa and Biber.\n'
+        'Compile with latexmk -pdf main.tex (Biber is detected automatically).\n'
         'All referenced figures and generated TeX inputs are included.\n'
         'Figure 1 is editable TikZ within main.tex.\n'
         'Bibliographic author names are retained as ordinary scientific citations.\n', encoding='utf8')

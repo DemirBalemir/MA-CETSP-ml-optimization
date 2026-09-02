@@ -7,6 +7,7 @@ declared.
 """
 import re
 import sys
+from collections import Counter
 from pathlib import Path
 
 path = Path(sys.argv[1] if len(sys.argv) > 1 else "paper/main.tex")
@@ -57,12 +58,16 @@ print(f"  kullanilmayan label: {unused if unused else 'yok'}")
 
 bib = path.with_name('references.bib').read_text(encoding='utf-8')
 active = re.sub(r'(?m)(?<!\\)%.*$', '', s)
-keys = set(re.findall(r'@\w+\s*\{\s*([^,]+),', bib))
+entry_keys = re.findall(r'@\w+\s*\{\s*([^,]+),', bib)
+keys = set(entry_keys)
+duplicate_keys = sorted(key for key, count in Counter(entry_keys).items() if count > 1)
 cited = {key.strip() for group in re.findall(r'\\cite\w*(?:\[[^]]*\])*\{([^}]+)\}', active)
          for key in group.split(',')}
 missing_cites = sorted(cited - keys)
+uncited_keys = sorted(keys - cited)
 print(f"\nKaynakca: {len(keys)} kayit, {len(cited)} atif anahtari; eksik: {missing_cites}")
+print(f"  atifsiz kaynak: {uncited_keys}; yinelenen anahtar: {duplicate_keys}")
 abstract = active.split(r'\begin{abstract}')[1].split(r'\end{abstract}')[0]
 print(f"Abstract kelime (LaTeX dahil): {len(abstract.split())}")
 
-sys.exit(1 if (bad or missing or missing_cites) else 0)
+sys.exit(1 if (bad or missing or missing_cites or uncited_keys or duplicate_keys) else 0)

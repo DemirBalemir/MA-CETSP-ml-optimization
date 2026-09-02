@@ -13,7 +13,15 @@
 
 \documentclass[a4paper,fleqn]{cas-dc}
 
-\usepackage[authoryear,longnamesfirst]{natbib}
+% APA 7 citations and references; compile the bibliography with Biber.
+\usepackage[american]{babel}
+\usepackage{csquotes}
+\usepackage[backend=biber,style=apa,natbib=true]{biblatex}
+\addbibresource{references.bib}
+\AtBeginBibliography{\raggedright}
+% Biber emits Unicode names; the CAS T1 font needs a TeX accent for g-breve.
+\usepackage{newunicodechar}
+\newunicodechar{ğ}{\u{g}}
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{algorithm}
@@ -1915,7 +1923,6 @@ and input hashes; exact historical selections for every older probe are not
 bundled. The repository README distinguishes result-level reproduction from
 refitting models on the original logs.
 
-\bibliographystyle{cas-model2-names}
-\bibliography{references}
+\printbibliography
 
 \end{document}
