@@ -10,15 +10,15 @@ setlocal enabledelayedexpansion
 
 set EXE=C:\Users\Demir\researchproject\MA-CETSP\build\Release\MA-CETSP.exe
 set OUTDIR=C:\Users\Demir\researchproject\MA-CETSP\solutions\experiment_results
-set ISLANDS=4
+set ISLANDS=10
 set ITERATIONS=200
 
 :: Instance index from first argument, default 0
 set INSTANCE=%~1
 if "%INSTANCE%"=="" set INSTANCE=0
 
-:: Seeds: 1, 11, 21, 31, 41, 51, 61, 71, 81, 91
-set SEEDS=1 11 21 31 41 51 61 71 81 91
+:: Seeds: 1, 11, 21, 31, 41
+set SEEDS=1 11 21 31 41
 
 mkdir "%OUTDIR%" 2>nul
 

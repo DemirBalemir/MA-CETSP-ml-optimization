@@ -1,8 +1,8 @@
-[INFO] Loading island logs from C:\Users\Demir\researchproject\MA-CETSP\solutions\ml_logs\car_door_45\island_2
-[INFO] Dataset size: 249 samples
-[INFO] Validation set: 50 samples for threshold search
+[INFO] Loading island logs from C:\Users\Demir\researchproject\MA-CETSP\solutions\ml_logs\kroD100_or2\island_2
+[INFO] Dataset size: 178 samples
+[INFO] Validation set: 36 samples for threshold search
 [INFO] Training GBSA model...
 [INFO] GBSA training completed!
-[INFO] Optimal rejection percentile: 60%  (objective=0.3579)  threshold=0.408145
+[INFO] Optimal rejection percentile: 95%  (objective=0.1271)  threshold=2.804942
 [INFO] Saved GBSA model -> C:\Users\Demir\researchproject\MA-CETSP\ml\models\island_2\gbsa_model.pkl
 [INFO] Saved GBSA meta  -> C:\Users\Demir\researchproject\MA-CETSP\ml\models\island_2\gbsa_meta.json

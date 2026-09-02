@@ -1,0 +1,364 @@
+%% ===========================================================================
+%%  ADDITIONS to references.bib  (merge these into the Overleaf project)
+%%
+%%  Purpose: raise the share of references from the last five years to >=60%,
+%%  as required at the ESWA editorial pre-check.
+%%
+%%  Every entry below was verified against Crossref (title, authors, journal,
+%%  volume, pages, year, DOI) -- none is reconstructed from memory.
+%%
+%%  ALSO DELETE from references.bib, and from main.tex, the three keys that
+%%  these entries replace:
+%%      bello2016ptrnet    -> subsumed by wu2026ncosurvey
+%%      kim2020pomo        -> subsumed by wu2026ncosurvey
+%%      jin2002framework   -> superseded by hanawa2025impact + zheng2024noise
+%%
+%%  Groups:
+%%    A. Recent CETSP literature                     (Sec. 1, 2.1, 2.2)
+%%    B. Surrogate-assisted evolutionary computation (Sec. 1, 2.4, 6, 8)
+%%    C. Learning-augmented metaheuristics           (Sec. 1, 2.3)
+%%    D. Empirical methodology / negative results    (Sec. 5, 8)
+%%    E. Survival analysis, recent                   (Sec. 2.5, 6.1)
+%%    F. Application motivation                      (Sec. 1)
+%% ===========================================================================
+
+
+%% ===== A. Recent CETSP literature ==========================================
+
+@article{diplacido2023generalized,
+  author  = {Di Placido, Andrea and Archetti, Claudia and Cerrone, Carmine and
+             Golden, Bruce},
+  title   = {The generalized close enough traveling salesman problem},
+  journal = {European Journal of Operational Research},
+  volume  = {310},
+  number  = {3},
+  pages   = {974--991},
+  year    = {2023},
+  doi     = {10.1016/j.ejor.2023.04.010}
+}
+
+@article{zhang2023cetspbb,
+  author  = {Zhang, Wenda and Sauppe, Jason J. and Jacobson, Sheldon H.},
+  title   = {Results for the close-enough traveling salesman problem with a
+             branch-and-bound algorithm},
+  journal = {Computational Optimization and Applications},
+  volume  = {85},
+  number  = {2},
+  pages   = {369--407},
+  year    = {2023},
+  doi     = {10.1007/s10589-023-00474-3}
+}
+
+@article{cariou2023geometric,
+  author  = {Cariou, Christophe and Moiroux-Arvis, Laure and Pinet, Fran\c{c}ois and
+             Chanet, Jean-Pierre},
+  title   = {Evolutionary algorithm with geometrical heuristics for solving the
+             close enough traveling salesman problem: Application to the
+             trajectory planning of an unmanned aerial vehicle},
+  journal = {Algorithms},
+  volume  = {16},
+  number  = {1},
+  pages   = {44},
+  year    = {2023},
+  doi     = {10.3390/a16010044}
+}
+
+@article{canturk2026scalable,
+  author  = {Cant\"urk, Deniz and D\"okero\u{g}lu, Tansel},
+  title   = {Scalable parallel memetic algorithms for large close-enough
+             traveling salesman problems},
+  journal = {Neural Computing and Applications},
+  volume  = {38},
+  number  = {2},
+  pages   = {27},
+  year    = {2026},
+  doi     = {10.1007/s00521-025-11706-4}
+}
+
+@article{cui2026service,
+  author  = {Cui, Weiwei and Zhu, Jianhui and Peng, Lan},
+  title   = {On the service time in the close-enough traveling salesman problem},
+  journal = {European Journal of Operational Research},
+  year    = {2026},
+  note    = {In press},
+  doi     = {10.1016/j.ejor.2026.08.001}
+}
+
+@inproceedings{carrabs2025upper,
+  author    = {Carrabs, Francesco and Cerulli, Raffaele and D'Ambrosio, Ciriaco and
+               Murano, Gabriele},
+  title     = {Upper bound computation for the multiple close-enough traveling
+               salesman problem},
+  booktitle = {Proceedings of the 14th International Conference on Operations
+               Research and Enterprise Systems (ICORES)},
+  pages     = {186--195},
+  year      = {2025},
+  doi       = {10.5220/0013377900003893}
+}
+
+
+%% ===== B. Surrogate-assisted evolutionary computation ======================
+
+@article{he2023review,
+  author  = {He, Chunlin and Zhang, Yong and Gong, Dunwei and Ji, Xinfang},
+  title   = {A review of surrogate-assisted evolutionary algorithms for
+             expensive optimization problems},
+  journal = {Expert Systems with Applications},
+  volume  = {217},
+  pages   = {119495},
+  year    = {2023},
+  doi     = {10.1016/j.eswa.2022.119495}
+}
+
+@article{liu2024combinatorial,
+  author  = {Liu, Shulei and Wang, Handing and Peng, Wei and Yao, Wen},
+  title   = {Surrogate-assisted evolutionary algorithms for expensive
+             combinatorial optimization: A survey},
+  journal = {Complex \& Intelligent Systems},
+  volume  = {10},
+  number  = {4},
+  pages   = {5933--5949},
+  year    = {2024},
+  doi     = {10.1007/s40747-024-01465-5}
+}
+
+@article{nishihara2025memetic,
+  author  = {Ikeguchi, Takashi and Nishihara, Kei and Kawauchi, Yo and
+             Koguma, Yuji and Nakata, Masaya},
+  title   = {A surrogate-assisted memetic algorithm for permutation-based
+             combinatorial optimization problems},
+  journal = {Swarm and Evolutionary Computation},
+  volume  = {98},
+  pages   = {102060},
+  year    = {2025},
+  doi     = {10.1016/j.swevo.2025.102060}
+}
+
+@article{hanawa2025impact,
+  author  = {Hanawa, Yuki and Harada, Tomohiro and Miura, Yukiya},
+  title   = {Impact of surrogate model accuracy on performance and model
+             management strategy in surrogate-assisted evolutionary algorithms},
+  journal = {Array},
+  volume  = {27},
+  pages   = {100461},
+  year    = {2025},
+  doi     = {10.1016/j.array.2025.100461}
+}
+
+@article{hao2024unevaluated,
+  author  = {Hao, Hao and Zhang, Xiaoqun and Zhou, Aimin},
+  title   = {Enhancing {SAEAs} with unevaluated solutions: A case study of
+             relation model for expensive optimization},
+  journal = {Science China Information Sciences},
+  volume  = {67},
+  number  = {2},
+  pages   = {120103},
+  year    = {2024},
+  doi     = {10.1007/s11432-023-3909-x}
+}
+
+@article{li2024explainable,
+  author  = {Li, Bingdong and Yang, Yanting and Liu, Dacheng and Zhang, Yan and
+             Zhou, Aimin and Yao, Xin},
+  title   = {Accelerating surrogate assisted evolutionary algorithms for
+             expensive multi-objective optimization via explainable machine
+             learning},
+  journal = {Swarm and Evolutionary Computation},
+  volume  = {88},
+  pages   = {101610},
+  year    = {2024},
+  doi     = {10.1016/j.swevo.2024.101610}
+}
+
+@article{zhai2024composite,
+  author  = {Zhai, Zhaomin and Tan, Yanyan and Li, Xiaojie and Li, Junqing and
+             Zhang, Huaxiang},
+  title   = {A composite surrogate-assisted evolutionary algorithm for expensive
+             many-objective optimization},
+  journal = {Expert Systems with Applications},
+  volume  = {236},
+  pages   = {121374},
+  year    = {2024},
+  doi     = {10.1016/j.eswa.2023.121374}
+}
+
+@article{li2022classification,
+  author  = {Li, Jinglu and Wang, Peng and Dong, Huachao and Shen, Jiangtao and
+             Chen, Caihua},
+  title   = {A classification surrogate-assisted multi-objective evolutionary
+             algorithm for expensive optimization},
+  journal = {Knowledge-Based Systems},
+  volume  = {242},
+  pages   = {108416},
+  year    = {2022},
+  doi     = {10.1016/j.knosys.2022.108416}
+}
+
+@article{zheng2024noise,
+  author  = {Zheng, Nan and Wang, Handing and Liu, Jialin},
+  title   = {Formulating approximation error as noise in surrogate-assisted
+             multi-objective evolutionary algorithm},
+  journal = {Swarm and Evolutionary Computation},
+  volume  = {90},
+  pages   = {101666},
+  year    = {2024},
+  doi     = {10.1016/j.swevo.2024.101666}
+}
+
+
+%% ===== C. Learning-augmented metaheuristics ================================
+
+@article{talbi2021mlmeta,
+  author  = {Talbi, El-Ghazali},
+  title   = {Machine learning into metaheuristics: A survey and taxonomy},
+  journal = {ACM Computing Surveys},
+  volume  = {54},
+  number  = {6},
+  pages   = {1--32},
+  year    = {2021},
+  doi     = {10.1145/3459664}
+}
+
+@article{bolufe2025mlmeta,
+  author  = {Boluf\'e-R\"ohler, Antonio and Tamayo-Vera, Dania},
+  title   = {Machine learning for enhancing metaheuristics in global
+             optimization: A comprehensive review},
+  journal = {Mathematics},
+  volume  = {13},
+  number  = {18},
+  pages   = {2909},
+  year    = {2025},
+  doi     = {10.3390/math13182909}
+}
+
+@article{wu2026ncosurvey,
+  author  = {Wu, Xuan and Wen, Lijie and Xiao, Yubin and Wu, Chunguo and
+             Wu, Yuesong and Yu, Chaoyu and Maskell, Douglas L. and
+             Zhou, You and Wang, Di},
+  title   = {Neural combinatorial optimization algorithms for solving vehicle
+             routing problems: A comprehensive survey with perspectives},
+  journal = {IEEE Transactions on Neural Networks and Learning Systems},
+  pages   = {1--21},
+  year    = {2026},
+  doi     = {10.1109/TNNLS.2026.3713193}
+}
+
+@article{zhang2022drlhh,
+  author  = {Zhang, Yuchang and Bai, Ruibin and Qu, Rong and Tu, Chaofan and
+             Jin, Jiahuan},
+  title   = {A deep reinforcement learning based hyper-heuristic for
+             combinatorial optimisation with uncertainties},
+  journal = {European Journal of Operational Research},
+  volume  = {300},
+  number  = {2},
+  pages   = {418--427},
+  year    = {2022},
+  doi     = {10.1016/j.ejor.2021.10.032}
+}
+
+@article{zhao2023qlhh,
+  % "Jonrinaldi" is a mononym; braced so BibTeX treats it as a surname.
+  author  = {Zhao, Fuqing and Liu, Yuebao and Zhu, Ningning and Xu, Tianpeng and
+             {Jonrinaldi}},
+  title   = {A selection hyper-heuristic algorithm with {Q}-learning mechanism},
+  journal = {Applied Soft Computing},
+  volume  = {147},
+  pages   = {110815},
+  year    = {2023},
+  doi     = {10.1016/j.asoc.2023.110815}
+}
+
+@article{zhang2024qlmemetic,
+  author  = {Zhang, Wenqiang and Li, Chen and Gen, Mitsuo and Yang, Weidong and
+             Zhang, Guohui},
+  title   = {A multiobjective memetic algorithm with particle swarm optimization
+             and {Q}-learning-based local search for energy-efficient
+             distributed heterogeneous hybrid flow-shop scheduling problem},
+  journal = {Expert Systems with Applications},
+  volume  = {237},
+  pages   = {121570},
+  year    = {2024},
+  doi     = {10.1016/j.eswa.2023.121570}
+}
+
+@article{karcher2025heuristic,
+  author  = {K\"archer, Jens and Meyr, Herbert},
+  title   = {A machine learning approach for predicting the best heuristic for a
+             large scaled capacitated lotsizing problem},
+  journal = {OR Spectrum},
+  volume  = {47},
+  number  = {3},
+  pages   = {889--931},
+  year    = {2025},
+  doi     = {10.1007/s00291-024-00804-9}
+}
+
+
+%% ===== D. Empirical methodology / negative results =========================
+
+@article{pang2022counterintuitive,
+  author  = {Pang, Lie Meng and Ishibuchi, Hisao and Shang, Ke},
+  title   = {Counterintuitive experimental results in evolutionary large-scale
+             multiobjective optimization},
+  journal = {IEEE Transactions on Evolutionary Computation},
+  volume  = {26},
+  number  = {6},
+  pages   = {1609--1616},
+  year    = {2022},
+  doi     = {10.1109/TEVC.2022.3161363}
+}
+
+
+%% ===== E. Survival analysis, recent ========================================
+
+@article{wiegrebe2024dlsurvival,
+  author  = {Wiegrebe, Simon and Kopper, Philipp and Sonabend, Raphael and
+             Bischl, Bernd and Bender, Andreas},
+  title   = {Deep learning for survival analysis: A review},
+  journal = {Artificial Intelligence Review},
+  volume  = {57},
+  number  = {3},
+  pages   = {65},
+  year    = {2024},
+  doi     = {10.1007/s10462-023-10681-3}
+}
+
+@article{burk2026neutral,
+  author  = {Burk, Lukas and Zobolas, John and Bischl, Bernd and Bender, Andreas and
+             Wright, Marvin N. and Sonabend, Raphael},
+  title   = {A large-scale neutral comparison study of survival models on
+             low-dimensional data},
+  journal = {Bioinformatics},
+  volume  = {42},
+  number  = {5},
+  pages   = {btag186},
+  year    = {2026},
+  doi     = {10.1093/bioinformatics/btag186}
+}
+
+
+%% ===== F. Application motivation ===========================================
+
+@article{zhen2024uavinspection,
+  author  = {Zhen, Lu and Yang, Zhiyuan and Laporte, Gilbert and Yi, Wen and
+             Fan, Tianyi},
+  title   = {Unmanned aerial vehicle inspection routing and scheduling for
+             engineering management},
+  journal = {Engineering},
+  volume  = {36},
+  pages   = {223--239},
+  year    = {2024},
+  doi     = {10.1016/j.eng.2023.10.014}
+}
+
+@article{ismail2025uavwind,
+  author  = {Ismail, Asrul Harun and Song, Xiang and Ouelhadj, Djamila and
+             Al-Behadili, Mohanad and Fraess-Ehrfeld, Alexander},
+  title   = {Unmanned surface vessel routing and unmanned aerial vehicle swarm
+             scheduling for off-shore wind turbine blade inspection},
+  journal = {Expert Systems with Applications},
+  volume  = {284},
+  pages   = {127534},
+  year    = {2025},
+  doi     = {10.1016/j.eswa.2025.127534}
+}

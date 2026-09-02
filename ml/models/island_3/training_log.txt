@@ -1,9 +1,9 @@
-[INFO] Loading island logs from C:\Users\Demir\researchproject\MA-CETSP\solutions\ml_logs\car_door_45\island_3
-[INFO] Dataset size: 200 samples
-[INFO] Validation set: 40 samples for threshold search
+[INFO] Loading island logs from C:\Users\Demir\researchproject\MA-CETSP\solutions\ml_logs\kroD100_or2\island_3
+[INFO] Dataset size: 171 samples
+[INFO] Validation set: 35 samples for threshold search
 [INFO] Training DeepSurv model...
 [INFO] DeepSurv training completed.
-[INFO] Optimal rejection percentile: 50%  (objective=0.4111)  threshold(pct)=50.0
+[INFO] Optimal rejection percentile: 80%  (objective=0.2940)  threshold(pct)=80.0
 [INFO] Saved DeepSurv weights -> C:\Users\Demir\researchproject\MA-CETSP\ml\models\island_3\deepsurv_net.pt
 [INFO] Saved sorted risks     -> C:\Users\Demir\researchproject\MA-CETSP\ml\models\island_3\deepsurv_risks_sorted.npy
 [INFO] Saved DeepSurv config  -> C:\Users\Demir\researchproject\MA-CETSP\ml\models\island_3\deepsurv_config.json

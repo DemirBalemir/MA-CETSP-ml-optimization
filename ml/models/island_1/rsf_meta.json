@@ -1,6 +1,6 @@
 {
-  "threshold": 79.22374016188921,
-  "rejection_percentile": 55,
-  "objective": 0.1176870088289512,
-  "n_samples": 200
+  "threshold": 79.25480111033403,
+  "rejection_percentile": 95,
+  "objective": 0.253781512605042,
+  "n_samples": 180
 }

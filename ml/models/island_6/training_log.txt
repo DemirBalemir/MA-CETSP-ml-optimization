@@ -1,7 +1,7 @@
-[INFO] Loading island logs from C:\Users\Demir\researchproject\MA-CETSP\solutions\ml_logs\car_door_45\island_6
-[INFO] Dataset size: 236 samples
-[INFO] Validation set: 48 samples for threshold search
+[INFO] Loading island logs from C:\Users\Demir\researchproject\MA-CETSP\solutions\ml_logs\kroD100_or2\island_6
+[INFO] Dataset size: 160 samples
+[INFO] Validation set: 32 samples for threshold search
 [INFO] KNN training completed.
-[INFO] Optimal rejection percentile: 85%  (objective=0.0970)  threshold=-14.033333
+[INFO] Optimal rejection percentile: 95%  (objective=0.3042)  threshold=-10.463333
 [INFO] Saved KNN model -> C:\Users\Demir\researchproject\MA-CETSP\ml\models\island_6\knn_model.pkl
 [INFO] Saved KNN meta  -> C:\Users\Demir\researchproject\MA-CETSP\ml\models\island_6\knn_meta.json

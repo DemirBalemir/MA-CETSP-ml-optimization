@@ -1,9 +1,9 @@
-[INFO] Loading island logs from C:\Users\Demir\researchproject\MA-CETSP\solutions\ml_logs\car_door_45\island_8
-[INFO] Dataset size: 250 samples
-[INFO] Validation set: 50 samples for threshold search
+[INFO] Loading island logs from C:\Users\Demir\researchproject\MA-CETSP\solutions\ml_logs\kroD100_or2\island_8
+[INFO] Dataset size: 175 samples
+[INFO] Validation set: 35 samples for threshold search
 [INFO] Training MTLR model...
 [INFO] MTLR training completed.
-[INFO] Optimal rejection percentile: 60%  (objective=-0.0370)  threshold=0.925499
+[INFO] Optimal rejection percentile: 95%  (objective=0.1508)  threshold=0.999125
 [INFO] Saved MTLR weights   -> C:\Users\Demir\researchproject\MA-CETSP\ml\models\island_8\mtlr_net.pt
 [INFO] Saved MTLR labtrans  -> C:\Users\Demir\researchproject\MA-CETSP\ml\models\island_8\mtlr_labtrans.pkl
 [INFO] Saved MTLR scaler    -> C:\Users\Demir\researchproject\MA-CETSP\ml\models\island_8\mtlr_scaler.pkl

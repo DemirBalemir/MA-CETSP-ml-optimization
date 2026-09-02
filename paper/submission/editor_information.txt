@@ -1,0 +1,34 @@
+EDITOR ONLY — exclude from reviewer-facing files
+
+This file records information omitted from the anonymous manuscript.
+Supply it to the editor in a file category hidden from reviewers.
+It is not included in the anonymous source ZIP.
+
+Corresponding author: Demir Balemir, demir.balemir@tedu.edu.tr
+Co-author: Deniz Cantürk, deniz.canturk@tedu.edu.tr
+
+Public repository: https://github.com/DemirBalemir/MA-CETSP-ml-optimization
+
+Original CRediT text (LaTeX):
+\section*{CRediT authorship contribution statement}
+\textbf{Demir Balemir}: Conceptualisation, Methodology, Software,
+Formal analysis, Investigation, Data curation, Visualisation,
+Writing -- original draft.
+\textbf{Deniz Cant{\"u}rk}: Conceptualisation, Supervision, Validation,
+Writing -- review and editing.
+
+
+Original data-availability text (LaTeX):
+\section*{Data availability}
+
+The solver, survival-modelling pipeline, diagnostic scripts and retained
+measurement CSVs are publicly available at
+\url{https://github.com/DemirBalemir/MA-CETSP-ml-optimization}, together with
+parsed end-to-end results. The release rebuilds tables and figures from these
+retained measurements and documents their evaluation protocols. Raw per-solution
+logs, approximately 3.4 million records, are available from the authors on request
+for recalculating diagnostics. The full-VND calibration includes a run manifest
+and input hashes; exact historical selections for every older probe are not
+bundled. The repository README distinguishes result-level reproduction from
+refitting models on the original logs.
+
