@@ -1,0 +1,9 @@
+{
+  "ml_runs": 2385,
+  "before_trigger": 852,
+  "at_trigger": 3,
+  "trigger_reaching": 1533,
+  "median_window": 1083.0,
+  "median_window_fraction": 0.5199231877100337,
+  "instances_with_rejection": 47
+}

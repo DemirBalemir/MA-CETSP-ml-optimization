@@ -1,5 +1,11 @@
 # New Learning-Assisted Memetic Algorithm for the Close-Enough Traveling Salesman Problem (LA-CETSP)
 
+The follow-up diagnostic manuscript and reproduction instructions are in
+[paper/README.md](paper/README.md). The evaluated 53-instance experiment found no
+statistically detectable quality or runtime benefit under its protocol. The
+manuscript discusses conditional diagnostics and their limitations; it does not
+claim that pre-local-search filtering is universally impossible.
+
 
 This repository is based on the C++ implementation of the paper  
 [An Effective Memetic Algorithm for the Close-Enough Traveling Salesman Problem](https://www.sciencedirect.com/science/article/pii/S1568494624000401)  

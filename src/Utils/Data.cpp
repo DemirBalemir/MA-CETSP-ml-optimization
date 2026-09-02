@@ -132,6 +132,19 @@ void Data::writeSolutionLog(List* s) {
         // POST-VND COST
         out << "  \"post_vnd_cost\": " << s->post_vnd_value << ",\n";
 
+        // INTERMEDIATE-STAGE COSTS (VND pipeline probes)
+        out << "  \"post_greed_cost\": " << s->post_greed_value << ",\n";
+        out << "  \"post_lkh_cost\": " << s->post_lkh_value << ",\n";
+
+        // LINEAGE (provenance) probe — all known BEFORE VND
+        out << "  \"parent1_cost\": "    << s->parent1_value   << ",\n";
+        out << "  \"parent2_cost\": "    << s->parent2_value   << ",\n";
+        out << "  \"parent1_fitness\": " << s->parent1_fitness << ",\n";
+        out << "  \"parent2_fitness\": " << s->parent2_fitness << ",\n";
+        out << "  \"parent1_dist\": "    << s->parent1_dist    << ",\n";
+        out << "  \"parent2_dist\": "    << s->parent2_dist    << ",\n";
+        out << "  \"mutated\": "         << s->mutated         << ",\n";
+
         // pre-VND coords
         out << "  \"pre_vnd_coords\": [";
         for (int i = 0; i < s->pre_vnd_coords.size(); ++i) {

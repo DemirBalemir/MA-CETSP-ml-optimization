@@ -31,6 +31,21 @@ public:
     bool already_logged = false;  // true after censored log at training time — skip death log
     double pre_vnd_value = -1;
     double post_vnd_value = -1;
+    double post_greed_value = -1;  // cost after 1st greedy, BEFORE LKH (cheap-stage probe)
+    double post_lkh_value = -1;    // cost after LKH (expensive stage)
+    // ---- LINEAGE (provenance) probe ----------------------------------------
+    // Everything below is known BEFORE VND runs, so it is a legitimate filter
+    // feature. Parents are population members that have already been through
+    // VND, so their cost and fitness are meaningful; the two edit distances are
+    // already computed in Population::nextPopulation and were previously
+    // discarded. This is the one feature family the geometry set cannot express.
+    double parent1_value = -1;     // post-VND cost of parent A
+    double parent2_value = -1;     // post-VND cost of parent B
+    double parent1_fitness = -1;   // value-rank + beta*distance-rank of parent A
+    double parent2_fitness = -1;   // ditto, parent B
+    double parent1_dist = -1;      // edit distance offspring <-> parent A (pre-VND)
+    double parent2_dist = -1;      // edit distance offspring <-> parent B (pre-VND)
+    int    mutated = 0;            // 1 if the patience-driven mutation fired
     double cox_lp = 0.0;
     bool has_cox_lp = false;
 

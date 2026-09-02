@@ -42,10 +42,18 @@ List *LocalSearch::VND(List *s) {
     s->evaluate();
     if (LOG) std::cout << "offspring solution : " << s->getValue() << std::endl;
     greed.run(s);
+    // MEASUREMENT: cost after the cheap greedy stage, BEFORE the expensive LKH.
+    // Captured in a local because lkh.run below returns a NEW List object.
+    s->evaluate();
+    double c_post_greed = s->getValue();
     s = lkh.run(s, true);
+    double c_post_lkh = s->getValue();   // lkh.run already evaluate()s in real space
     greed.run(s);
     jointOpt(s);
     solver.solve(s);
+    // stamp the intermediate-stage costs onto the FINAL object so they survive to logging
+    s->post_greed_value = c_post_greed;
+    s->post_lkh_value = c_post_lkh;
     return s;
 }
 

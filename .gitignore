@@ -9,3 +9,17 @@ solutions/experiment_results/*
 !solutions/experiment_results/.gitkeep
 solutions/ml_logs/*
 !solutions/ml_logs/.gitkeep
+__pycache__/
+*.pyc
+tmp/
+output/
+analysis_la_cetsp/legacy_results/
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.spl
+paper/*.synctex.gz
+paper/*.fls
+paper/*.fdb_latexmk

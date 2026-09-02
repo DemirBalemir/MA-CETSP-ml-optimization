@@ -1,0 +1,9 @@
+feature,kind,signal(|C-.5|),C_mean,concentricCircles4,car_door_50,bonus1000,kroD100_or2,rat195_or30
+post_pct_live,LEAK,0.1261,0.6261,0.619,0.61,0.675,0.623,0.603
+vnd_gain,LEAK,0.0336,0.4721,0.483,0.473,0.399,0.514,0.491
+pre_vnd_cost,legit,0.0183,0.4939,0.496,0.482,0.462,0.521,0.509
+cost_ratio_runbest,legit,0.017,0.5155,0.501,0.496,0.517,0.534,0.53
+cost_pct_live,legit,0.0131,0.4985,0.489,0.474,0.512,0.502,0.515
+cost_ratio_median,legit,0.0122,0.4993,0.489,0.479,0.509,0.506,0.514
+cost_ratio_best,legit,0.0119,0.5112,0.498,0.501,0.509,0.527,0.52
+cost_z,legit,0.0115,0.4977,0.49,0.479,0.51,0.496,0.513

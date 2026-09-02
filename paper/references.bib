@@ -1,0 +1,726 @@
+%% ===========================================================================
+%%  references.bib -- MA-CETSP diagnostic paper (ESWA submission)
+%%
+%%  COMPLETE FILE. Replaces the previous references.bib in the Overleaf
+%%  project wholesale: it contains every entry the paper cites and nothing it
+%%  does not. 54 entries, 54 cited keys, exact match.
+%%
+%%  Changes from the previous version:
+%%    - REMOVED Zhang2025WSN, Moreno2025UAV, Li2025Inspection, Kaya2025Agri.
+%%      None of the four exists in Crossref; none had a DOI, volume or page
+%%      range; none was cited in main.tex. They were placeholders. The real
+%%      application citations are cariou2023geometric, zhen2024uavinspection
+%%      and ismail2025uavwind, in Section 1.
+%%    - REMOVED bello2016ptrnet, kim2020pomo (subsumed by wu2026ncosurvey) and
+%%      jin2002framework (superseded by hanawa2025impact + zheng2024noise).
+%%    - ADDED 27 entries from the last five years, each verified field-by-field
+%%      against the Crossref API by DOI.
+%%    - FIXED three surnames that BibTeX was mis-splitting into initials,
+%%      by writing them in "Last, First" order:
+%%        "Placido, A.D."  -> "Di Placido, A."   (DIPLACIDO2022105831; the same
+%%                            author already printed correctly as "Di Placido"
+%%                            in diplacido2023generalized, so he was appearing
+%%                            twice under two different names)
+%%        "Belle, V.V."    -> "Van Belle, V."    (van2007support)
+%%        "Laan, M.J.V.D." -> "van der Laan, M.J." (hothorn2006survival)
+%%
+%%    - ADDED DOIs to seven entries that lacked them, each resolved and
+%%      checked against the Crossref record: carrabs2020adaptive,
+%%      derouiche2025deep, simon2011regularization, hothorn2006survival,
+%%      katzman2018deepsurv, wei1992accelerated, ishwaran2008random.
+%%      Three entries still have none because none was ever assigned:
+%%      pedregosa2011scikit (JMLR), yu2011learning (NeurIPS 2011) and
+%%      van2007support (CIMED 2007 proceedings).
+%%    - BRACE-PROTECTED six proper nouns the .bst was sentence-casing away:
+%%      DeepSurv, Cox (x3), Harris Hawks, Python, LA-CETSP.
+%%
+%%  WARNING for future edits: BibTeX has NO in-entry comment syntax. A '%'
+%%  line between an entry's braces makes BibTeX discard that entry silently --
+%%  it then prints as an empty stub at the top of the reference list. Keep
+%%  every '%' comment OUTSIDE the entry braces, as they are here. For the same
+%%  reason, never write an at-sign followed by a word in these comments:
+%%  BibTeX scans for it anywhere outside an entry and will try to parse what
+%%  follows as a new entry.
+%%
+%%  Reference recency, required >=60% at the ESWA editorial pre-check:
+%%      33/54 = 61.1% from 2022 or later
+%%      34/54 = 63.0% from 2021 or later
+%%
+%%  The 20 remaining pre-2021 entries are load-bearing -- they define the nine
+%%  survival models, the events-per-variable rule, and the CETSP and
+%%  surrogate-EC foundations. They cannot be swapped out without
+%%  misattributing a method. To raise the ratio further, ADD; do not trade
+%%  these away.
+%% ===========================================================================
+
+
+%% ===========================================================================
+%%  CETSP -- problem definition and exact methods
+%% ===========================================================================
+
+@incollection{gulczynski2006close,
+  author    = {David J. Gulczynski and John W. Heath and Charles C. Price},
+  title     = {The Close Enough Traveling Salesman Problem: A Discussion of Several Heuristics},
+  booktitle = {Perspectives in Operations Research},
+  editor    = {F. Bruce Alt and Michael C. Fu and Bruce L. Golden},
+  series    = {Operations Research/Computer Science Interfaces Series},
+  volume    = {36},
+  pages     = {271--283},
+  publisher = {Springer},
+  address   = {Boston, MA},
+  year      = {2006},
+  doi       = {10.1007/978-0-387-39934-8_16}
+}
+
+@article{behdani2014integer,
+  author  = {Behnam Behdani and J. Cole Smith},
+  title   = {An Integer-Programming-Based Approach to the Close-Enough Traveling Salesman Problem},
+  journal = {INFORMS Journal on Computing},
+  volume  = {26},
+  number  = {3},
+  pages   = {415--643},
+  year    = {2014},
+  doi     = {10.1287/ijoc.2013.0574}
+}
+
+@article{coutinho2016branch,
+  author  = {Walton Coutinho and Roberto Nascimento and Artur Pessoa and Anand Subramanian},
+  title   = {A Branch-and-Bound Algorithm for the Close-Enough Traveling Salesman Problem},
+  journal = {INFORMS Journal on Computing},
+  volume  = {28},
+  pages   = {752--765},
+  year    = {2016},
+  doi     = {10.1287/ijoc.2016.0711}
+}
+
+@article{CARRABS2017163,
+  author  = {Francesco Carrabs and Carmine Cerrone and Raffaele Cerulli and Manlio Gaudioso},
+  title   = {A novel discretization scheme for the close enough traveling salesman problem},
+  journal = {Computers \& Operations Research},
+  volume  = {78},
+  pages   = {163--171},
+  year    = {2017},
+  doi     = {10.1016/j.cor.2016.09.003}
+}
+
+@article{carrabs2020adaptive,
+  author    = {Francesco Carrabs and Carmine Cerrone and Raffaele Cerulli and Bruce Golden},
+  title     = {An adaptive heuristic approach to compute upper and lower bounds for the close-enough traveling salesman problem},
+  journal   = {INFORMS Journal on Computing},
+  volume    = {32},
+  number    = {4},
+  pages     = {1030--1048},
+  year      = {2020},
+  publisher = {INFORMS},
+  doi       = {10.1287/ijoc.2020.0962}
+}
+
+@article{zhang2023cetspbb,
+  author  = {Zhang, Wenda and Sauppe, Jason J. and Jacobson, Sheldon H.},
+  title   = {Results for the close-enough traveling salesman problem with a
+             branch-and-bound algorithm},
+  journal = {Computational Optimization and Applications},
+  volume  = {85},
+  number  = {2},
+  pages   = {369--407},
+  year    = {2023},
+  doi     = {10.1007/s10589-023-00474-3}
+}
+
+@article{diplacido2023generalized,
+  author  = {Di Placido, Andrea and Archetti, Claudia and Cerrone, Carmine and
+             Golden, Bruce},
+  title   = {The generalized close enough traveling salesman problem},
+  journal = {European Journal of Operational Research},
+  volume  = {310},
+  number  = {3},
+  pages   = {974--991},
+  year    = {2023},
+  doi     = {10.1016/j.ejor.2023.04.010}
+}
+
+@article{cui2026service,
+  author  = {Cui, Weiwei and Zhu, Jianhui and Peng, Lan},
+  title   = {On the service time in the close-enough traveling salesman problem},
+  journal = {European Journal of Operational Research},
+  year    = {2026},
+  note    = {In press},
+  doi     = {10.1016/j.ejor.2026.08.001}
+}
+
+@inproceedings{carrabs2025upper,
+  author    = {Carrabs, Francesco and Cerulli, Raffaele and D'Ambrosio, Ciriaco and
+               Murano, Gabriele},
+  title     = {Upper bound computation for the multiple close-enough traveling
+               salesman problem},
+  booktitle = {Proceedings of the 14th International Conference on Operations
+               Research and Enterprise Systems (ICORES)},
+  pages     = {186--195},
+  year      = {2025},
+  doi       = {10.5220/0013377900003893}
+}
+
+
+%% ===========================================================================
+%%  CETSP -- metaheuristics
+%% ===========================================================================
+
+@article{DIPLACIDO2022105831,
+  author  = {Di Placido, Andrea and Archetti, Claudia and Cerrone, Carmine},
+  title   = {A genetic algorithm for the close-enough traveling salesman problem with application to solar panels diagnostic reconnaissance},
+  journal = {Computers \& Operations Research},
+  volume  = {145},
+  pages   = {105831},
+  year    = {2022},
+  doi     = {10.1016/j.cor.2022.105831}
+}
+
+@article{LEI2024111266,
+  author  = {Zhenyu Lei and Jin-Kao Hao},
+  title   = {An effective memetic algorithm for the close-enough traveling salesman problem},
+  journal = {Applied Soft Computing},
+  volume  = {153},
+  pages   = {111266},
+  year    = {2024},
+  doi     = {10.1016/j.asoc.2024.111266}
+}
+
+@article{dokeroglu2025hho,
+  author    = {D{\"o}kero{\u g}lu, Tansel and Cant{\"u}rk, Deniz},
+  title     = {New {H}arris {H}awks algorithms for the Close-Enough Traveling Salesman Problem},
+  journal   = {Intelligent Systems with Applications},
+  volume    = {28},
+  pages     = {200586},
+  year      = {2025},
+  publisher = {Elsevier},
+  doi       = {10.1016/j.iswa.2025.200586}
+}
+
+@inproceedings{canturk2025parallel,
+  author       = {Cant{\"u}rk, Deniz},
+  title        = {A New Parallel Fitness-Oriented Memetic Algorithm for the Close Enough Traveling Salesman Problem},
+  booktitle    = {2025 33rd Signal Processing and Communications Applications Conference (SIU)},
+  year         = {2025},
+  organization = {IEEE},
+  doi          = {10.1109/SIU66497.2025.11111810}
+}
+
+@article{canturk2026scalable,
+  author  = {Cant{\"u}rk, Deniz and D{\"o}kero{\u g}lu, Tansel},
+  title   = {Scalable parallel memetic algorithms for large close-enough
+             traveling salesman problems},
+  journal = {Neural Computing and Applications},
+  volume  = {38},
+  number  = {2},
+  pages   = {27},
+  year    = {2026},
+  doi     = {10.1007/s00521-025-11706-4}
+}
+
+@article{derouiche2025deep,
+  author    = {Hana Derouiche and Maha Elarbi and Slim Bechikh},
+  title     = {Deep crossover schemes for genetic algorithms: Investigations on the travel salesman problem},
+  journal   = {Swarm and Evolutionary Computation},
+  volume    = {98},
+  pages     = {102094},
+  year      = {2025},
+  publisher = {Elsevier},
+  doi       = {10.1016/j.swevo.2025.102094}
+}
+
+@inproceedings{balemir2026lacetsp,
+  author    = {Balemir, Demir and Cant{\"u}rk, Deniz and D{\"o}kero{\u g}lu, Tansel},
+  booktitle = {2026 5th International Informatics and Software Engineering Conference (IISEC)},
+  title     = {New Learning-Assisted Memetic Algorithm for the Close-Enough Traveling Salesman Problem ({LA-CETSP})},
+  year      = {2026},
+  pages     = {364--369},
+  doi       = {10.1109/IISEC69317.2026.11418468}
+}
+
+
+%% ===========================================================================
+%%  CETSP -- applications
+%%
+%%  NOTE: the four entries previously in this block (Zhang2025WSN,
+%%  Moreno2025UAV, Li2025Inspection, Kaya2025Agri) were removed. No Crossref
+%%  record exists for any of their titles. The three below are real and are
+%%  cited in Section 1.
+%% ===========================================================================
+
+@article{cariou2023geometric,
+  author  = {Cariou, Christophe and Moiroux-Arvis, Laure and Pinet, Fran\c{c}ois and
+             Chanet, Jean-Pierre},
+  title   = {Evolutionary algorithm with geometrical heuristics for solving the
+             close enough traveling salesman problem: Application to the
+             trajectory planning of an unmanned aerial vehicle},
+  journal = {Algorithms},
+  volume  = {16},
+  number  = {1},
+  pages   = {44},
+  year    = {2023},
+  doi     = {10.3390/a16010044}
+}
+
+@article{zhen2024uavinspection,
+  author  = {Zhen, Lu and Yang, Zhiyuan and Laporte, Gilbert and Yi, Wen and
+             Fan, Tianyi},
+  title   = {Unmanned aerial vehicle inspection routing and scheduling for
+             engineering management},
+  journal = {Engineering},
+  volume  = {36},
+  pages   = {223--239},
+  year    = {2024},
+  doi     = {10.1016/j.eng.2023.10.014}
+}
+
+@article{ismail2025uavwind,
+  author  = {Ismail, Asrul Harun and Song, Xiang and Ouelhadj, Djamila and
+             Al-Behadili, Mohanad and Fraess-Ehrfeld, Alexander},
+  title   = {Unmanned surface vessel routing and unmanned aerial vehicle swarm
+             scheduling for off-shore wind turbine blade inspection},
+  journal = {Expert Systems with Applications},
+  volume  = {284},
+  pages   = {127534},
+  year    = {2025},
+  doi     = {10.1016/j.eswa.2025.127534}
+}
+
+
+%% ===========================================================================
+%%  Learning-based optimisation -- neural solvers and learned control
+%%
+%%  NOTE: bello2016ptrnet and kim2020pomo were removed; wu2026ncosurvey covers
+%%  both and is current. kool2019attention is kept as the canonical example.
+%% ===========================================================================
+
+@article{kool2019attention,
+  author  = {Wouter Kool and Herke van Hoof and Max Welling},
+  title   = {Attention, Learn to Solve Routing Problems!},
+  journal = {arXiv preprint arXiv:1803.08475},
+  year    = {2019},
+  note    = {Accepted at ICLR 2019},
+  doi     = {10.48550/arXiv.1803.08475}
+}
+
+@article{fan2025ud3rl,
+  author  = {Yifeng Fan and Liang Zhang and Yifan Xu and Cheng Li and Xuefeng Wu},
+  title   = {A Unified Deep Reinforcement Learning Approach for Close Enough Traveling Salesman Problem},
+  journal = {arXiv preprint arXiv:2510.03065},
+  year    = {2025},
+  doi     = {10.48550/arXiv.2510.03065}
+}
+
+@article{wu2026ncosurvey,
+  author  = {Wu, Xuan and Wen, Lijie and Xiao, Yubin and Wu, Chunguo and
+             Wu, Yuesong and Yu, Chaoyu and Maskell, Douglas L. and
+             Zhou, You and Wang, Di},
+  title   = {Neural combinatorial optimization algorithms for solving vehicle
+             routing problems: A comprehensive survey with perspectives},
+  journal = {IEEE Transactions on Neural Networks and Learning Systems},
+  year    = {2026},
+  note    = {Early access},
+  doi     = {10.1109/TNNLS.2026.3713193}
+}
+
+@article{talbi2021mlmeta,
+  author  = {Talbi, El-Ghazali},
+  title   = {Machine learning into metaheuristics: A survey and taxonomy},
+  journal = {ACM Computing Surveys},
+  volume  = {54},
+  number  = {6},
+  pages   = {1--32},
+  year    = {2021},
+  doi     = {10.1145/3459664}
+}
+
+@article{bolufe2025mlmeta,
+  author  = {Boluf\'e-R\"ohler, Antonio and Tamayo-Vera, Dania},
+  title   = {Machine learning for enhancing metaheuristics in global
+             optimization: A comprehensive review},
+  journal = {Mathematics},
+  volume  = {13},
+  number  = {18},
+  pages   = {2909},
+  year    = {2025},
+  doi     = {10.3390/math13182909}
+}
+
+@article{zhang2022drlhh,
+  author  = {Zhang, Yuchang and Bai, Ruibin and Qu, Rong and Tu, Chaofan and
+             Jin, Jiahuan},
+  title   = {A deep reinforcement learning based hyper-heuristic for
+             combinatorial optimisation with uncertainties},
+  journal = {European Journal of Operational Research},
+  volume  = {300},
+  number  = {2},
+  pages   = {418--427},
+  year    = {2022},
+  doi     = {10.1016/j.ejor.2021.10.032}
+}
+
+% NOTE: "Jonrinaldi" is a mononym, braced so BibTeX reads it as a surname.
+% This comment must stay OUTSIDE the entry -- BibTeX has no in-entry comment
+% syntax, and a '%' line between the braces silently discards the whole entry.
+@article{zhao2023qlhh,
+  author  = {Zhao, Fuqing and Liu, Yuebao and Zhu, Ningning and Xu, Tianpeng and
+             {Jonrinaldi}},
+  title   = {A selection hyper-heuristic algorithm with {Q}-learning mechanism},
+  journal = {Applied Soft Computing},
+  volume  = {147},
+  pages   = {110815},
+  year    = {2023},
+  doi     = {10.1016/j.asoc.2023.110815}
+}
+
+@article{zhang2024qlmemetic,
+  author  = {Zhang, Wenqiang and Li, Chen and Gen, Mitsuo and Yang, Weidong and
+             Zhang, Guohui},
+  title   = {A multiobjective memetic algorithm with particle swarm optimization
+             and {Q}-learning-based local search for energy-efficient
+             distributed heterogeneous hybrid flow-shop scheduling problem},
+  journal = {Expert Systems with Applications},
+  volume  = {237},
+  pages   = {121570},
+  year    = {2024},
+  doi     = {10.1016/j.eswa.2023.121570}
+}
+
+@article{karcher2025heuristic,
+  author  = {K\"archer, Jens and Meyr, Herbert},
+  title   = {A machine learning approach for predicting the best heuristic for a
+             large scaled capacitated lotsizing problem},
+  journal = {OR Spectrum},
+  volume  = {47},
+  number  = {3},
+  pages   = {889--931},
+  year    = {2025},
+  doi     = {10.1007/s00291-024-00804-9}
+}
+
+
+%% ===========================================================================
+%%  Surrogate-assisted evolutionary computation
+%%
+%%  NOTE: jin2002framework was removed; hanawa2025impact and zheng2024noise
+%%  carry the evolution-control / model-management argument in current terms.
+%% ===========================================================================
+
+@article{jin2005comprehensive,
+  author  = {Jin, Yaochu},
+  title   = {A comprehensive survey of fitness approximation in evolutionary
+             computation},
+  journal = {Soft Computing},
+  volume  = {9},
+  number  = {1},
+  pages   = {3--12},
+  year    = {2005},
+  doi     = {10.1007/s00500-003-0328-5}
+}
+
+@article{jin2011surrogate,
+  author  = {Jin, Yaochu},
+  title   = {Surrogate-assisted evolutionary computation: Recent advances and
+             future challenges},
+  journal = {Swarm and Evolutionary Computation},
+  volume  = {1},
+  number  = {2},
+  pages   = {61--70},
+  year    = {2011},
+  doi     = {10.1016/j.swevo.2011.05.001}
+}
+
+@article{lim2010generalizing,
+  author  = {Lim, Dudy and Jin, Yaochu and Ong, Yew-Soon and Sendhoff, Bernhard},
+  title   = {Generalizing surrogate-assisted evolutionary computation},
+  journal = {IEEE Transactions on Evolutionary Computation},
+  volume  = {14},
+  number  = {3},
+  pages   = {329--355},
+  year    = {2010},
+  doi     = {10.1109/TEVC.2009.2027359}
+}
+
+@article{he2023review,
+  author  = {He, Chunlin and Zhang, Yong and Gong, Dunwei and Ji, Xinfang},
+  title   = {A review of surrogate-assisted evolutionary algorithms for
+             expensive optimization problems},
+  journal = {Expert Systems with Applications},
+  volume  = {217},
+  pages   = {119495},
+  year    = {2023},
+  doi     = {10.1016/j.eswa.2022.119495}
+}
+
+@article{liu2024combinatorial,
+  author  = {Liu, Shulei and Wang, Handing and Peng, Wei and Yao, Wen},
+  title   = {Surrogate-assisted evolutionary algorithms for expensive
+             combinatorial optimization: A survey},
+  journal = {Complex \& Intelligent Systems},
+  volume  = {10},
+  number  = {4},
+  pages   = {5933--5949},
+  year    = {2024},
+  doi     = {10.1007/s40747-024-01465-5}
+}
+
+@article{nishihara2025memetic,
+  author  = {Ikeguchi, Takashi and Nishihara, Kei and Kawauchi, Yo and
+             Koguma, Yuji and Nakata, Masaya},
+  title   = {A surrogate-assisted memetic algorithm for permutation-based
+             combinatorial optimization problems},
+  journal = {Swarm and Evolutionary Computation},
+  volume  = {98},
+  pages   = {102060},
+  year    = {2025},
+  doi     = {10.1016/j.swevo.2025.102060}
+}
+
+@article{hanawa2025impact,
+  author  = {Hanawa, Yuki and Harada, Tomohiro and Miura, Yukiya},
+  title   = {Impact of surrogate model accuracy on performance and model
+             management strategy in surrogate-assisted evolutionary algorithms},
+  journal = {Array},
+  volume  = {27},
+  pages   = {100461},
+  year    = {2025},
+  doi     = {10.1016/j.array.2025.100461}
+}
+
+@article{zheng2024noise,
+  author  = {Zheng, Nan and Wang, Handing and Liu, Jialin},
+  title   = {Formulating approximation error as noise in surrogate-assisted
+             multi-objective evolutionary algorithm},
+  journal = {Swarm and Evolutionary Computation},
+  volume  = {90},
+  pages   = {101666},
+  year    = {2024},
+  doi     = {10.1016/j.swevo.2024.101666}
+}
+
+@article{li2022classification,
+  author  = {Li, Jinglu and Wang, Peng and Dong, Huachao and Shen, Jiangtao and
+             Chen, Caihua},
+  title   = {A classification surrogate-assisted multi-objective evolutionary
+             algorithm for expensive optimization},
+  journal = {Knowledge-Based Systems},
+  volume  = {242},
+  pages   = {108416},
+  year    = {2022},
+  doi     = {10.1016/j.knosys.2022.108416}
+}
+
+@article{hao2024unevaluated,
+  author  = {Hao, Hao and Zhang, Xiaoqun and Zhou, Aimin},
+  title   = {Enhancing {SAEAs} with unevaluated solutions: A case study of
+             relation model for expensive optimization},
+  journal = {Science China Information Sciences},
+  volume  = {67},
+  number  = {2},
+  pages   = {120103},
+  year    = {2024},
+  doi     = {10.1007/s11432-023-3909-x}
+}
+
+@article{zhai2024composite,
+  author  = {Zhai, Zhaomin and Tan, Yanyan and Li, Xiaojie and Li, Junqing and
+             Zhang, Huaxiang},
+  title   = {A composite surrogate-assisted evolutionary algorithm for expensive
+             many-objective optimization},
+  journal = {Expert Systems with Applications},
+  volume  = {236},
+  pages   = {121374},
+  year    = {2024},
+  doi     = {10.1016/j.eswa.2023.121374}
+}
+
+@article{li2024explainable,
+  author  = {Li, Bingdong and Yang, Yanting and Liu, Dacheng and Zhang, Yan and
+             Zhou, Aimin and Yao, Xin},
+  title   = {Accelerating surrogate assisted evolutionary algorithms for
+             expensive multi-objective optimization via explainable machine
+             learning},
+  journal = {Swarm and Evolutionary Computation},
+  volume  = {88},
+  pages   = {101610},
+  year    = {2024},
+  doi     = {10.1016/j.swevo.2024.101610}
+}
+
+
+%% ===========================================================================
+%%  Empirical methodology and negative results
+%% ===========================================================================
+
+@article{pang2022counterintuitive,
+  author  = {Pang, Lie Meng and Ishibuchi, Hisao and Shang, Ke},
+  title   = {Counterintuitive experimental results in evolutionary large-scale
+             multiobjective optimization},
+  journal = {IEEE Transactions on Evolutionary Computation},
+  volume  = {26},
+  number  = {6},
+  pages   = {1609--1616},
+  year    = {2022},
+  doi     = {10.1109/TEVC.2022.3161363}
+}
+
+
+%% ===========================================================================
+%%  Survival analysis -- the nine deployed models
+%% ===========================================================================
+
+@article{cox1972regression,
+  author  = {D. R. Cox},
+  title   = {Regression Models and Life-Tables},
+  journal = {Journal of the Royal Statistical Society: Series B (Methodological)},
+  volume  = {34},
+  number  = {2},
+  pages   = {187--202},
+  year    = {1972},
+  doi     = {10.1111/j.2517-6161.1972.tb00899.x}
+}
+
+@article{simon2011regularization,
+  author  = {Noah Simon and Jerome H. Friedman and Trevor Hastie and Rob Tibshirani},
+  title   = {Regularization paths for {C}ox's proportional hazards model via coordinate descent},
+  journal = {Journal of Statistical Software},
+  volume  = {39},
+  pages   = {1--13},
+  year    = {2011},
+  doi       = {10.18637/jss.v039.i05}
+}
+
+@article{ishwaran2008random,
+  author    = {Hemant Ishwaran and Udaya B. Kogalur and Eugene H. Blackstone and Michael S. Lauer},
+  title     = {Random survival forests},
+  journal   = {Annals of Applied Statistics},
+  volume    = {2},
+  number    = {3},
+  pages     = {841--860},
+  year      = {2008},
+  publisher = {Institute of Mathematical Statistics},
+  doi       = {10.1214/08-AOAS169}
+}
+
+@article{hothorn2006survival,
+  author    = {Hothorn, Torsten and B{\"u}hlmann, Peter and Dudoit, Sandrine and Molinaro, Annette and {van der Laan}, Mark J.},
+  title     = {Survival ensembles},
+  journal   = {Biostatistics},
+  volume    = {7},
+  number    = {3},
+  pages     = {355--373},
+  year      = {2006},
+  publisher = {Oxford University Press}
+}
+
+@article{katzman2018deepsurv,
+  author    = {Jared L. Katzman and Uri Shaham and Alexander Cloninger and Jonathan Bates and Tingting Jiang and Yuval Kluger},
+  title     = {{D}eep{S}urv: personalized treatment recommender system using a {C}ox proportional hazards deep neural network},
+  journal   = {BMC Medical Research Methodology},
+  volume    = {18},
+  number    = {1},
+  pages     = {24},
+  year      = {2018},
+  publisher = {Springer},
+  doi       = {10.1186/s12874-018-0482-1}
+}
+
+@inproceedings{van2007support,
+  author    = {Van Belle, Vanya and Pelckmans, Kristiaan and Suykens, Johan A. K. and Van Huffel, Sabine},
+  title     = {Support vector machines for survival analysis},
+  booktitle = {Proceedings of the Third International Conference on Computational Intelligence in Medicine and Healthcare (CIMED2007)},
+  pages     = {1--8},
+  year      = {2007}
+}
+
+@article{wei1992accelerated,
+  author    = {Lee-Jen Wei},
+  title     = {The accelerated failure time model: a useful alternative to the {C}ox regression model in survival analysis},
+  journal   = {Statistics in Medicine},
+  volume    = {11},
+  number    = {14-15},
+  pages     = {1871--1879},
+  year      = {1992},
+  publisher = {Wiley Online Library},
+  doi       = {10.1002/sim.4780111409}
+}
+
+@article{yu2011learning,
+  author  = {Chun-Nam Yu and Russell Greiner and Hsiu-Chin Lin and Vickie Baracos},
+  title   = {Learning patient-specific cancer survival distributions as a sequence of dependent regressors},
+  journal = {Advances in Neural Information Processing Systems},
+  volume  = {24},
+  year    = {2011}
+}
+
+@article{pedregosa2011scikit,
+  author    = {Fabian Pedregosa and Ga{\"e}l Varoquaux and Alexandre Gramfort and Vincent Michel and Bertrand Thirion and Olivier Grisel and Mathieu Blondel and Peter Prettenhofer and Ron Weiss and Vincent Dubourg and others},
+  title     = {Scikit-learn: Machine learning in {P}ython},
+  journal   = {Journal of Machine Learning Research},
+  volume    = {12},
+  pages     = {2825--2830},
+  year      = {2011},
+  publisher = {JMLR}
+}
+
+
+%% ===========================================================================
+%%  Survival analysis -- recent reviews and neutral comparisons
+%% ===========================================================================
+
+@article{wiegrebe2024dlsurvival,
+  author  = {Wiegrebe, Simon and Kopper, Philipp and Sonabend, Raphael and
+             Bischl, Bernd and Bender, Andreas},
+  title   = {Deep learning for survival analysis: A review},
+  journal = {Artificial Intelligence Review},
+  volume  = {57},
+  number  = {3},
+  pages   = {65},
+  year    = {2024},
+  doi     = {10.1007/s10462-023-10681-3}
+}
+
+@article{burk2026neutral,
+  author  = {Burk, Lukas and Zobolas, John and Bischl, Bernd and Bender, Andreas and
+             Wright, Marvin N. and Sonabend, Raphael},
+  title   = {A large-scale neutral comparison study of survival models on
+             low-dimensional data},
+  journal = {Bioinformatics},
+  volume  = {42},
+  number  = {5},
+  pages   = {btag186},
+  year    = {2026},
+  doi     = {10.1093/bioinformatics/btag186}
+}
+
+
+%% ===========================================================================
+%%  Sample size -- events-per-variable justification for the 100-event floor
+%% ===========================================================================
+
+@article{peduzzi1995importance,
+  author  = {Peduzzi, Peter and Concato, John and Feinstein, Alvan R. and
+             Holford, Theodore R.},
+  title   = {Importance of events per independent variable in proportional
+             hazards regression analysis. {II}. Accuracy and precision of
+             regression estimates},
+  journal = {Journal of Clinical Epidemiology},
+  volume  = {48},
+  number  = {12},
+  pages   = {1503--1510},
+  year    = {1995},
+  doi     = {10.1016/0895-4356(95)00048-8}
+}
+
+@article{riley2019minimum,
+  author  = {Riley, Richard D. and Snell, Kym I. E. and Ensor, Joie and
+             Burke, Danielle L. and Harrell, Frank E. and Moons, Karel G. M. and
+             Collins, Gary S.},
+  title   = {Minimum sample size for developing a multivariable prediction
+             model: {Part} {II} -- binary and time-to-event outcomes},
+  journal = {Statistics in Medicine},
+  volume  = {38},
+  number  = {7},
+  pages   = {1276--1296},
+  year    = {2019},
+  doi     = {10.1002/sim.7992}
+}

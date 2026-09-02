@@ -233,9 +233,20 @@ List* Population::nextPopulation(int patience) {
     }
 
     // Mutation
+    bool mutation_applied = false;
     if (random->randomInt(1000) < patience) {
         randomSwap(offspring);
+        mutation_applied = true;
     }
+
+    // ================= LINEAGE SNAPSHOT (pre-VND) =================
+    // Capture parent quality and offspring-to-parent distances BY VALUE now:
+    // the parents may be evicted and deleted before this offspring dies.
+    // All of it is available before VND, so it is a legitimate filter feature.
+    const double p1_value   = parents.first  ? parents.first->getValue()   : -1;
+    const double p2_value   = parents.second ? parents.second->getValue()  : -1;
+    const double p1_fitness = parents.first  ? parents.first->getFitness() : -1;
+    const double p2_fitness = parents.second ? parents.second->getFitness(): -1;
 
     // ================= PRE-VND COST =================
     offspring->evaluate();
@@ -366,6 +377,14 @@ List* Population::nextPopulation(int patience) {
     offspring->pre_vnd_coords = raw_coords;
     offspring->birth_iter = current_iter;
     offspring->instance_index = data->instance_index;
+    // lineage snapshot taken before VND (see above)
+    offspring->parent1_value   = p1_value;
+    offspring->parent2_value   = p2_value;
+    offspring->parent1_fitness = p1_fitness;
+    offspring->parent2_fitness = p2_fitness;
+    offspring->parent1_dist    = dist1;
+    offspring->parent2_dist    = dist2;
+    offspring->mutated         = mutation_applied ? 1 : 0;
 
     // ================= INSERT & SURVIVAL MGMT =================
     insertSolution(offspring);
