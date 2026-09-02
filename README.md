@@ -8,67 +8,47 @@
 
 This repository provides the official implementation, experimental benchmarks, and diagnostic reproducibility suite for the research paper:
 
-> **Assessing the Viability of Pre-Local-Search Surrogate Filtering: A Diagnostic Study of Survival-Based Offspring Pruning in Memetic CETSP**  
-> *Demir Balemir and Deniz Cantürk*  
-> Department of Computer Engineering, TED University, Ankara, Türkiye  
-> Submitted to *Expert Systems with Applications* (Elsevier)
+> **Assessing the Viability of Pre-Local-Search Surrogate Filtering: A Diagnostic Study of Survival-Based Offspring Pruning in Memetic CETSP**<br>
+> *Demir Balemir and Deniz Cantürk*<br>
+> Department of Computer Engineering, TED University, Ankara, Türkiye<br>
+> Target journal: *Expert Systems with Applications* (Elsevier)
 
 The study investigates whether an offspring's pre-local-search features can support useful pruning decisions before an expensive local-search stage in a memetic algorithm for the **Close-Enough Traveling Salesman Problem (CETSP)**. Evaluating nine survival models against a concurrent in-run no-filter control on 53 benchmark instances with five seeds per configuration (2,650 island-runs), the experiment finds **no statistically detectable difference in solution quality or total runtime**.
 
-To explain this outcome, the paper presents a set of mechanistic diagnostic analyses connecting target predictability, rank transmission through local search, and discrimination beyond temporal drift, formalising a reusable **one-sided viability gate** to screen surrogate-filtering designs before deployment.
+To investigate this outcome, the paper presents diagnostic analyses of target predictability, rank transmission through local search, and discrimination beyond temporal drift. These motivate a **one-sided viability gate**, assessed retrospectively in the tested system.
 
 ---
 
 ## Key Empirical & Diagnostic Findings
 
-1. **Controlled End-to-End Evaluation (53 Instances $\times$ 5 Seeds):**
-   - Solution quality across all nine survival models differs from the concurrent no-filter control by only $-0.009\%$ to $+0.049\%$. Under two-sided Wilcoxon signed-rank tests over per-instance means, no model is statistically distinguishable from the control ($p \ge 0.31$).
-   - Total runtime speedups range from $1.008$ to $1.084$, none of which are statistically significant ($p \ge 0.15$).
-   - The filter was active in 1,533 runs with a median active window of 1,083 iterations (52% of run length), removing tens of thousands of local-search calls. Limited filter activity alone does not account for the null result.
+The end-to-end experiment and the offline diagnostics use different samples:
 
-2. **Limited Feature & Model Discrimination:**
-   - Offline cross-validated concordance ($C$) across all nine survival model families lands between $0.495$ and $0.544$ (near chance $0.500$). Model flexibility (from linear Cox to deep networks and tree ensembles) provides no consistent gain.
-   - Deployed geometry descriptors are effectively constant within an instance. Scale-free population-relative cost features reach $C \approx 0.53 - 0.54$. Directed Chamfer distance diversity proxies score $C \approx 0.48$.
-   - While lineage features score $C = 0.598$, the birth iteration alone on the same runs scores $C = 0.613$. Apparent feature discrimination is driven by temporal search progress rather than contemporaneous candidate differentiation.
+| Analysis | Sample | Main observation |
+|---|---|---|
+| End-to-end filtering | 53 test instances × 5 runs × 10 islands = 2,650 island runs | No statistically detectable quality or runtime difference under the evaluated protocol |
+| Model and oracle diagnostics | 5 instances; 17,568 recorded solutions | Model-mean concordance approximately 0.495–0.544; post-VND empirical oracle reference 0.687 |
+| Full-VND rank–gain calibration | 25 instances | Mean recorded-cohort rank–gain coefficient 0.889; observed direct cost-rank concordance 0.560 |
+| Stage-wise local-search measurements | 3 instrumented instances | Instance-dependent transmission of cost ordering through greedy, LKH and refinement stages |
 
-3. **Empirical Oracle Reference:**
-   - An oracle given post-local-search outcome information reaches $C = 0.687$, demonstrating that even with the exact cost produced by local search, future population survival is not deterministically predictable.
-   - Adding all pre-local-search features to the oracle increases concordance by only $0.001$ (from $0.687$ to $0.688$).
+Quality comparisons cover all 53 test instances; runtime tests use the 47 with at least one recorded rejection. Tests pair instance-level means, while island seeds differ by island ID. Runtime is to the stopping rule under concurrent-island contention, rather than to a common solution-quality target. The absence of statistical significance does not establish equivalence.
 
-4. **Rank Attenuation & The Contraction Mechanism:**
-   - Local search (VND) acts as a non-linear contraction: lower-ranked pre-VND candidates receive substantially larger relative improvements ($\kappa_{\mathrm{VND}} = 0.889$ across 25 diagnostic instances).
-   - This compensatory improvement scrambles the entering cost order, resulting in an observed direct cost-rank concordance of only $C_{\mathrm{rank}} = 0.560$.
+Among the 2,385 ML island runs, 1,533 reached the nominal 1,000-iteration training floor; three ended exactly at that boundary. The median post-floor window was 1,083 iterations, approximately 52% of run length. Reaching the floor is distinct from having a non-empty active filtering window.
+
+The diagnostics are conditional on recorded, admitted, positive-lifetime solutions. Unadmitted offspring and terminal control survivors are absent, and reconstructed cohorts are incomplete. The five-instance sample includes one development instance; the 25-instance sample includes eight. Their memberships are recorded in the [instance manifest](analysis_la_cetsp/results/instance_manifest.csv).
+
+The oracle is a fitted empirical reference, not a formal prediction ceiling or proof that survival is inherently unpredictable. Rank–gain association alone does not establish rank destruction or filtering infeasibility. Clock comparisons contextualise the measured discrimination; within-time evaluation and time-plus-feature controls remain future work. See [paper/README.md](paper/README.md) for the protocols and limitations.
 
 ---
 
 ## The Three-Check Viability Gate
 
-The paper formulates these diagnostic measurements into a reusable, low-cost screening procedure that can be evaluated on instrumented search logs *before* deploying an online surrogate filter:
+| Check | Measurement | Evidence in this study |
+|---|---|---|
+| Target predictability | Fit an empirical oracle using recorded post-step information | Oracle concordance 0.687 |
+| Rank transmission | Assess input-output ordering alongside Spearman(input cohort rank, relative gain) | Full-VND coefficient 0.889; cost-rank concordance 0.560 |
+| Discrimination beyond drift | Compare candidate features with a matched iteration-index control | Best tested feature representation 0.605; clock 0.613 |
 
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│                        THE THREE-CHECK VIABILITY GATE                  │
-├────────────────────────────────────────────────────────────────────────┤
-│ Check 1: Is the label reachable?                                      │
-│          Fit an empirical oracle model using recorded post-step data.  │
-│          ► CETSP Oracle: C = 0.687 (far from deterministic survival)   │
-├────────────────────────────────────────────────────────────────────────┤
-│ Check 2: Does the pipeline preserve ordering?                         │
-│          Compute contraction coefficient κ = Spearman(r_in, gain)     │
-│          and input-output cost-rank concordance C_rank.                │
-│          ► CETSP Full-VND: κ = 0.889, C_rank = 0.560                   │
-│            (compensatory gains attenuate entering cost order)          │
-├────────────────────────────────────────────────────────────────────────┤
-│ Check 3: Does the feature set beat the clock?                          │
-│          Evaluate features against a baseline of the iteration index. │
-│          ► CETSP Features vs Clock: C = 0.605 vs C = 0.613             │
-│            (pooled discrimination reflects temporal drift)             │
-└────────────────────────────────────────────────────────────────────────┘
-```
-
-> [!IMPORTANT]
-> **One-Sided Interpretation:**  
-> The gate is one-sided. Adverse evidence across the checks (weak label reachability, strong rank contraction, failure to beat the temporal drift clock) justifies a decision **not to proceed** with the tested filtering design. Conversely, passing the gate merely justifies further evaluation without establishing that filtering will yield a net benefit.
+**One-sided interpretation:** adverse findings can support reconsidering the tested design; favourable findings justify further evaluation without establishing net benefit. The gate has been applied retrospectively in one pipeline. Prospective validation and matched-rate random-pruning comparisons remain future work; no universal cut-point is claimed.
 
 ---
 
@@ -76,33 +56,22 @@ The paper formulates these diagnostic measurements into a reusable, low-cost scr
 
 The solver embeds surrogate filtering into the state-of-the-art MA-CETSP algorithm (Lei & Hao, 2024):
 
+```mermaid
+flowchart LR
+    P[Population] --> S[Select parents] --> C[Crossover] --> M[Mutation]
+    M --> F{ML filter}
+    F -->|Accept| V[VND: greedy, LKH, refinement]
+    V --> I[Insert and manage] --> P
+    F -->|Reject: skip VND and insertion| P
+    I -.-> D[Survival records]
+    D -.-> T[Training trigger]
+    T -.-> A[Fit model and calibrate threshold]
+    A -.-> F
 ```
-┌────────────────────────────────────────────────────────────────────────┐
-│                        MEMETIC SEARCH LOOP                             │
-│                                                                        │
-│  Population ──► Select Parents ──► Crossover ──► Mutation             │
-│   (μ = 20)                                           │                 │
-│      ▲                                               ▼                 │
-│      │                                         ┌───────────┐           │
-│      │               ┌─── [Reject: M(x) > θ] ──┤ ML Filter │           │
-│      │               │   (Bypasses VND;        └─────┬─────┘           │
-│      │               │    neutral stagnation)        │                 │
-│      │               │                               ▼ [Accept]        │
-│      │               │                         ┌───────────┐           │
-│      │               ▼                         │    VND    │           │
-│      └────── Insert & Manage ◄─────────────────┤ Pipeline  │           │
-│             (Fitness = Rank_val + β·Rank_div)  └───────────┘           │
-└───────────────────────┬────────────────────────────────────────────────┘
-                        │ features, birth/death
-                        ▼
-┌────────────────────────────────────────────────────────────────────────┐
-│                        ONLINE LEARNING LOOP                            │
-│                                                                        │
-│  Survival Dataset ──► Training Trigger ──► Fit Model & Calibrate θ    │
-│                       (iter ≥ 0.20T &      (Held-out 20% validation;   │
-│                        evictions ≥ 100)     target rejection r* = 0.20)│
-└────────────────────────────────────────────────────────────────────────┘
-```
+
+Population fitness combines cost rank and diversity rank as
+$(1-\beta)r_{val}+\beta r_{div}$. Rejected offspring bypass VND and insertion;
+their rejection does not advance the stagnation counter.
 
 ### Components
 - **Pre-Local-Search Features (10):** Pre-VND tour cost, edge length mean and variance, bounding box width, height, and area, centroid coordinates $(x, y)$, sum of point-to-centroid distances, and interior turning angle variance.
@@ -121,8 +90,8 @@ The solver embeds surrogate filtering into the state-of-the-art MA-CETSP algorit
 - **Threshold Calibration:** Selected on a held-out 20% validation split by maximising regularised survival gap:
   $$J(r, g) = g \cdot \min\left(1, \frac{r}{r^*}\right) - \lambda \max(0, r - r^*)$$
   with target rejection rate $r^* = 0.20$ and penalty $\lambda = 2$.
-- **Rolling Rejection-Rate Cap:** Suspends the filter for 50 iterations if the empirical rejection rate exceeds 30% over a sliding window of 50 candidates.
-- **Parallel Multi-Island Portfolio:** 10 concurrent threads (9 ML models + 1 in-run unfiltered control), seeded with $\sigma + i$. No migration occurs between islands, providing an unpolluted in-run control under identical hardware conditions.
+- **Rolling Rejection-Rate Cap:** Suspends filtering for the next window if the rejection rate exceeds 30% over a window of 50 ML-eligible offspring.
+- **Parallel Multi-Island Portfolio:** 10 concurrent threads (9 ML models + 1 in-run unfiltered control), seeded with $\sigma + i$. No migration occurs between islands. The control shares the machine and stopping rules; timing is subject to contention and island seeds are offset.
 - **Stagnation Neutrality:** Rejected offspring bypass VND entirely and neither increment nor reset the non-improving stagnation counter $\pi$.
 
 ---
@@ -178,7 +147,7 @@ MA-CETSP/
 │   ├── parsed/                   # Run summaries, rejections, thresholds, convergence
 │   └── results/                  # Model comparisons, Wilcoxon tests, threshold stats
 ├── analysis_la_cetsp/            # Diagnostic analyses & retained measurement CSVs
-│   ├── make_figures.py           # Generates all manuscript figures
+│   ├── make_figures.py           # Generates data figures; Figure 1 is TikZ in main.tex
 │   ├── oracle_ceiling.py         # Empirical oracle reference
 │   ├── lkh_character.py          # LKH rank-gain contraction analysis
 │   └── calibrate_recorded_cohorts.py # Full-VND copula sensitivity analysis
@@ -190,7 +159,7 @@ MA-CETSP/
 ├── paper/                        # Complete LaTeX manuscript sources
 │   ├── main.tex                  # Local source of truth (cas-dc template)
 │   ├── references.bib            # Canonical bibliography (54 entries)
-│   ├── figures/                  # PDF and PNG figures (Figures 1-6)
+│   ├── figures/                  # Data figures as PDF/PNG; Figure 1 is in main.tex
 │   ├── generated/                # Exported LaTeX input fragments
 │   └── submission/               # Cover letter, title page, editor info
 ├── run_experiment.ps1            # Automated PowerShell experiment runner
@@ -203,9 +172,9 @@ MA-CETSP/
 ## Installation & Build Instructions
 
 ### Prerequisites
-- **C++17 Compiler:** MSVC 2022 (Windows) or GCC 10+ / Clang 12+ (Linux)
+- **C++17 Compiler:** MSVC 2022 on Windows. The current inference bridge uses Windows process APIs.
 - **Build System:** CMake 3.17+
-- **Exact MIP Solver:** [Gurobi Optimizer](https://www.gurobi.com/) (tested with 12.0.3). Ensure `GUROBI_HOME` points to your installation.
+- **Optimisation Solver:** [Gurobi Optimizer](https://www.gurobi.com/) (recorded version 12.0.3), with a valid licence. Edit `GUROBI_HOME` and the library names in `CMakeLists.txt` for your installation; the current file sets this path directly.
 - **Python 3.10+:** Required for survival model training and figure reproduction.
 
 ### Python Dependencies
@@ -226,13 +195,8 @@ cmake -S . -B build -A x64
 cmake --build build --config Release --parallel
 ```
 
-```bash
-# Linux / macOS
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-cmake --build build --parallel
-```
-
-The executable `MA-CETSP.exe` (or `MA-CETSP`) is generated in `build/Release/`.
+With this MSVC build, `MA-CETSP.exe` is generated in `build/Release/`.
+The current CMake linkage and inference bridge require platform changes for Linux or macOS.
 
 ---
 
@@ -255,7 +219,7 @@ Set-Location build/Release
 ```
 
 ### Batch Experiment Execution
-To replicate the 10-island seeded benchmark:
+To launch additional seeded experiments, run the following from the repository root. These examples do not reproduce the full 53-instance test set:
 
 ```powershell
 # Run on instance 0 (bonus1000) across all 5 seeds with 10 parallel islands:
@@ -265,6 +229,7 @@ powershell -ExecutionPolicy Bypass -File run_experiment.ps1 -Instances 0 -Island
 powershell -ExecutionPolicy Bypass -File run_experiment.ps1 -Instances 0,1,2,3 -Islands 10 -Iterations 5000
 ```
 Console logs and summary files are written to `solutions/experiment_results/`.
+For the reported test set, select instances marked `test` in the [instance manifest](analysis_la_cetsp/results/instance_manifest.csv), map them to `FILENAMES` indices in `include/Defs.hpp`, and use the manuscript parameters. `bonus1000` (index 0) is a development instance. Leave `--ml_model` unset for the default nine-model-plus-control cycle.
 
 ### CLI Options Reference
 
@@ -277,7 +242,7 @@ Console logs and summary files are written to `solutions/experiment_results/`.
 | `-b` | `float` | `0.96` | Diversity balance weight $\beta$ in fitness function |
 | `-d` | `float` | `5.0` | Minimum edit distance threshold for admission |
 | `-n` | `int` | `50` | Candidate neighbourhood size for local search |
-| `--islands` | `int` | `1` | Number of concurrent search threads (1–10) |
+| `--islands` | `int` | `1` | Number of concurrent search threads; use 10 for the nine-model-plus-control configuration |
 | `--ml_model` | `string` | `MTLR` | Model: `COX`, `RSF`, `GBSA`, `DEEPSURV`, `SSVM`, `WEIBULLAFT`, `KNN`, `ELASTICNET`, `MTLR` |
 | `--ml_enable` | `int` | `1` | Enable ML surrogate filtering (`1` = yes, `0` = no) |
 | `--python_exe` | `string` | `python` | Path to Python interpreter for resident worker |
@@ -289,7 +254,7 @@ Console logs and summary files are written to `solutions/experiment_results/`.
 
 ## Reproducing Article Results
 
-All tables, Wilcoxon signed-rank tests, diagnostic metrics, and publication figures can be reconstructed directly from the retained measurement CSVs without rerunning the C++ solver:
+The retained CSVs support rebuilding summary tables, Wilcoxon tests and data figures without rerunning the C++ solver. Diagnostic measurements are reused from released CSVs; recalculating them from individual solutions requires the original logs. Figure 1 is editable TikZ in `paper/main.tex`.
 
 ```bash
 # 1. Run unit tests for concordance metrics:
@@ -298,7 +263,7 @@ python tools/test_diagnostic_metrics.py
 # 2. Export paper summary tables and LaTeX macros:
 python tools/export_paper_results.py
 
-# 3. Regenerate all manuscript figures (Figures 1-6):
+# 3. Regenerate the data figures from retained CSVs:
 python analysis_la_cetsp/make_figures.py
 
 # 4. Verify LaTeX document structure, environments, and citations:
@@ -311,23 +276,32 @@ cd paper
 latexmk -pdf main.tex
 ```
 
-Or compile with Tectonic:
-```bash
+Or, from the repository root, create the output directory and compile with Tectonic:
+```sh
+python -c "from pathlib import Path; Path('output/pdf').mkdir(parents=True, exist_ok=True)"
 tectonic -X compile paper/main.tex --outdir output/pdf --untrusted
 ```
+
+### Data availability and reproducibility scope
+
+The [parsed end-to-end records](analysis_test/parsed/) and [diagnostic measurements](analysis_la_cetsp/results/) are released with [input hashes](paper/generated/input_hashes.csv) and a [full-VND run manifest](analysis_la_cetsp/results/kappa_run_manifest.csv). Raw per-solution logs (approximately 3.4 million records) are available from the authors on request via the manuscript contact details. They are not bundled here; exact historical selections for every older probe are also unavailable in the release.
+
+The release supports result-level reproduction, with these limits on reconstructing historical fits. Use `calibrate_recorded_cohorts.py` for current full-VND calibration. The historical `kappa_calibration.py` and some CSV filenames containing `ceiling` retain legacy naming; use the definitions in [paper/README.md](paper/README.md).
 
 ---
 
 ## Citation
 
+The diagnostic manuscript extends the earlier LA-CETSP conference study: Balemir, Cantürk and Dökeroğlu, IISEC 2026, pp. 364–369, [doi:10.1109/IISEC69317.2026.11418468](https://doi.org/10.1109/IISEC69317.2026.11418468). The manuscript discusses the change from the earlier four-instance evaluation to the current protocol.
+
 ```bibtex
-@article{balemir2026assessing,
-  title   = {Assessing the Viability of Pre-Local-Search Surrogate Filtering: 
+@unpublished{balemir2026assessing,
+  title   = {Assessing the Viability of Pre-Local-Search Surrogate Filtering:
              A Diagnostic Study of Survival-Based Offspring Pruning in Memetic {CETSP}},
   author  = {Balemir, Demir and Cant{\"u}rk, Deniz},
-  journal = {Expert Systems with Applications},
   year    = {2026},
-  note    = {Under review}
+  note    = {Diagnostic manuscript},
+  url     = {https://github.com/DemirBalemir/MA-CETSP-ml-optimization}
 }
 
 @article{lei2024effective,
