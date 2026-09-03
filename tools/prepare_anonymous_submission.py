@@ -66,7 +66,7 @@ def prepare():
     credit = without_comments(text[start:end])
     text = text[:start] + text[end:]
     start = text.index(r'\section*{Data availability}')
-    end = text.index(r'\printbibliography', start)
+    end = text.index(r'\section*{Declaration of generative AI', start)
     original_data = without_comments(text[start:end])
     anonymous_data = r'''\section*{Data availability}
 The solver, survival-modelling pipeline, diagnostic scripts, retained measurement
