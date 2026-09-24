@@ -288,6 +288,10 @@ tectonic -X compile paper/main.tex --outdir output/pdf --untrusted
 
 ### Data availability and reproducibility scope
 
+**Experiment console logs:** [Download experiment_results.zip (858 MB)](https://github.com/DemirBalemir/MA-CETSP-ml-optimization/releases/download/untagged-e56afac21a1a58aa4fd4/experiment_results.zip) from the [June 2026 experiment-results release](https://github.com/DemirBalemir/MA-CETSP-ml-optimization/releases/tag/experiment-results-2026-06). The archive contains 265 run logs and 53 summaries for 53 test instances (five seeds each). Extract it into `solutions/` to restore `solutions/experiment_results/`. A [SHA-256 checksum](https://github.com/DemirBalemir/MA-CETSP-ml-optimization/releases/download/untagged-e56afac21a1a58aa4fd4/experiment_results.zip.sha256) is provided for verification.
+
+This download contains console logs and run summaries; it does **not** contain the per-solution JSON records under `solutions/ml_logs/` used to refit survival models and recalculate some diagnostics.
+
 The [parsed end-to-end records](analysis_test/parsed/) and [diagnostic measurements](analysis_la_cetsp/results/) are released with [input hashes](paper/generated/input_hashes.csv) and a [full-VND run manifest](analysis_la_cetsp/results/kappa_run_manifest.csv). Raw per-solution logs (approximately 3.4 million records) are available from the authors on request via the manuscript contact details. They are not bundled here; exact historical selections for every older probe are also unavailable in the release.
 
 The release supports result-level reproduction, with these limits on reconstructing historical fits. Use `calibrate_recorded_cohorts.py` for current full-VND calibration. The historical `kappa_calibration.py` and some CSV filenames containing `ceiling` retain legacy naming; use the definitions in [paper/README.md](paper/README.md).
