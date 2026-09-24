@@ -288,7 +288,7 @@ tectonic -X compile paper/main.tex --outdir output/pdf --untrusted
 
 ### Data availability and reproducibility scope
 
-**Experiment console logs:** [Download experiment_results.zip (858 MB)](https://github.com/DemirBalemir/MA-CETSP-ml-optimization/releases/download/untagged-e56afac21a1a58aa4fd4/experiment_results.zip) from the [June 2026 experiment-results release](https://github.com/DemirBalemir/MA-CETSP-ml-optimization/releases/tag/experiment-results-2026-06). The archive contains 265 run logs and 53 summaries for 53 test instances (five seeds each). Extract it into `solutions/` to restore `solutions/experiment_results/`. A [SHA-256 checksum](https://github.com/DemirBalemir/MA-CETSP-ml-optimization/releases/download/untagged-e56afac21a1a58aa4fd4/experiment_results.zip.sha256) is provided for verification.
+**Experiment console logs:** [Download experiment_results.zip (858 MB)](https://github.com/DemirBalemir/MA-CETSP-ml-optimization/releases/download/experiment-results-2026-06/experiment_results.zip) from the [June 2026 experiment-results release](https://github.com/DemirBalemir/MA-CETSP-ml-optimization/releases/tag/experiment-results-2026-06). The archive contains 265 run logs and 53 summaries for 53 test instances (five seeds each). Extract it into `solutions/` to restore `solutions/experiment_results/`. A [SHA-256 checksum](https://github.com/DemirBalemir/MA-CETSP-ml-optimization/releases/download/experiment-results-2026-06/experiment_results.zip.sha256) is provided for verification.
 
 This download contains console logs and run summaries; it does **not** contain the per-solution JSON records under `solutions/ml_logs/` used to refit survival models and recalculate some diagnostics.
 
