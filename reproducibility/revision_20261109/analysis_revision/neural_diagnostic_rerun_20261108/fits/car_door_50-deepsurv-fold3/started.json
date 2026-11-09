@@ -1,0 +1,12 @@
+{
+  "fit_id": "car_door_50-deepsurv-fold3",
+  "instance": "car_door_50",
+  "model": "DEEPSURV",
+  "fold": 3,
+  "n_train": 2481,
+  "n_test": 1252,
+  "train_runs": 7,
+  "test_runs": 3,
+  "seed": 20261211,
+  "started_utc": "2026-11-07T22:19:01.543981+00:00"
+}

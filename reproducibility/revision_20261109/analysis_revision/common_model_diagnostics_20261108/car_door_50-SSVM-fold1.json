@@ -1,0 +1,8 @@
+{
+  "instance": "car_door_50",
+  "model": "SSVM",
+  "fold": 1,
+  "cindex": 0.5364377176547939,
+  "seconds": 0.5630000000019209,
+  "warnings": []
+}

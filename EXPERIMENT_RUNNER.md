@@ -1,5 +1,12 @@
 # Experiment Runner
 
+The completed November revision and saved-result verification are documented in
+[reproducibility/revision_20261109/README.md](reproducibility/revision_20261109/README.md).
+The historical runner/task notes below retain their original context. Use the
+saved-result script to check the published tables; no campaign execution is
+needed. Current code checks are described in [tests/README.md](tests/README.md).
+
+
 Runs the filtered memetic algorithm across benchmark instances with fixed seeds, launching 10 concurrent threads (islands) per run: nine carrying distinct survival-analysis filtering models and the tenth running with filtering disabled as an in-run control.
 
 ---
@@ -94,3 +101,52 @@ Run 1  |  seed=1
 
 *Complete 68-instance list is defined in `include/Defs.hpp` $\to$ `FILENAMES`.*
 
+
+## Task 3 review fixes (30 October 2026; review pending)
+
+`tools/experiment_control.py` is the guarded sequential Task 3 runner. The
+concurrent ten-island runner described above is the historical experiment.
+Main/draft execution remains blocked. No new pilot, calibration or timing run
+is authorized by these fixes.
+
+Resume now requires a version-2 full configuration record and matching hash,
+command, current input identities, valid outputs and complete startup record.
+Legacy statuses are inspection-only and are never upgraded or rewritten.
+Existing output directories are preserved, including mismatching successes.
+Inspection with `validate_run` checks the fields available in historical logs;
+it does not certify historical provenance or make a run resumable.
+
+The source hash now covers the sorted per-file SHA-256 map for all C++ sources
+and headers under `src/` and `include/`, all Python under `ml/scripts/`, root
+CMake definitions and historical runner definitions, and the Task 3 runner.
+`TASK3_SOURCE_IDENTITY_V2.json` is the review-time snapshot; each new status
+also embeds its own full source map. Generated models, logs, datasets and build
+outputs are excluded from this source hash. Runtime identity separately records
+the selected dataset, executable, schedule, LKH executable, adjacent DLLs and
+configured Gurobi runtime DLL when present. Python identity includes executable
+bytes, version/implementation, installed distribution names/versions and RECORD
+metadata digests. It does not hash every installed package payload or resolve
+the complete system/transitive DLL closure. Environment variables are bound by
+a digest without saving their values; platform, machine and working directory
+are recorded. CPU contention, licenses and transient machine state are outside
+this identity. This is scoped provenance, not a hermetic reproduction claim.
+
+Old manifests deliberately retain their old source and binary identities. The
+new source algorithm and rebuilt startup logger make them incompatible with new
+execution. Do not edit them in place. A future separately authorized technical
+run must use an explicit new manifest filename and new output root, for example
+`--kind pilot --manifest pilot_manifest_task3_v2.csv --output-root
+solutions/technical_pilot_task3_v2`. Without `--execute` this only prepares a
+manifest/dry-run. Review the new manifest before any separately authorized run.
+The default old-manifest command now fails clearly on different contents.
+
+Cox score/threshold lines and JSON models are parsed and checked, including
+feature agreement and usable standard deviations. The producer's low-variance
+feature removal permits a nonempty subset of its ten actual input features.
+The small-sample `objective=NaN` exception requires n<30, percentile 80 and the
+exact producer fallback message. Used coefficients, means, standard deviations
+and threshold must always be finite. Training success, observed prediction use,
+convergence warnings and fallback remain separate diagnostics. Warnings do not
+silently become a new scientific exclusion policy. Candidate/iteration IDs must
+be exactly 1..generated; admitted IDs and final lifetimes must match one-to-one,
+with valid zero durations and censoring only at the final processed iteration.

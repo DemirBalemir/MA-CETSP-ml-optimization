@@ -1,0 +1,42 @@
+{
+  "fit_id": "bonus1000-deepsurv-fold2",
+  "instance": "bonus1000",
+  "model": "DEEPSURV",
+  "fold": 2,
+  "n_train": 2504,
+  "n_test": 1247,
+  "train_runs": 36,
+  "test_runs": 19,
+  "seed": 20261310,
+  "state": "completed",
+  "cindex": 0.5463170422884999,
+  "seconds": 1.75,
+  "concordant": 402563,
+  "discordant": 334304,
+  "tied_risk": 0,
+  "tied_time": 0,
+  "unique_risks": 1203,
+  "risk_min": -1.4271141290664673,
+  "risk_max": 3.0817065238952637,
+  "warning_messages": [],
+  "training_audit": {
+    "policy": "fixed_epochs_no_validation_callback_v1",
+    "epochs_requested": 100,
+    "epochs_completed": 100,
+    "batch_size": 256,
+    "training_rows": 2504,
+    "initial_state_sha256": "623832738d971e3d4a9eebd421b3185c1fb7db978560c387a5c6730b6f10ad16",
+    "final_state_sha256": "5de24f15bd951ec905607ca9c8494ef1b300b9d239a9e0077e241ad297b6f7ea",
+    "changed_parameter_tensors": 9,
+    "parameter_tensors": 9,
+    "batchnorm_batches": {
+      "net.0.batch_norm.num_batches_tracked": 1000,
+      "net.1.batch_norm.num_batches_tracked": 1000
+    },
+    "first_train_loss": 4.632811498641968,
+    "final_train_loss": 4.424248075485229,
+    "minimum_train_loss": 4.396687459945679,
+    "saved_weights_verified": true
+  },
+  "prediction_sha256": "c1c79c0284d8818c38014ffb5de833c90a7002f3598b1d126ecc7e2e4e5ce706"
+}

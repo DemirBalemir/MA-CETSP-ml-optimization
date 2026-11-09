@@ -1,0 +1,67 @@
+{
+  "verified_utc": "2026-11-09T00:09:48.1964585Z",
+  "state": {
+    "state": "running",
+    "pid": 25896,
+    "completed": 657,
+    "planned": 795,
+    "active": {
+      "2": "dsj1000_or2-s31-mtlr-a1",
+      "1": "dsj1000_or2-s31-none-a1",
+      "4": "dsj1000_or2-s31-deepsurv-a1",
+      "3": "rotatingDiamonds4-s1-mtlr-a1"
+    },
+    "errors": [],
+    "first_30_validated": 30,
+    "free_GiB": 28.757957458496094,
+    "updated_utc": "2026-11-09T03:08:55.875863+03:00"
+  },
+  "solver_children": [
+    {
+      "pid": 15092,
+      "run_id": "dsj1000_or2-s31-mtlr-a1",
+      "created": "2026-11-09T03:08:56.375252+03:00"
+    },
+    {
+      "pid": 14152,
+      "run_id": "rotatingDiamonds4-s1-mtlr-a1",
+      "created": "2026-11-09T03:08:56.378716+03:00"
+    },
+    {
+      "pid": 28300,
+      "run_id": "dsj1000_or2-s31-deepsurv-a1",
+      "created": "2026-11-09T03:08:56.382794+03:00"
+    },
+    {
+      "pid": 33868,
+      "run_id": "dsj1000_or2-s31-none-a1",
+      "created": "2026-11-09T03:08:56.390496+03:00"
+    }
+  ],
+  "parent_chain": [
+    {
+      "pid": 25896,
+      "name": "python.exe",
+      "parent_pid": 11036
+    },
+    {
+      "pid": 11036,
+      "name": "powershell.exe",
+      "parent_pid": 2916
+    },
+    {
+      "pid": 2916,
+      "name": "svchost.exe",
+      "parent_pid": 1744
+    },
+    {
+      "pid": 1744,
+      "name": "services.exe",
+      "parent_pid": 1664
+    }
+  ],
+  "independent_of_codex": true,
+  "launcher": "Windows Task Scheduler",
+  "scientific_settings_changed": false,
+  "original_failure_preserved_under": "maintenance/20261109_restart_failure"
+}

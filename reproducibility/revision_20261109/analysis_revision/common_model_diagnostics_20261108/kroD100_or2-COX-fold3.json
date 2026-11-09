@@ -1,0 +1,8 @@
+{
+  "instance": "kroD100_or2",
+  "model": "COX",
+  "fold": 3,
+  "cindex": 0.541979436403831,
+  "seconds": 0.11000000000058208,
+  "warnings": []
+}

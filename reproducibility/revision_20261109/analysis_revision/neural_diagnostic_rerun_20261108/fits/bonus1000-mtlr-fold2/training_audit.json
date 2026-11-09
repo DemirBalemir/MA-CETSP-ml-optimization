@@ -1,0 +1,19 @@
+{
+  "policy": "fixed_epochs_no_validation_callback_v1",
+  "epochs_requested": 100,
+  "epochs_completed": 100,
+  "batch_size": 256,
+  "training_rows": 2504,
+  "initial_state_sha256": "3e40db47ba28c8624f478c147a8963ea40ba451636b2cb134c85f33275b39254",
+  "final_state_sha256": "0177974df0a27fcf7605ea31cef5c316e5aadc18dc303a51f32e722cf047b0b5",
+  "changed_parameter_tensors": 10,
+  "parameter_tensors": 10,
+  "batchnorm_batches": {
+    "net.0.batch_norm.num_batches_tracked": 1000,
+    "net.1.batch_norm.num_batches_tracked": 1000
+  },
+  "first_train_loss": 2.700473761558533,
+  "final_train_loss": 0.6027537286281586,
+  "minimum_train_loss": 0.6027537286281586,
+  "saved_weights_verified": true
+}

@@ -8,6 +8,10 @@
 #include <cmath>
 #include <algorithm>
 #include <filesystem>
+#include <regex>
+#include <set>
+#include <stdexcept>
+#include <locale>
 
 #include "Defs.hpp"
 
@@ -232,117 +236,150 @@ void SurvivalModel::invalidate()
 // ---------------------------------------------------------------------------
 // Cox native prediction
 // ---------------------------------------------------------------------------
-double SurvivalModel::predict_cox_score(
-    const std::map<std::string, double>& feats)
+namespace {
+// Deliberately limited to the Cox producer's object/numeric JSON contract.
+// No external dependency; reject unsupported values instead of partially loading.
+struct CoxJson {
+    bool object = false;
+    double number = 0;
+    std::map<std::string, CoxJson> fields;
+};
+class CoxJsonReader {
+    std::string text;
+    size_t pos = 0;
+    [[noreturn]] void fail() const { throw std::runtime_error("[ML ERROR] Invalid Cox JSON at byte " + std::to_string(pos)); }
+    void space() { while (pos < text.size() && (text[pos]==' ' || text[pos]=='\n' || text[pos]=='\r' || text[pos]=='\t')) ++pos; }
+    bool take(char c) { space(); if (pos < text.size() && text[pos]==c) { ++pos; return true; } return false; }
+    std::string key() {
+        if (!take('"')) fail();
+        std::string out;
+        while (pos < text.size()) {
+            unsigned char c = text[pos++];
+            if (c == '"') return out;
+            if (c < 32) fail();
+            if (c == '\\') {
+                if (pos == text.size()) fail();
+                c = text[pos++];
+                if (c == 'u') {
+                    unsigned int code = 0;
+                    for (int i=0;i<4;++i) {
+                        if (pos == text.size()) fail();
+                        char h=text[pos++];
+                        int digit = h>='0' && h<='9' ? h-'0' : h>='a' && h<='f' ? h-'a'+10 : h>='A' && h<='F' ? h-'A'+10 : -1;
+                        if (digit<0) fail();
+                        code=code*16+digit;
+                    }
+                    // All supported feature/statistic names are ASCII.
+                    if (code>127) fail();
+                    c=static_cast<unsigned char>(code);
+                } else if (c=='b') c='\b';
+                else if (c=='f') c='\f';
+                else if (c=='n') c='\n';
+                else if (c=='r') c='\r';
+                else if (c=='t') c='\t';
+                else if (c!='"' && c!='\\' && c!='/') fail();
+            }
+            out+=static_cast<char>(c);
+        }
+        fail();
+    }
+    CoxJson value(int depth) {
+        space();
+        if (depth>2) fail();
+        CoxJson node;
+        if (take('{')) {
+            node.object=true;
+            if (take('}')) return node;
+            do {
+                auto name=key();
+                if (!take(':')) fail();
+                auto child=value(depth+1);
+                if (!node.fields.emplace(name,std::move(child)).second) fail();
+                if (take('}')) return node;
+            } while (take(','));
+            fail();
+        }
+        static const std::regex number(R"(-?(0|[1-9][0-9]*)(\.[0-9]+)?([eE][+-]?[0-9]+)?)");
+        std::smatch match;
+        std::string rest=text.substr(pos);
+        if (!std::regex_search(rest,match,number,std::regex_constants::match_continuous)) fail();
+        std::istringstream input(match.str()); input.imbue(std::locale::classic());
+        input >> node.number;
+        if (input.fail() || !std::isfinite(node.number)) fail();
+        pos+=match.length();
+        return node;
+    }
+public:
+    explicit CoxJsonReader(const std::string& path) {
+        std::ifstream file(path);
+        if (!file) throw std::runtime_error("[ML ERROR] Missing Cox model: " + path);
+        text.assign(std::istreambuf_iterator<char>(file),{});
+    }
+    CoxJson read() {
+        auto node=value(0); space();
+        if (pos!=text.size() || !node.object) fail();
+        return node;
+    }
+};
+const std::set<std::string> cox_features = {
+    "avg_edge_length", "var_edge_length", "bbox_width", "bbox_height", "bbox_area",
+    "centroid_x", "centroid_y", "centroid_dist_sum", "angle_variance", "pre_vnd_cost"
+};
+}
+
+double SurvivalModel::predict_cox_score(const std::map<std::string, double>& feats)
 {
-    if (!cox_loaded) {
-        load_cox_coeffs();
-        if (!cox_loaded) return 0.0;
-    }
-
-    if (!cox_norm_loaded) {
-        load_cox_norm();
-        if (!cox_norm_loaded) return 0.0;
-    }
-
+    if (!cox_loaded) load_cox_coeffs();
+    if (!cox_norm_loaded) load_cox_norm();
     double linear = 0.0;
     for (const auto& kv : cox_beta) {
         auto it = feats.find(kv.first);
-        if (it == feats.end()) continue;
-
-        double x = it->second;
-        auto ns = cox_norm.find(kv.first);
-        if (ns != cox_norm.end()) {
-            double mean = ns->second.mean;
-            double stdv = ns->second.std;
-            if (stdv > 1e-12) x = (x - mean) / stdv;
-        }
-        linear += kv.second * x;
+        if (it == feats.end() || !std::isfinite(it->second))
+            throw std::runtime_error("[ML ERROR] Missing/nonfinite Cox feature: " + kv.first);
+        const auto& ns = cox_norm.at(kv.first);
+        // lifelines params_ are already in original covariate units. Its
+        // predict_partial_hazard centers X but does NOT divide by std again.
+        linear += kv.second * (it->second - ns.mean);
     }
-    return std::exp(linear);
+    double score=std::exp(linear);
+    if (!std::isfinite(score)) throw std::runtime_error("[ML ERROR] Nonfinite Cox score");
+    return score;
 }
 
 void SurvivalModel::load_cox_coeffs()
 {
     if (cox_loaded) return;
-    std::string path = model_dir_ + "cox_coeffs.json";
-    std::ifstream f(path);
-    if (!f.is_open()) {
-        std::cerr << "[ML ERROR] Could not open Cox coeffs: " << path << "\n";
-        return;
+    auto root=CoxJsonReader(model_dir_ + "cox_coeffs.json").read();
+    std::map<std::string,double> loaded;
+    for (const auto& item : root.fields) {
+        if (!cox_features.count(item.first) || item.second.object)
+            throw std::runtime_error("[ML ERROR] Invalid Cox coefficient: " + item.first);
+        loaded.emplace(item.first,item.second.number);
     }
-
-    std::string json((std::istreambuf_iterator<char>(f)),
-                      std::istreambuf_iterator<char>());
-
-    size_t pos = 0;
-    while (true) {
-        size_t key_start = json.find('"', pos);
-        if (key_start == std::string::npos) break;
-        size_t key_end = json.find('"', key_start + 1);
-        if (key_end == std::string::npos) break;
-        std::string key = json.substr(key_start + 1, key_end - key_start - 1);
-
-        size_t colon = json.find(':', key_end);
-        if (colon == std::string::npos) break;
-        size_t value_end = json.find_first_of(",}", colon + 1);
-        if (value_end == std::string::npos) value_end = json.size();
-
-        std::string value_str = json.substr(colon + 1, value_end - (colon + 1));
-        value_str.erase(std::remove_if(value_str.begin(), value_str.end(),
-            [](unsigned char c) { return std::isspace(c); }), value_str.end());
-
-        try { cox_beta[key] = std::stod(value_str); }
-        catch (...) {
-            std::cerr << "[ML ERROR] Failed to parse Cox beta for " << key << "\n";
-        }
-        pos = value_end;
-    }
-    cox_loaded = true;
+    if (loaded.empty()) throw std::runtime_error("[ML ERROR] Empty Cox coefficients");
+    cox_beta=std::move(loaded);
+    cox_loaded=true;
 }
 
 void SurvivalModel::load_cox_norm()
 {
     if (cox_norm_loaded) return;
-    std::string path = model_dir_ + "cox_norm.json";
-    std::ifstream f(path);
-    if (!f.is_open()) {
-        std::cerr << "[ML ERROR] Could not open Cox norm: " << path << "\n";
-        return;
+    if (!cox_loaded) load_cox_coeffs();
+    auto root=CoxJsonReader(model_dir_ + "cox_norm.json").read();
+    std::map<std::string,CoxNormStat> loaded;
+    if (root.fields.size()!=cox_beta.size())
+        throw std::runtime_error("[ML ERROR] Cox normalization feature mismatch");
+    for (const auto& item : root.fields) {
+        const auto& stats=item.second;
+        if (!cox_beta.count(item.first) || !stats.object || stats.fields.size()!=2 ||
+            !stats.fields.count("mean") || !stats.fields.count("std") ||
+            stats.fields.at("mean").object || stats.fields.at("std").object ||
+            stats.fields.at("std").number<=1e-12)
+            throw std::runtime_error("[ML ERROR] Invalid Cox normalization: " + item.first);
+        loaded.emplace(item.first,CoxNormStat{stats.fields.at("mean").number,stats.fields.at("std").number});
     }
-
-    std::string json((std::istreambuf_iterator<char>(f)),
-                      std::istreambuf_iterator<char>());
-
-    size_t pos = 0;
-    while (true) {
-        size_t key_start = json.find('"', pos);
-        if (key_start == std::string::npos) break;
-        size_t key_end = json.find('"', key_start + 1);
-        if (key_end == std::string::npos) break;
-        std::string key = json.substr(key_start + 1, key_end - key_start - 1);
-
-        size_t mean_pos   = json.find("\"mean\"", key_end);
-        if (mean_pos == std::string::npos) break;
-        size_t mean_colon = json.find(':', mean_pos);
-        size_t mean_end   = json.find_first_of(",}", mean_colon + 1);
-        std::string mean_str = json.substr(mean_colon + 1, mean_end - (mean_colon + 1));
-
-        size_t std_pos   = json.find("\"std\"", mean_end);
-        if (std_pos == std::string::npos) break;
-        size_t std_colon = json.find(':', std_pos);
-        size_t std_end   = json.find_first_of(",}", std_colon + 1);
-        std::string std_str = json.substr(std_colon + 1, std_end - (std_colon + 1));
-
-        mean_str.erase(remove_if(mean_str.begin(), mean_str.end(), ::isspace), mean_str.end());
-        std_str.erase(remove_if(std_str.begin(), std_str.end(), ::isspace), std_str.end());
-
-        try { cox_norm[key] = { std::stod(mean_str), std::stod(std_str) }; }
-        catch (...) { std::cerr << "[ML ERROR] Failed to parse norm for " << key << "\n"; }
-
-        pos = std_end;
-    }
-    cox_norm_loaded = true;
+    cox_norm=std::move(loaded);
+    cox_norm_loaded=true;
 }
 
 // ---------------------------------------------------------------------------

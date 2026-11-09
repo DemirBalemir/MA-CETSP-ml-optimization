@@ -33,6 +33,7 @@ def main():
                     help="Island-specific log folder (train only on this island's solutions)")
     ap.add_argument("--logfile", default=None,
                     help="Redirect stdout+stderr to this file (avoids shell-redirect quoting issues)")
+    ap.add_argument("--strict_log_dir", action="store_true")
     args, _ = ap.parse_known_args()
 
     _logfile_handle = None
@@ -52,9 +53,13 @@ def main():
             if rows:
                 df_logs = pd.DataFrame(rows)
             else:
+                if args.strict_log_dir:
+                    raise RuntimeError(f"Current-run training logs are empty: {log_dir_path}")
                 print("[WARN] Island log dir is empty, falling back to all logs")
                 df_logs = load_all_logs(get_default_log_root())
         else:
+            if args.strict_log_dir:
+                raise RuntimeError(f"Current-run training logs not found: {log_dir_path}")
             print(f"[WARN] Island log dir not found: {log_dir_path}, falling back to all logs")
             df_logs = load_all_logs(get_default_log_root())
     else:

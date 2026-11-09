@@ -23,6 +23,8 @@ def main():
                     help="Island-specific log folder (train only on this island's solutions)")
     ap.add_argument("--logfile", default=None,
                     help="Redirect stdout+stderr to this file (avoids shell-redirect quoting issues)")
+    ap.add_argument("--dataset_dir", default=None)
+    ap.add_argument("--strict_log_dir", action="store_true")
     args, _ = ap.parse_known_args()
 
     _logfile_handle = None
@@ -44,9 +46,13 @@ def main():
             if rows:
                 df_logs = pd.DataFrame(rows)
             else:
+                if args.strict_log_dir:
+                    raise RuntimeError(f"Current-run training logs are empty: {log_dir_path}")
                 print("[WARN] Island log dir is empty, falling back to all logs")
                 df_logs = load_all_logs(get_default_log_root())
         else:
+            if args.strict_log_dir:
+                raise RuntimeError(f"Current-run training logs not found: {log_dir_path}")
             print(f"[WARN] Island log dir not found: {log_dir_path}, falling back to all logs")
             df_logs = load_all_logs(get_default_log_root())
     else:
@@ -83,7 +89,7 @@ def main():
     # ------------------------------------------
     # 4) Save cleaned dataset
     # ------------------------------------------
-    dataset_dir = project_root / "ml" / "dataset"
+    dataset_dir = Path(args.dataset_dir) if args.dataset_dir else project_root / "ml" / "dataset"
     dataset_dir.mkdir(parents=True, exist_ok=True)
     dataset_path = dataset_dir / "cox_dataset.csv"
     df.to_csv(dataset_path, index=False)
@@ -160,6 +166,7 @@ def main():
           f"(objective={obj:.4f})  threshold={threshold:.6f}")
 
     cox_meta = {
+        "coefficient_scale":    "lifelines_raw_centered_v1",
         "threshold":            threshold,
         "rejection_percentile": best_pct,
         "objective":            obj,

@@ -1,0 +1,8 @@
+{
+  "instance": "rat195_or30",
+  "model": "GBSA",
+  "fold": 1,
+  "cindex": 0.5895802653050781,
+  "seconds": 21.906999999999243,
+  "warnings": []
+}

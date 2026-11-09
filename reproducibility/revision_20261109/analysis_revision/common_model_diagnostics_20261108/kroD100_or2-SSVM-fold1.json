@@ -1,0 +1,8 @@
+{
+  "instance": "kroD100_or2",
+  "model": "SSVM",
+  "fold": 1,
+  "cindex": 0.532848136454597,
+  "seconds": 0.09399999999732245,
+  "warnings": []
+}

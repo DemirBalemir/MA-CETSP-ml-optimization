@@ -1,0 +1,42 @@
+{
+  "fit_id": "rat195_or30-mtlr-fold2",
+  "instance": "rat195_or30",
+  "model": "MTLR",
+  "fold": 2,
+  "n_train": 2455,
+  "n_test": 1258,
+  "train_runs": 7,
+  "test_runs": 3,
+  "seed": 20261520,
+  "state": "completed",
+  "cindex": 0.47718673254707045,
+  "seconds": 2.186999999998079,
+  "concordant": 311124,
+  "discordant": 345346,
+  "tied_risk": 93576,
+  "tied_time": 0,
+  "unique_risks": 148,
+  "risk_min": 0.9997506737709045,
+  "risk_max": 1.000000238418579,
+  "warning_messages": [],
+  "training_audit": {
+    "policy": "fixed_epochs_no_validation_callback_v1",
+    "epochs_requested": 100,
+    "epochs_completed": 100,
+    "batch_size": 256,
+    "training_rows": 2455,
+    "initial_state_sha256": "a287a7ae0258d2a37b1bdd9f7696d19c285b682ac7b3c3240fe4f68d60b2b405",
+    "final_state_sha256": "2e226e471a68c4812747b610382eb40b6f621f4911c063c2ffe0ab7dd9f4275f",
+    "changed_parameter_tensors": 10,
+    "parameter_tensors": 10,
+    "batchnorm_batches": {
+      "net.0.batch_norm.num_batches_tracked": 1000,
+      "net.1.batch_norm.num_batches_tracked": 1000
+    },
+    "first_train_loss": 2.6534136295318604,
+    "final_train_loss": 0.5673529267311096,
+    "minimum_train_loss": 0.5673529267311096,
+    "saved_weights_verified": true
+  },
+  "prediction_sha256": "abc5bbfd03fc6a82531392c5b28107b94a5f9af68d1dc3ca7c930ff99ca2cc5f"
+}

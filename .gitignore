@@ -24,3 +24,16 @@ paper/*.synctex.gz
 paper/*.fls
 paper/*.fdb_latexmk
 *.log
+
+# Local experiment payloads and manuscript/submission working copies.
+/analysis_revision/
+/build-task*-validation/
+/validation-task*/
+/solutions/control53*/
+/solutions/neural53_v1/
+/solutions/fixed_preflight_20261102/
+/solutions/invalid_campaign_audit_20261102/
+/solutions/license_trial_20261102/
+/solutions/parallel_timing_probe_v1/
+/solutions/technical_pilot_task3/
+/reproducibility/**/rerun/

@@ -1,0 +1,14 @@
+{
+  "published_date": "2026-11-09",
+  "python_unit_tests": 31,
+  "cpp_unit_tests": 4,
+  "saved_neural_contrasts": 6,
+  "saved_cox_contrasts": 6,
+  "saved_diagnostic_fold_scores": 135,
+  "diagnostic_records": 18115,
+  "fold_cindex_max_error": 0.0,
+  "frozen_bytes_checked": 2087,
+  "new_solver_runs": 0,
+  "new_model_fits": 0,
+  "editable_controller_change": "Bounded retries for transient Windows JSON report sharing failures; frozen deployed snapshots unchanged."
+}

@@ -5,6 +5,7 @@
  **/
 
 #include "Utils/Data.hpp"
+#include <stdexcept>
 
 Data::Data(Parameters* params) {
     this->instance_index = params->instance_index;
@@ -21,6 +22,21 @@ Data::Data(Parameters* params) {
         data_dir = SERVER_DATA_DIR;
         res_dir = SERVER_RES_DIR;
     }
+    if (!params->results_dir.empty()) res_dir = params->results_dir;
+    research_enabled_ = params->filter_mode != "legacy";
+    if (research_enabled_) research_ = std::make_unique<ResearchLedger>(res_dir + "research/");
+}
+
+void Data::recordGenerated(int id, int iter) {
+    if (research_) research_->generated(id, iter);
+}
+
+void Data::recordCandidate(int id, int iter, const char* outcome) {
+    if (research_) research_->outcome(id, iter, outcome);
+}
+
+void Data::recordLifetime(int id, int birth, int death, bool censored) {
+    if (research_) research_->lifetime(id, birth, death, censored);
 }
 
 void Data::read() {
@@ -79,7 +95,7 @@ void Data::write(List* solution, int iter, std::string running_time) {
         }
         std::string running_dir = res_dir + "normal/" + filename + "-" + this->timestamp + "/";
         if (!std::filesystem::exists(running_dir)) {
-            std::filesystem::create_directory(running_dir);
+            std::filesystem::create_directories(running_dir);
         }
         std::ofstream out;
         result_filename = filename + "-" + this->timestamp + "-" + std::to_string(iter);
@@ -87,6 +103,7 @@ void Data::write(List* solution, int iter, std::string running_time) {
             std::cout << "file name : " << result_filename << std::endl;
         }
         out.open(running_dir + result_filename + ".txt");
+        if (research_enabled_ && !out) throw std::runtime_error("cannot open solution result");
         Node* p = solution->head();
         for (int i = 0; i < solution->size(); ++i) {
             out << p->id << ",";
@@ -100,8 +117,10 @@ void Data::write(List* solution, int iter, std::string running_time) {
             p = p->next;
         }
         out.close();
+        if (research_enabled_ && !out) throw std::runtime_error("cannot write solution result");
     }
-    catch (std::exception e) {
+    catch (const std::exception& e) {
+        if (research_enabled_) throw;
         std::cout << "ERROR : write result" << std::endl;
     }
 }
@@ -118,8 +137,11 @@ void Data::writeSolutionLog(List* s) {
         std::string fname = "sol-" + std::to_string(log_counter_++) + ".json";
 
         std::ofstream out(logdir + fname);
+        if (research_enabled_ && !out) throw std::runtime_error("cannot open training log");
 
         out << "{\n";
+        if (research_enabled_)
+            out << "  \"candidate_id\": " << s->candidate_id << ",\n";
         out << "  \"instance_index\": " << instance_index << ",\n";
         out << "  \"birth_iter\": " << s->birth_iter << ",\n";
         out << "  \"death_iter\": " << s->death_iter << ",\n";
@@ -161,12 +183,14 @@ void Data::writeSolutionLog(List* s) {
         out << "}\n";
 
         out.close();
+        if (research_enabled_ && !out) throw std::runtime_error("cannot write training log");
 
         // Track death events (non-censored) separately — used by Algo to decide
         // when enough survival signal has been collected to trigger ML training.
         if (!s->censored) ++event_count_;
     }
-    catch (std::exception e) {
+    catch (const std::exception& e) {
+        if (research_enabled_) throw;
         std::cout << "ERROR : writeSolutionLog" << std::endl;
     }
 }

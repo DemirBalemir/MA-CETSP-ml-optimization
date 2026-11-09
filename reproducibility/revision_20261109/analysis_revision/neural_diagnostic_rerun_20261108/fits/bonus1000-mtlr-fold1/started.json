@@ -1,0 +1,12 @@
+{
+  "fit_id": "bonus1000-mtlr-fold1",
+  "instance": "bonus1000",
+  "model": "MTLR",
+  "fold": 1,
+  "n_train": 2498,
+  "n_test": 1253,
+  "train_runs": 37,
+  "test_runs": 18,
+  "seed": 20261319,
+  "started_utc": "2026-11-07T22:19:07.330093+00:00"
+}

@@ -1,0 +1,12 @@
+{
+  "fit_id": "rat195_or30-mtlr-fold3",
+  "instance": "rat195_or30",
+  "model": "MTLR",
+  "fold": 3,
+  "n_train": 2476,
+  "n_test": 1237,
+  "train_runs": 7,
+  "test_runs": 3,
+  "seed": 20261521,
+  "started_utc": "2026-11-07T22:19:38.031684+00:00"
+}

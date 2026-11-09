@@ -1,0 +1,4 @@
+ml_model,generated,filter_rejected,vnd_evaluated,admitted,socp_successes,socp_numerical_fallbacks
+DEEPSURV,446320,32886,413434,406918,205276,208158
+MTLR,439930,30968,408962,401576,203180,205782
+NONE,408412,0,408412,402039,202218,206194

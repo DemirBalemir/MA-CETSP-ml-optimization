@@ -17,6 +17,8 @@
 #include <fstream>
 #include <ctime>
 #include <filesystem>
+#include <memory>
+#include "Utils/ResearchLedger.hpp"
 
 class Data {
 private:
@@ -39,10 +41,18 @@ public:
     int island_id_ = 0;                         // island index (set in constructor)
 
     int getEventCount() const { return event_count_; }
+    void recordCandidate(int id, int iter, const char* outcome);
+    void recordGenerated(int id, int iter);
+    void recordLifetime(int id, int birth, int death, bool censored);
+    bool research_enabled() const { return research_enabled_; }
+    void verifyResearch() const { if (research_) research_->verify(); }
+    const ResearchLedger::Counts& researchCounts() const { return research_->counts; }
 
 private:
     long long log_counter_ = 0;                 // per-instance counter (replaces static local)
     int       event_count_ = 0;                 // number of non-censored deaths logged so far
+    bool research_enabled_ = false;
+    std::unique_ptr<ResearchLedger> research_;
 };
 
 #endif //CETSP_DATA_HPP

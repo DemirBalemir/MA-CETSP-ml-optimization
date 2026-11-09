@@ -1,0 +1,8 @@
+{
+  "instance": "rat195_or30",
+  "model": "KNN",
+  "fold": 1,
+  "cindex": 0.5376329794795108,
+  "seconds": 0.06199999999807915,
+  "warnings": []
+}

@@ -1,0 +1,8 @@
+{
+  "instance": "bonus1000",
+  "model": "KNN",
+  "fold": 2,
+  "cindex": 0.5248776237774252,
+  "seconds": 0.062000000005355105,
+  "warnings": []
+}

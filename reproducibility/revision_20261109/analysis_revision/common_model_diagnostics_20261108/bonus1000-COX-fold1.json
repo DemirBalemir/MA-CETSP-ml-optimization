@@ -1,0 +1,8 @@
+{
+  "instance": "bonus1000",
+  "model": "COX",
+  "fold": 1,
+  "cindex": 0.5355942219744945,
+  "seconds": 0.0940000000045984,
+  "warnings": []
+}

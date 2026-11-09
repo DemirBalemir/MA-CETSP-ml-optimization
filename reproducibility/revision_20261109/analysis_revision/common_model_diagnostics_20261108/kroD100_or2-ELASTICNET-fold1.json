@@ -1,0 +1,8 @@
+{
+  "instance": "kroD100_or2",
+  "model": "ELASTICNET",
+  "fold": 1,
+  "cindex": 0.5273364818944356,
+  "seconds": 0.046999999998661224,
+  "warnings": []
+}

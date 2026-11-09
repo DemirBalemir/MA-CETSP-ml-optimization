@@ -27,7 +27,17 @@ aux_source_directory("src/Genetic" GENETIC)
 aux_source_directory("src/Genetic/Crossover" CROSSOVER)
 aux_source_directory("src/LocalSearch" LOCALSEARCH)
 aux_source_directory("src/Utils" UTILS)
-add_executable(MA-CETSP ${SRC} ${GENETIC} ${CROSSOVER} ${LOCALSEARCH} ${UTILS} "src/ML/SurvivalModel.cpp" "src/Features/GeometryFeatures.cpp")
+add_executable(MA-CETSP ${SRC} ${GENETIC} ${CROSSOVER} ${LOCALSEARCH} ${UTILS} "src/ML/SurvivalModel.cpp" "src/ML/CoxLifecycle.cpp" "src/Features/GeometryFeatures.cpp")
+add_executable(prune_policy_test tests/prune_policy_test.cpp src/Utils/PrunePolicy.cpp)
+add_executable(research_ledger_test tests/research_ledger_test.cpp)
+add_executable(cox_model_test tests/cox_model_test.cpp src/ML/SurvivalModel.cpp)
+add_executable(cox_lifecycle_test tests/cox_lifecycle_test.cpp src/ML/CoxLifecycle.cpp
+    src/ML/SurvivalModel.cpp src/Features/GeometryFeatures.cpp src/Genetic/List.cpp src/Genetic/Node.cpp)
+enable_testing()
+add_test(NAME cox_lifecycle_test COMMAND cox_lifecycle_test)
+add_test(NAME cox_model_test COMMAND cox_model_test)
+add_test(NAME prune_policy_test COMMAND prune_policy_test)
+add_test(NAME research_ledger_test COMMAND research_ledger_test)
 
 # ==========================================================
 #                 WINDOWS (MSVC) CONFIG

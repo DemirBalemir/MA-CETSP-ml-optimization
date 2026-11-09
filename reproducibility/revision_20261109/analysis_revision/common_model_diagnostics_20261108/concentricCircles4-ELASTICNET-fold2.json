@@ -1,0 +1,8 @@
+{
+  "instance": "concentricCircles4",
+  "model": "ELASTICNET",
+  "fold": 2,
+  "cindex": 0.5116703782041128,
+  "seconds": 0.031000000002677552,
+  "warnings": []
+}

@@ -1,0 +1,8 @@
+{
+  "instance": "bonus1000",
+  "model": "SSVM",
+  "fold": 3,
+  "cindex": 0.5566316546723967,
+  "seconds": 0.2180000000007567,
+  "warnings": []
+}

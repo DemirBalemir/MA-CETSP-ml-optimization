@@ -13,6 +13,8 @@ from pycox.preprocessing.label_transforms import LabTransDiscreteTime
 from loader import load_all_logs, load_run_dir, get_default_log_root
 from features import build_feature_dataset
 from threshold_utils import compute_threshold
+from neural_training import fit_fixed_epochs
+from mtlr_scores import risk_from_logits, SCORE_VERSION
 
 
 NUM_DURATIONS = 20
@@ -37,20 +39,15 @@ def _train_model(X_norm, durations, events, epochs=200):
     net = _build_net(X_norm.shape[1])
     model = MTLR(net, tt.optim.Adam)
     model.optimizer.set_lr(0.01)
-    model.fit(
-        X_norm, y_discrete,
-        batch_size=min(256, len(X_norm)),
-        epochs=epochs,
-        verbose=False,
-        callbacks=[tt.callbacks.EarlyStopping(patience=20)],
-    )
+    fit_fixed_epochs(model, X_norm, y_discrete, epochs=epochs)
     model.duration_index = labtrans.cuts
     return model, labtrans
 
 
 def _risks(model, X_norm):
-    surv = model.predict_surv_df(X_norm)   # (num_durations, n_samples)
-    return 1.0 - surv.iloc[-1].values       # higher = shorter survival = higher risk
+    model.net.eval()
+    with torch.no_grad():
+        return risk_from_logits(model.net(torch.as_tensor(X_norm, dtype=torch.float32)), model.duration_index)
 
 
 def get_project_root() -> Path:
@@ -66,6 +63,7 @@ def main():
                     help="Island-specific log folder (train only on this island's solutions)")
     ap.add_argument("--logfile", default=None,
                     help="Redirect stdout+stderr to this file (avoids shell-redirect quoting issues)")
+    ap.add_argument("--strict_log_dir", action="store_true")
     args, _ = ap.parse_known_args()
 
     _logfile_handle = None
@@ -85,9 +83,13 @@ def main():
             if rows:
                 df_logs = pd.DataFrame(rows)
             else:
+                if args.strict_log_dir:
+                    raise RuntimeError(f"Current-run training logs are empty: {log_dir_path}")
                 print("[WARN] Island log dir is empty, falling back to all logs")
                 df_logs = load_all_logs(get_default_log_root())
         else:
+            if args.strict_log_dir:
+                raise RuntimeError(f"Current-run training logs not found: {log_dir_path}")
             print(f"[WARN] Island log dir not found: {log_dir_path}, falling back to all logs")
             df_logs = load_all_logs(get_default_log_root())
     else:
@@ -174,6 +176,8 @@ def main():
     print(f"[INFO] Saved MTLR scaler    -> {model_dir / 'mtlr_scaler.pkl'}")
 
     config = {
+        "score_version": SCORE_VERSION,
+        "duration_cuts": labtrans.cuts.tolist(),
         "in_features":   X_norm.shape[1],
         "num_nodes":     [64, 64],
         "num_durations": NUM_DURATIONS,
@@ -186,6 +190,8 @@ def main():
     print(f"[INFO] Saved MTLR config    -> {model_dir / 'mtlr_config.json'}")
 
     meta = {
+        "score_version": SCORE_VERSION,
+        "training_audit":       model.training_audit_,
         "threshold":            threshold,
         "rejection_percentile": best_pct,
         "objective":            obj,

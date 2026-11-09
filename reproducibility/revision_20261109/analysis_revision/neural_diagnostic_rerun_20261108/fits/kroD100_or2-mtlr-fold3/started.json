@@ -1,0 +1,12 @@
+{
+  "fit_id": "kroD100_or2-mtlr-fold3",
+  "instance": "kroD100_or2",
+  "model": "MTLR",
+  "fold": 3,
+  "n_train": 2094,
+  "n_test": 1085,
+  "train_runs": 7,
+  "test_runs": 4,
+  "seed": 20261421,
+  "started_utc": "2026-11-07T22:19:26.449107+00:00"
+}

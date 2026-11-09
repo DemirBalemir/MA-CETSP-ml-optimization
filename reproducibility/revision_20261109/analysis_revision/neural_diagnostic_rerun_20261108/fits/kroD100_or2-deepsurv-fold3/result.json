@@ -1,0 +1,42 @@
+{
+  "fit_id": "kroD100_or2-deepsurv-fold3",
+  "instance": "kroD100_or2",
+  "model": "DEEPSURV",
+  "fold": 3,
+  "n_train": 2094,
+  "n_test": 1085,
+  "train_runs": 7,
+  "test_runs": 4,
+  "seed": 20261411,
+  "state": "completed",
+  "cindex": 0.5818021554783452,
+  "seconds": 1.5310000000026776,
+  "concordant": 328706,
+  "discordant": 236273,
+  "tied_risk": 0,
+  "tied_time": 0,
+  "unique_risks": 1003,
+  "risk_min": -2.3897886276245117,
+  "risk_max": 3.9712300300598145,
+  "warning_messages": [],
+  "training_audit": {
+    "policy": "fixed_epochs_no_validation_callback_v1",
+    "epochs_requested": 100,
+    "epochs_completed": 100,
+    "batch_size": 256,
+    "training_rows": 2094,
+    "initial_state_sha256": "98d87c3882ee8b745bc80f47c3bf7f2fcf1d02f178579c391240022795a2a7df",
+    "final_state_sha256": "71f096625f6c30aa47d2d473fad6e97a9d65cbd0422758fec9d1849bde565629",
+    "changed_parameter_tensors": 9,
+    "parameter_tensors": 9,
+    "batchnorm_batches": {
+      "net.0.batch_norm.num_batches_tracked": 900,
+      "net.1.batch_norm.num_batches_tracked": 900
+    },
+    "first_train_loss": 4.43521703614129,
+    "final_train_loss": 4.212756580776638,
+    "minimum_train_loss": 4.212756580776638,
+    "saved_weights_verified": true
+  },
+  "prediction_sha256": "946c488ef4bef7982ece0fac2bf39c7ad9c239592ea4c1b087a22ea12a29a236"
+}

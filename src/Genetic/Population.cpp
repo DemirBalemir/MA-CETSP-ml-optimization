@@ -5,6 +5,7 @@
  **/
 
 #include "Genetic/Population.hpp"
+#include "ML/CoxLifecycle.hpp"
 #include <cstdio>
 #include <iostream>
 #include <memory>
@@ -23,8 +24,17 @@ Population::Population(Parameters* params)
     ml_model(new SurvivalModel(params->model_dir, params->ml_model,
                                params->python_exe, params->scripts_dir)),
     ml_model_name(params->ml_model),
-    ml_enable_(params->ml_enable)
+    ml_enable_(params->ml_enable), filter_mode_(params->filter_mode)
 {
+    if (filter_mode_ == "random") {
+        prune_policy = std::make_unique<PrunePolicy>(params->prune_seed, params->random_reject_rate, params->random_start_iter);
+        if (!params->prune_windows.empty()) {
+            std::vector<PrunePolicy::Window> windows;
+            for (const auto& w : params->prune_windows)
+                windows.push_back({std::get<0>(w),std::get<1>(w),std::get<2>(w)});
+            prune_policy->set_schedule(std::move(windows));
+        }
+    }
     this->initialization = params->init;
     this->selection = params->select;
     this->crossover_type = params->crossover;
@@ -138,23 +148,7 @@ List* Population::initPopulation() {
         if (!solution) continue;
 
         insertSolution(solution);
-        if (ml_enable_ && ml_model_name == "COX" && !solution->has_cox_lp && training_completed_at >= 0) {
-            auto coords = solution->pre_vnd_coords;
-            if (coords.empty()) {
-                Node* p = solution->head();
-                for (int i = 0; i < solution->size(); ++i) {
-                    coords.push_back({ p->x, p->y });
-                    p = p->next;
-                }
-            }
-
-            auto feats = GeometryFeatures::extract(coords);
-            feats["pre_vnd_cost"] = solution->getValue();
-
-            solution->cox_lp = predict_cox_score(feats);
-            solution->has_cox_lp = true;
-        }
-
+        CoxLifecycle::cache_score(ml_enable_, ml_model_name, training_completed_at, ml_model, *solution);
 
         if (!best || solution->getValue() < best->getValue()) {
             best = solution;
@@ -210,6 +204,7 @@ std::pair<List*, List*> Population::chooseParent() {
 }
 
 List* Population::nextPopulation(int patience) {
+    last_filter_decision = {};
     std::pair<List*, List*> parents;
     double dist1 = 0, dist2 = 0;
     List* offspring = nullptr;
@@ -260,6 +255,14 @@ List* Population::nextPopulation(int patience) {
         p_raw = p_raw->next;
     }
     // ================= ML FILTER =================
+    if (data->research_enabled()) { offspring->candidate_id = current_iter; ++generated_count; data->recordGenerated(current_iter, current_iter); }
+    if (prune_policy && prune_policy->reject(current_iter)) {
+        ++ml_reject_count; // Includes random and learned rejects for legacy consumers.
+        last_filter_decision.rejected = true;
+        data->recordCandidate(current_iter, current_iter, "filter_rejected");
+        delete offspring;
+        return best_solution;
+    }
     if (ml_enable_ && training_completed_at >= 0 && current_iter > training_completed_at) {
 
         // ---- rolling rejection-rate cap ─────────────────────────────────
@@ -302,6 +305,8 @@ List* Population::nextPopulation(int patience) {
                 if (score > threshold) {
                     ml_win_rejects_++;
                     ml_reject_count++;
+                    last_filter_decision.rejected = true;
+                    data->recordCandidate(current_iter, current_iter, "filter_rejected");
                     if (LOG) {
                         std::cout << "[ML] Offspring rejected before VND (COX). "
                             << "score=" << score << "\n";
@@ -348,6 +353,8 @@ List* Population::nextPopulation(int patience) {
                 if (score > threshold) {
                     ml_win_rejects_++;
                     ml_reject_count++;
+                    last_filter_decision.rejected = true;
+                    data->recordCandidate(current_iter, current_iter, "filter_rejected");
                     if (LOG) {
                         std::cout << "[ML] Offspring rejected before VND ("
                             << ml_model_name << "). Score=" << score << "\n";
@@ -365,6 +372,8 @@ List* Population::nextPopulation(int patience) {
 
 
     // ================= VND IMPROVEMENT =================
+    last_filter_decision.reached_vnd = true;
+    if (data->research_enabled()) ++vnd_evaluated_count;
     offspring = ls.VND(offspring);
 
     // ================= POST-VND COST =================
@@ -376,6 +385,7 @@ List* Population::nextPopulation(int patience) {
     offspring->post_vnd_value = post_cost;
     offspring->pre_vnd_coords = raw_coords;
     offspring->birth_iter = current_iter;
+    if (data->research_enabled()) offspring->candidate_id = current_iter;
     offspring->instance_index = data->instance_index;
     // lineage snapshot taken before VND (see above)
     offspring->parent1_value   = p1_value;
@@ -389,31 +399,16 @@ List* Population::nextPopulation(int patience) {
     // ================= INSERT & SURVIVAL MGMT =================
     insertSolution(offspring);
     bool offspring_was_inserted = offspring->was_inserted;
+    if (data->research_enabled()) {
+        if (offspring_was_inserted) ++admitted_count;
+        else ++not_admitted_count;
+        data->recordCandidate(current_iter, current_iter,
+            offspring_was_inserted ? "admitted" : "not_admitted");
+    }
     offspring->post_vnd_fitness_at_birth = offspring->getFitness();
     populationManagement();
     if (!offspring_was_inserted) delete offspring;
-    if (ml_enable_ && ml_model_name == "COX") {
-        for (List* s : population) {
-
-            if (s->has_cox_lp) continue;
-
-            std::vector<std::pair<double, double>> coords = s->pre_vnd_coords;
-            if (coords.empty()) {
-                Node* p = s->head();
-                for (int i = 0; i < s->size(); ++i) {
-                    coords.push_back({ p->x, p->y });
-                    p = p->next;
-                }
-            }
-
-            auto feats = GeometryFeatures::extract(coords);
-            feats["pre_vnd_cost"] =
-                (s->pre_vnd_value >= 0) ? s->pre_vnd_value : s->getValue();
-
-            s->cox_lp = predict_cox_score(feats);
-            s->has_cox_lp = true;
-        }
-    }
+    backfill_cox_scores();
 
     // ================= LOGGING =================
     if (LOG) {
@@ -518,6 +513,9 @@ void Population::populationManagement() {
         for (int i = population_size; i < old_size; ++i) {
             List* dying = population[i];
 
+            if (data->research_enabled())
+                data->recordLifetime(dying->candidate_id, dying->birth_iter, current_iter, false);
+
 
             if (!dying->was_inserted)
                 continue;
@@ -581,8 +579,16 @@ void Population::randomSwap(List* s) {
 double Population::predict_cox_score(
     const std::map<std::string, double>& feats
 ) {
-    if (!ml_model) return 0.0;
-    return ml_model->predict_cox_score(feats);
+    return CoxLifecycle::predict(ml_enable_, ml_model_name, training_completed_at, ml_model, feats);
+}
+
+void Population::backfill_cox_scores() {
+    CoxLifecycle::backfill(ml_enable_, ml_model_name, training_completed_at, ml_model, population);
+}
+
+void Population::complete_ml_training(bool success, int iteration) {
+    CoxLifecycle::complete_training(success, iteration, ml_enable_, ml_model_name,
+        training_completed_at, ml_model, population, best_solution);
 }
 
 double Population::compute_relative_lp_threshold(double q) {

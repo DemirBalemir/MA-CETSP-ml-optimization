@@ -1,0 +1,8 @@
+{
+  "instance": "bonus1000",
+  "model": "GBSA",
+  "fold": 2,
+  "cindex": 0.5700811679719678,
+  "seconds": 21.109000000004016,
+  "warnings": []
+}

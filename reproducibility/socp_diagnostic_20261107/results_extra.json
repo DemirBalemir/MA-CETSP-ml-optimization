@@ -1,0 +1,22 @@
+[
+  {
+    "case": "coordinate_bounds_tight",
+    "status": 13,
+    "solutions": 1,
+    "runtime": 0.015000104904174805,
+    "variables": 259,
+    "linear_constraints": 185,
+    "quadratic_constraints": 74,
+    "params": {
+      "FeasibilityTol": 1e-09,
+      "BarQCPConvTol": 1e-10
+    },
+    "source_sha256": "f16cd27735893959309fb6096f3529da5229233f44c60e2d6fa7c64162bf79f1",
+    "objective": 349.1348891846393,
+    "recomputed_cost": 349.13488918352334,
+    "max_disk_distance_excess": 1.5507595207964187e-12,
+    "depot_distance": 0.0,
+    "ConstrVio": 1.1362999430275522e-10,
+    "BoundVio": 0.0
+  }
+]

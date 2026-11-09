@@ -1,0 +1,8 @@
+{
+  "records": 18115,
+  "fold_scores": 135,
+  "training_runs_held_out": true,
+  "prediction_cindex_max_error": 0.0,
+  "source_hashes_match": true,
+  "no_training_or_solver_launched": true
+}

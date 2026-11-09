@@ -1,4 +1,4 @@
-# Assessing the Viability of Pre-Local-Search Surrogate Filtering: A Diagnostic Study of Survival-Based Offspring Pruning in Memetic CETSP
+# Assessing the Viability of Pre-Local-Search Surrogate Filtering: A Diagnostic Study of Survival-Based Offspring Pruning in a Memetic Algorithm for the Close-Enough Traveling Salesman Problem
 
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://en.cppreference.com/w/cpp/17)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-green.svg)](https://www.python.org/)
@@ -8,16 +8,42 @@
 
 This repository provides the official implementation, experimental benchmarks, and diagnostic reproducibility suite for the research paper:
 
-> **Assessing the Viability of Pre-Local-Search Surrogate Filtering: A Diagnostic Study of Survival-Based Offspring Pruning in Memetic CETSP**<br>
+> **Assessing the Viability of Pre-Local-Search Surrogate Filtering: A Diagnostic Study of Survival-Based Offspring Pruning in a Memetic Algorithm for the Close-Enough Traveling Salesman Problem**<br>
 > *Demir Balemir and Deniz Cantürk*<br>
-> Department of Computer Engineering, TED University, Ankara, Türkiye<br>
-> Target journal: *Expert Systems with Applications* (Elsevier)
+> TED University, Ankara, Türkiye<br>
+> Target journal: *IEEE Access*
 
-The study investigates whether an offspring's pre-local-search features can support useful pruning decisions before an expensive local-search stage in a memetic algorithm for the **Close-Enough Traveling Salesman Problem (CETSP)**. Evaluating nine survival models against a concurrent in-run no-filter control on 53 benchmark instances with five seeds per configuration (2,650 island-runs), the experiment finds **no statistically detectable difference in solution quality or total runtime**.
+The study investigates whether an offspring's pre-local-search features support useful rejection before expensive local search in a memetic algorithm for the **Close-Enough Traveling Salesman Problem (CETSP)**. The historical nine-model evaluation used 53 instances and five seeds (2,650 island outcomes). Separate Cox/random/unfiltered and corrected-neural re-evaluations each contain 795 runs. The corrected filters showed no detectable final-cost advantage and required more total runtime in the evaluated execution regimes.
 
 To investigate this outcome, the paper presents diagnostic analyses of target predictability, rank transmission through local search, and discrimination beyond temporal drift. These motivate a **one-sided viability gate**, assessed retrospectively in the tested system.
 
 ---
+
+## Current IEEE Access revision
+
+The [November 2026 experiment/reproduction reference](reproducibility/revision_20261109/README.md) contains the final saved results, frozen deployed code, selected diagnostic inputs, folds, predictions and compact training audits. This is the public result-level reference for the latest experiments. Submission documents remain separate; `paper/` and `Article.pdf` are historical manuscript versions.
+
+The changes are distinct:
+
+1. Correct the existing neural training path by removing invalid validation-loss early stopping; audit fixed-epoch learning.
+2. Change MTLR's operational score separately to a finite-horizon negative step-RMST.
+3. Compare all nine families on the same 18,115 selected records and run-held-out folds (30 reused neural fits plus 105 other fits).
+4. Re-evaluate existing DeepSurv/MTLR implementations against a fresh unfiltered control in 795 runs. DeepSurv and MTLR take 5.28% and 4.02% longer (six-test Holm p=0.004252 and 0.045651), without a detectable cost advantage.
+5. Keep the separate 795-run Cox/random/unfiltered study: Cox takes 7.95% longer than random and 6.11% longer than unfiltered; no cost contrast survives Holm adjustment.
+
+The historical neural rows retain their arithmetic and implementation qualifications. The common-sample model concordance range is 0.526–0.569. It does not re-estimate the older oracle/clock on that sample, and it is separate from the fixed-Cox within-time diagnostic. Each neural arm contains 175 trained runs and 90 runs that stopped before training; all 350 saved final networks have fitting audits.
+
+**Saved-result verification, no solver or fitting:**
+
+```console
+python reproducibility/revision_20261109/reproduce_revision_results.py
+```
+
+Install the [recorded analysis dependencies](reproducibility/revision_20261109/requirements-saved-results.txt) first. The script checks six neural contrasts, 135 saved-prediction fold C-indices, operational totals and six separate Cox contrasts. See the reference README for data and hash scope. Full raw neural run archives and weights are retained by the authors, not embedded in Git.
+
+The numerical refinement policy remains part of the evaluated pipeline. Cox follow-up counts include 628,249 numerical-no-solution fallbacks in 1,245,598 conic calls. The corrected-neural study has its own counts: 620,134 fallbacks and 610,674 successful calls. A [separate saved SOCP representation diagnostic](reproducibility/socp_diagnostic_20261107/README_PUBLIC.md) shows one subproblem resolved by implied coordinate bounds; no end-to-end rerun with those bounds was performed.
+
+All 2,650 original best costs, runtimes and rejection counts matched post-join summaries. Auxiliary iteration-field uncertainty and historical executable-identity limits remain documented in the reporting reference.
 
 ## Key Empirical & Diagnostic Findings
 
@@ -25,18 +51,21 @@ The end-to-end experiment and the offline diagnostics use different samples:
 
 | Analysis | Sample | Main observation |
 |---|---|---|
-| End-to-end filtering | 53 test instances × 5 runs × 10 islands = 2,650 island runs | No statistically detectable quality or runtime difference under the evaluated protocol |
-| Model and oracle diagnostics | 5 instances; 17,568 recorded solutions | Model-mean concordance approximately 0.495–0.544; post-VND empirical oracle reference 0.687 |
-| Full-VND rank–gain calibration | 25 instances | Mean recorded-cohort rank–gain coefficient 0.889; observed direct cost-rank concordance 0.560 |
-| Stage-wise local-search measurements | 3 instrumented instances | Instance-dependent transmission of cost ordering through greedy, LKH and refinement stages |
+| Historical end-to-end filtering | 53 test instances × 5 runs × 10 islands = 2,650 island runs | No detectable quality/runtime advantage; historical neural/Cox implementation scope applies |
+| Corrected Cox control | 53 instances × 5 common seeds × 3 methods = 795 runs, plus 159 separate calibration runs | No detectable adjusted cost advantage; greater Cox total runtime |
+| Corrected neural re-evaluation | 53 instances × 5 common seeds × DeepSurv/MTLR/fresh unfiltered = 795 runs | No detectable cost advantage; runtime +5.28% / +4.02% |
+| Updated common-sample diagnostic | 5 instances; 18,115 positive-lifetime eviction records; 135 held-out fold scores | Equal-instance mean concordance 0.526–0.569 across nine families |
+| Older oracle/feature diagnostics | Smaller, separately selected recorded samples | Post-VND empirical oracle reference 0.687; not a common-sample bound |
+| Full-VND rank–gain calibration | 25 instances | Mean recorded-cohort coefficient 0.889; direct cost-rank concordance 0.560 |
+| Stage-wise local-search measurements | 3 instrumented instances | Instance-dependent transmission through greedy, LKH and refinement stages |
 
-Quality comparisons cover all 53 test instances; runtime tests use the 47 with at least one recorded rejection. Tests pair instance-level means, while island seeds differ by island ID. Runtime is to the stopping rule under concurrent-island contention, rather than to a common solution-quality target. The absence of statistical significance does not establish equivalence.
+In the historical experiment, quality comparisons cover all 53 test instances; runtime tests use the 47 with at least one recorded rejection. Tests pair instance-level means, while island seeds differ by island ID. Runtime is to the stopping rule under concurrent-island contention, rather than to a common solution-quality target. The absence of statistical significance does not establish equivalence.
 
 Among the 2,385 ML island runs, 1,533 reached the nominal 1,000-iteration training floor; three ended exactly at that boundary. The median post-floor window was 1,083 iterations, approximately 52% of run length. Reaching the floor is distinct from having a non-empty active filtering window.
 
 The diagnostics are conditional on recorded, admitted, positive-lifetime solutions. Unadmitted offspring and terminal control survivors are absent, and reconstructed cohorts are incomplete. The five-instance sample includes one development instance; the 25-instance sample includes eight. Their memberships are recorded in the [instance manifest](analysis_la_cetsp/results/instance_manifest.csv).
 
-The oracle is a fitted empirical reference, not a formal prediction ceiling or proof that survival is inherently unpredictable. Rank–gain association alone does not establish rank destruction or filtering infeasibility. Clock comparisons contextualise the measured discrimination; within-time evaluation and time-plus-feature controls remain future work. See [paper/README.md](paper/README.md) for the protocols and limitations.
+The oracle is a fitted empirical reference, not a formal prediction ceiling or proof that survival is inherently unpredictable. Rank–gain association alone does not establish rank destruction or filtering infeasibility. Clock comparisons contextualise the measured discrimination. The revision adds a fixed-Cox within-time and time-plus-feature analysis on 16 matched test instances (29,908 records); this is a selected-sample diagnostic, not a re-evaluation of all nine deployed models. See [paper/README.md](paper/README.md) for the protocols and limitations.
 
 ---
 
@@ -48,7 +77,7 @@ The oracle is a fitted empirical reference, not a formal prediction ceiling or p
 | Rank transmission | Assess input-output ordering alongside Spearman(input cohort rank, relative gain) | Full-VND coefficient 0.889; cost-rank concordance 0.560 |
 | Discrimination beyond drift | Compare candidate features with a matched iteration-index control | Best tested feature representation 0.605; clock 0.613 |
 
-**One-sided interpretation:** adverse findings can support reconsidering the tested design; favourable findings justify further evaluation without establishing net benefit. The gate has been applied retrospectively in one pipeline. Prospective validation and matched-rate random-pruning comparisons remain future work; no universal cut-point is claimed.
+**One-sided interpretation:** adverse findings can support reconsidering the tested design; favourable findings justify further evaluation without establishing net benefit. The gate has been applied retrospectively in one pipeline. Prospective validation remains future work; no universal cut-point is claimed. The revision includes a corrected Cox versus independently calibrated random-pruning comparison; the other eight models have no random-pruning ablation.
 
 ---
 
@@ -70,7 +99,7 @@ flowchart LR
 ```
 
 Population fitness combines cost rank and diversity rank as
-$(1-\beta)r_{val}+\beta r_{div}$. Rejected offspring bypass VND and insertion;
+$r_{val}+\beta r_{div}$ with $\beta=0.96$. Rejected offspring bypass VND and insertion;
 their rejection does not advance the stagnation counter.
 
 ### Components
@@ -82,7 +111,7 @@ their rejection does not advance the stagnation counter.
   - *Gradient Boosting Survival Analysis (GBSA)*: Stagewise Cox partial-likelihood boosting.
   - *DeepSurv*: Multilayer neural network (2 hidden layers, 64 units, batch norm, dropout).
   - *Multi-Task Logistic Regression (MTLR)*: Neural network discretising the time axis into logistic models.
-  - *Survival Support Vector Machines (SSVM)*: Structured ranking formulation for censored pairs.
+  - *Survival Support Vector Machines (SSVM)*: Linear FastSurvivalSVM ranking formulation for censored pairs; no kernel model was evaluated.
   - *Weibull Accelerated Failure Time (Weibull AFT)*: Parametric log-survival regression.
   - *$k$-NN Survival*: Non-parametric risk estimator using the 15 nearest neighbours.
 - **Resident Process IPC:** Non-Cox models are served by a resident Python process communicating over standard anonymous I/O pipes via single-line JSON requests, removing interpreter start-up overhead.
@@ -105,9 +134,9 @@ their rejection does not advance the stagnation counter.
 - **Solvers:** Gurobi 12.0.3, LKH 2.0.11
 - **Python:** 3.10.9 (scikit-survival 0.25.0, lifelines 0.30.0, scikit-learn 1.7.2, PyTorch 2.11 CPU, pycox 0.3.0)
 
-### Benchmark Results (53 Instances $\times$ 5 Seeds = 2,650 Island-Runs)
+### Historical Benchmark Results (53 Instances $\times$ 5 Seeds = 2,650 Island-Runs)
 
-| Model | Class | Mean Best Cost | Degradation (%) | Speedup | Reject (%) | Wilcoxon Quality ($p$) | Wilcoxon Speed ($p$) |
+| Model | Class | Mean Best Cost | Degradation (%) | Control/model runtime | Reject (%) | Wilcoxon Quality ($p$) | Wilcoxon total runtime ($p$) |
 |---|---|---|---|---|---|---|---|
 | **Baseline (no ML)** | Control | 905.956 | +0.000% | 1.000 | 0.00% | — | — |
 | **RSF** | Tree ensemble | 906.253 | -0.009% | 1.008 | 2.01% | 0.944 ($n=39$) | 0.150 ($n=47$) |
@@ -117,8 +146,10 @@ their rejection does not advance the stagnation counter.
 | **GBSA** | Gradient boosting | 906.026 | +0.009% | 1.019 | 4.70% | 0.361 ($n=41$) | 0.208 ($n=47$) |
 | **DeepSurv** | Deep network | 906.048 | +0.011% | 1.030 | 4.21% | 0.572 ($n=40$) | 0.290 ($n=47$) |
 | **MTLR** | Deep network | 905.969 | +0.014% | 1.033 | 4.42% | 0.888 ($n=36$) | 0.498 ($n=47$) |
-| **SSVM** | Kernel / ranking | 906.248 | +0.018% | 1.084 | 6.51% | 0.464 ($n=40$) | 0.236 ($n=47$) |
+| **SSVM** | Linear ranking | 906.248 | +0.018% | 1.084 | 6.51% | 0.464 ($n=40$) | 0.236 ($n=47$) |
 | **Cox PH** | Linear | 906.415 | +0.049% | 1.041 | 8.24% | 0.567 ($n=39$) | 0.857 ($n=47$) |
+
+The following table describes the historical implementation; its neural and Cox rows have the implementation-scope limits stated above. It is not the corrected-neural evaluation.
 
 *Degradation averages matched run-level cost ratios $100(f_{mi} / f_{0i} - 1)$. Wilcoxon tests use per-instance mean differences (53 instances for quality; 47 instances with rejections for speed). All $p \ge 0.05$.*
 
@@ -126,45 +157,21 @@ their rejection does not advance the stagnation counter.
 
 ## Repository Structure
 
-```
+```text
 MA-CETSP/
-├── Article.pdf                   # Complete manuscript PDF (20 pages, APA 7 references)
-├── src/                          # C++ Solver implementation
-│   ├── Algo.cpp                  # Main memetic search loop & stopping logic
-│   ├── Genetic/                  # Population management, crossover, mutation
-│   ├── LocalSearch/              # VND, greedy adjustment, LKH interface
-│   ├── ML/                       # SurvivalModel C++ bridge & native Cox
-│   └── Features/                 # Geometry & cost feature extractors
-├── include/                      # C++ header files & global parameters (Defs.hpp)
-├── ml/
-│   ├── scripts/                  # Model training, prediction, threshold calibration
-│   └── models/                   # Serialised models and training logs
-├── datasets/                     # 68 CETSP benchmark instances (Mennell & Car-door)
-├── solutions/                    # Best-known tours and solution logs
-├── external/
-│   └── LKH-2.0.11/               # Bundled Lin-Kernighan-Helsgaun solver
-├── analysis_test/                # Parsed end-to-end experiment records (2,650 runs)
-│   ├── parsed/                   # Run summaries, rejections, thresholds, convergence
-│   └── results/                  # Model comparisons, Wilcoxon tests, threshold stats
-├── analysis_la_cetsp/            # Diagnostic analyses & retained measurement CSVs
-│   ├── make_figures.py           # Generates data figures; Figure 1 is TikZ in main.tex
-│   ├── oracle_ceiling.py         # Empirical oracle reference
-│   ├── lkh_character.py          # LKH rank-gain contraction analysis
-│   └── calibrate_recorded_cohorts.py # Full-VND copula sensitivity analysis
-├── tools/                        # Reproduction & verification tools
-│   ├── export_paper_results.py   # Rebuilds paper tables and LaTeX input fragments
-│   ├── test_diagnostic_metrics.py# Unit tests for rank concordance metrics
-│   ├── texcheck.py               # LaTeX document integrity checker
-│   └── prepare_anonymous_submission.py # Double-anonymized submission generator
-├── paper/                        # Complete LaTeX manuscript sources
-│   ├── main.tex                  # Local source of truth (cas-dc template)
-│   ├── references.bib            # Canonical bibliography (54 entries)
-│   ├── figures/                  # Data figures as PDF/PNG; Figure 1 is in main.tex
-│   ├── generated/                # Exported LaTeX input fragments
-│   └── submission/               # Cover letter, title page, editor info
-├── run_experiment.ps1            # Automated PowerShell experiment runner
-├── CMakeLists.txt                # CMake build configuration
-└── README.md                     # This file
+|-- src/, include/              C++ search, filtering, scoring and logging
+|-- ml/scripts/                 Training, resident prediction and shared scores
+|-- tools/                      Campaign, diagnostic and analysis drivers
+|-- tests/                      Synthetic Python and C++ unit checks
+|-- datasets/                   CETSP benchmark inputs
+|-- reproducibility/
+|   |-- revision_20261109/       Frozen code, saved results, folds and predictions
+|   `-- socp_diagnostic_20261107/ Saved numerical subproblem and result tables
+|-- analysis_test/              Historical parsed nine-model results
+|-- analysis_la_cetsp/          Diagnostic source and older measurements
+|-- paper/                      Historical manuscript source (not current submission)
+|-- Article.pdf                 Historical manuscript PDF
+`-- CMakeLists.txt              Build configuration
 ```
 
 ---
@@ -270,13 +277,13 @@ python analysis_la_cetsp/make_figures.py
 python tools/texcheck.py
 ```
 
-### Compiling the Manuscript
+### Compiling the historical manuscript
 ```bash
 cd paper
 latexmk -pdf main.tex
 ```
 
-References use **APA 7** (`biblatex-apa` with **Biber**). Overleaf and `latexmk`
+This historical source uses **APA 7** (`biblatex-apa` with **Biber**). Overleaf and `latexmk`
 detect Biber automatically. The legacy `cas-model2-names.bst` is not used.
 
 Or, from the repository root, create the output directory and compile with Tectonic
@@ -300,7 +307,7 @@ The release supports result-level reproduction, with these limits on reconstruct
 
 ## Citation
 
-The diagnostic manuscript extends the earlier LA-CETSP conference study: Balemir, Cantürk and Dökeroğlu, IISEC 2026, pp. 364–369, [doi:10.1109/IISEC69317.2026.11418468](https://doi.org/10.1109/IISEC69317.2026.11418468). The manuscript discusses the change from the earlier four-instance evaluation to the current protocol.
+The diagnostic manuscript extends the earlier LA-CETSP conference study: Balemir, Cantürk and DÃ¶keroÄŸlu, IISEC 2026, pp. 364–369, [doi:10.1109/IISEC69317.2026.11418468](https://doi.org/10.1109/IISEC69317.2026.11418468). The manuscript discusses the change from the earlier four-instance evaluation to the current protocol.
 
 ```bibtex
 @unpublished{balemir2026assessing,

@@ -1,0 +1,35 @@
+{
+  "results": [
+    {
+      "test": "progress.json_real_windows_sharing_collision",
+      "passed": true,
+      "retried": true
+    },
+    {
+      "test": "results.csv_real_windows_sharing_collision",
+      "passed": true,
+      "retried": true
+    },
+    {
+      "test": "non_permission_error_propagates_without_retry",
+      "passed": true
+    },
+    {
+      "test": "permission_retry_timeout_is_bounded",
+      "passed": true
+    },
+    {
+      "test": "report_failure_stops_new_work",
+      "passed": true
+    },
+    {
+      "test": "all_26_frozen_runtime_files_unchanged",
+      "passed": true
+    }
+  ],
+  "retry_messages": [
+    "[IO-RETRY] PermissionError: [WinError 5] Access is denied: 'C:\\\\Users\\\\Demir\\\\researchproject\\\\MA-CETSP\\\\solutions\\\\neural53_v1\\\\maintenance\\\\20261109_io_probe\\\\guarded\\\\progress.json.tmp' -> 'C:\\\\Users\\\\Demir\\\\researchproject\\\\MA-CETSP\\\\solutions\\\\neural53_v1\\\\maintenance\\\\20261109_io_probe\\\\guarded\\\\progress.json'",
+    "[IO-RETRY] PermissionError: [Errno 13] Permission denied: 'C:\\\\Users\\\\Demir\\\\researchproject\\\\MA-CETSP\\\\solutions\\\\neural53_v1\\\\maintenance\\\\20261109_io_probe\\\\guarded\\\\results.csv'"
+  ],
+  "adapter_sha256": "bdc9a344438c9481c5bea0ec79602995bb8eb86b0a4561fc3890257b002a69d9"
+}

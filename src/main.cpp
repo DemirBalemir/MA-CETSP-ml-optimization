@@ -17,7 +17,7 @@ static const std::vector<std::string> ISLAND_MODEL_CYCLE = {
     "BASELINE"   // island 9: ML disabled — direct per-run ablation control
 };
 
-int main(int argc, char *argv[]) {
+static int run_main(int argc, char *argv[]) {
     std::cout << "Memetic Algo for CETSP\n\n";
 
     Parameters base(argc, argv);
@@ -32,7 +32,8 @@ int main(int argc, char *argv[]) {
         algo.run();
         std::cout << "\n========== RUN SUMMARY ==========\n"
                   << "  Island 0"
-                  << "  model="    << p.ml_model
+                  << "  model="    << (!p.ml_enable ? (p.filter_mode == "random" ? "RANDOM" : "BASELINE") :
+                                       (p.filter_mode == "legacy" || algo.learned_filter_active()) ? p.ml_model : "LEARNED_INACTIVE")
                   << "  best="     << algo.get_best_value()
                   << "  time="     << algo.get_total_time() << "s"
                   << "  rejected=" << algo.get_reject_count() << "\n"
@@ -49,7 +50,7 @@ int main(int argc, char *argv[]) {
 
     auto run_island = [&](int id) {
         // Cycle through models unless the user fixed one with --ml_model
-        std::string model = (base.ml_model == ML_MODEL)  // default not overridden
+        std::string model = (!base.ml_model_explicit)  // default not overridden
             ? ISLAND_MODEL_CYCLE[id % ISLAND_MODEL_CYCLE.size()]
             : base.ml_model;
 
@@ -74,7 +75,8 @@ int main(int argc, char *argv[]) {
         best_values[id]   = algo.get_best_value();
         total_times[id]   = algo.get_total_time();
         reject_counts[id] = algo.get_reject_count();
-        model_used[id]    = p.ml_model;
+        model_used[id]    = !p.ml_enable ? "BASELINE" :
+                            (p.filter_mode == "legacy" || algo.learned_filter_active()) ? p.ml_model : "LEARNED_INACTIVE";
     };
 
     std::vector<std::thread> threads;
@@ -114,4 +116,12 @@ int main(int argc, char *argv[]) {
               << "==========================================\n";
 
     return 0;
+}
+
+int main(int argc, char *argv[]) {
+    try { return run_main(argc, argv); }
+    catch (const std::exception& e) {
+        std::cerr << "[ERROR] " << e.what() << "\n";
+        return 2;
+    }
 }

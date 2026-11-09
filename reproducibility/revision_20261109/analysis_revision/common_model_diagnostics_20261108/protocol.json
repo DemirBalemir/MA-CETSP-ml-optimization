@@ -1,0 +1,22 @@
+{
+  "models": [
+    "COX",
+    "ELASTICNET",
+    "RSF",
+    "GBSA",
+    "SSVM",
+    "WEIBULLAFT",
+    "KNN"
+  ],
+  "new_fits": 105,
+  "reused_neural_fits": 30,
+  "source_sample": "C:\\Users\\Demir\\researchproject\\MA-CETSP\\analysis_revision\\neural_diagnostic_rerun_20261108",
+  "mtlr_score": "negative_rmst_step_v1",
+  "settings": "Same 3 outer folds, features and model hyperparameters as model_ceiling.py; no tuning",
+  "scoring": "Mean fold C then equal mean of five instances; selected positive-lifetime eviction sample",
+  "sources": {
+    "analysis_la_cetsp/model_ceiling.py": "e86ded5c9ff46bc2957736f38ae643819a32949c6f28050ebb62cb5e330311b3",
+    "tools/common_model_diagnostics.py": "b444211ba0b5a5dd643c83fcfe562ad739577a1d76183cc7a91c40a9edcacf44",
+    "ml/scripts/mtlr_scores.py": "0cd99a2bb04534b295f6b235f41600600cec52c995743b710c6c76a9d3876a20"
+  }
+}

@@ -1,0 +1,114 @@
+[
+  {
+    "case": "baseline",
+    "status": 12,
+    "solutions": 0,
+    "runtime": 0.003999948501586914,
+    "variables": 259,
+    "linear_constraints": 185,
+    "quadratic_constraints": 74,
+    "params": {},
+    "source_sha256": "f16cd27735893959309fb6096f3529da5229233f44c60e2d6fa7c64162bf79f1"
+  },
+  {
+    "case": "fix_zero_radius",
+    "status": 12,
+    "solutions": 0,
+    "runtime": 0.0,
+    "variables": 259,
+    "linear_constraints": 187,
+    "quadratic_constraints": 73,
+    "params": {},
+    "source_sha256": "f16cd27735893959309fb6096f3529da5229233f44c60e2d6fa7c64162bf79f1"
+  },
+  {
+    "case": "coordinate_bounds",
+    "status": 2,
+    "solutions": 1,
+    "runtime": 0.007999897003173828,
+    "variables": 259,
+    "linear_constraints": 185,
+    "quadratic_constraints": 74,
+    "params": {},
+    "source_sha256": "f16cd27735893959309fb6096f3529da5229233f44c60e2d6fa7c64162bf79f1",
+    "objective": 349.1349078578171,
+    "recomputed_cost": 349.13486988333653,
+    "max_disk_distance_excess": 3.198730148312734e-06,
+    "depot_distance": 0.0,
+    "ConstrVio": 6.397461324070264e-05,
+    "BoundVio": 0.0
+  },
+  {
+    "case": "distance_lower_bounds",
+    "status": 12,
+    "solutions": 0,
+    "runtime": 0.0019998550415039062,
+    "variables": 259,
+    "linear_constraints": 185,
+    "quadratic_constraints": 74,
+    "params": {},
+    "source_sha256": "f16cd27735893959309fb6096f3529da5229233f44c60e2d6fa7c64162bf79f1"
+  },
+  {
+    "case": "fix_zero_and_coordinate_bounds",
+    "status": 2,
+    "solutions": 1,
+    "runtime": 0.003000020980834961,
+    "variables": 259,
+    "linear_constraints": 187,
+    "quadratic_constraints": 73,
+    "params": {},
+    "source_sha256": "f16cd27735893959309fb6096f3529da5229233f44c60e2d6fa7c64162bf79f1",
+    "objective": 349.1349078578171,
+    "recomputed_cost": 349.13486988333653,
+    "max_disk_distance_excess": 3.198730148312734e-06,
+    "depot_distance": 0.0,
+    "ConstrVio": 6.397461324070264e-05,
+    "BoundVio": 0.0
+  },
+  {
+    "case": "baseline_numericfocus3",
+    "status": 12,
+    "solutions": 0,
+    "runtime": 0.006999969482421875,
+    "variables": 259,
+    "linear_constraints": 185,
+    "quadratic_constraints": 74,
+    "params": {
+      "NumericFocus": 3
+    },
+    "source_sha256": "f16cd27735893959309fb6096f3529da5229233f44c60e2d6fa7c64162bf79f1"
+  },
+  {
+    "case": "baseline_homogeneous",
+    "status": 12,
+    "solutions": 0,
+    "runtime": 0.002000093460083008,
+    "variables": 259,
+    "linear_constraints": 185,
+    "quadratic_constraints": 74,
+    "params": {
+      "BarHomogeneous": 1
+    },
+    "source_sha256": "f16cd27735893959309fb6096f3529da5229233f44c60e2d6fa7c64162bf79f1"
+  },
+  {
+    "case": "baseline_no_presolve",
+    "status": 9,
+    "solutions": 1,
+    "runtime": 60.05299997329712,
+    "variables": 259,
+    "linear_constraints": 185,
+    "quadratic_constraints": 74,
+    "params": {
+      "Presolve": 0
+    },
+    "source_sha256": "f16cd27735893959309fb6096f3529da5229233f44c60e2d6fa7c64162bf79f1",
+    "objective": 349.13488924163886,
+    "recomputed_cost": 349.13488918055873,
+    "max_disk_distance_excess": 0.0,
+    "depot_distance": 0.0,
+    "ConstrVio": 8.526512829121202e-14,
+    "BoundVio": 0.0
+  }
+]

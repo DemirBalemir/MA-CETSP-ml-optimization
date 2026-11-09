@@ -1,0 +1,45 @@
+{
+  "rows": 2650,
+  "fields": {
+    "best_iter": {
+      "recovered": 2577,
+      "unresolved": 73,
+      "evidence": {
+        "literal_summary_field": 2572,
+        "unresolved": 73,
+        "zero_rejection_stop_rule_corroboration": 5
+      },
+      "different_from_original": 36
+    },
+    "effective_iter": {
+      "recovered": 2572,
+      "unresolved": 78,
+      "evidence": {
+        "literal_summary_field": 2563,
+        "unresolved": 78,
+        "terminal_log_corroboration": 5,
+        "zero_rejection_stop_rule_corroboration": 4
+      },
+      "different_from_original": 79
+    }
+  },
+  "corrected_fields": 115,
+  "cost_and_runtime_unchanged_exactly": true,
+  "displayed_rejection_rates_unchanged": true,
+  "activation_summaries_unchanged": true,
+  "activity": {
+    "original": {
+      "before_trigger": 852,
+      "at_trigger": 3,
+      "median_window": 1083.0,
+      "median_window_fraction": 0.5199231877100337
+    },
+    "safe_reference": {
+      "before_trigger": 852,
+      "at_trigger": 3,
+      "median_window": 1083.0,
+      "median_window_fraction": 0.5199231877100337
+    }
+  },
+  "core_rows_verified": 2650
+}

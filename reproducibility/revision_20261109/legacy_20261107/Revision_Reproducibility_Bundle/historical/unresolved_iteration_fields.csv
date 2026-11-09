@@ -1,0 +1,134 @@
+instance,run,model,island,console,console_sha256,old_best_iter,old_effective_iter,ml_rejects,complete_log_count,natural_stop_literal,issues,best_iter,best_iter_evidence_kind,best_iter_excerpt,effective_iter,effective_iter_evidence_kind,effective_iter_excerpt
+concentricCircles2,2,COX,0,solutions\experiment_results\instance12_20260629_013016\run2_seed11.log,4719d23794643487137b47909552e83757b3af88bddb244096b60b8c4214e712,608,1142,38,738,False,,607.0,literal_summary_field,"[Island 0] [SUMMARY] instance= 27.027 40.5405 37.8378 concentricCircles227.027 29.7297 35.1351 40.5405 37.8378 35.1351  model=COX40.5405 best= 37.8378 153.167
+ best_iter=607 effective_iter=population costs : 1145 total_t=
+154.675 187.732 ",,unresolved,
+concentricCircles2,2,MTLR,8,solutions\experiment_results\instance12_20260629_013016\run2_seed11.log,4719d23794643487137b47909552e83757b3af88bddb244096b60b8c4214e712,45,541,0,320,False,,,unresolved,,545.0,literal_summary_field,[Island 8] [SUMMARY] instance=32.4324 29.7297 concentricCircles2 model=MTLR best=153.44 best_iter=37.837845 effective_iter=545 total_t=99.9745 
+concentricCircles2,4,COX,0,solutions\experiment_results\instance12_20260629_013016\run4_seed31.log,194cb5b4c15044f6080469890b33811607ca2c1783d3d1bc6bd8209de098643e,330,828,0,515,False,,,unresolved,,,unresolved,"[Island 0] [SUMMARY] instance=
+concentricCircles2 model=COX best=[Island 6] 154.574 best_iter=330[LOG] iter= effective_iter=838830 total_t= best=153.167 patience=162.758 "
+concentricCircles2,5,BASELINE,9,solutions\experiment_results\instance12_20260629_013016\run5_seed41.log,f6d16066de2b84776f1abb81fa4ba75d8c32d0c75de5cfe9f1c9fe2ad1da8cce,327,827,0,494,True,effective_iter below complete LOG,327.0,literal_summary_field,"model=BASELINE best=154.601 best_iter=327 effective_iter=827
+---
+[Island 9] [SUMMARY] instance=concentricCircles2 model=BASELINE best=154.601 best_iter=327 effective_iter=827 total_t=149.271 ",,unresolved,"model=BASELINE best=154.601 best_iter=327 effective_iter=827
+---
+[Island 9] [SUMMARY] instance=concentricCircles2 model=BASELINE best=154.601 best_iter=327 effective_iter=827 total_t=149.271 "
+concentricCircles2,5,RSF,1,solutions\experiment_results\instance12_20260629_013016\run5_seed41.log,f6d16066de2b84776f1abb81fa4ba75d8c32d0c75de5cfe9f1c9fe2ad1da8cce,338,836,0,489,True,,,unresolved,,,unresolved,
+concentricCircles3,4,COX,0,solutions\experiment_results\instance13_20260629_084836\run4_seed31.log,1d0873593b3aa883084a26c3f9a15ce2aeaaf3b42d1d7506e6032a483edf5407,417,916,0,879,False,,,unresolved,,,unresolved,
+concentricCircles4,5,BASELINE,9,solutions\experiment_results\instance14_20260629_090506\run5_seed41.log,9783496891a18028026b72875898c15bc01ccbbe034fb0c81a161afebb113740,2013,2513,0,2448,True,effective_iter below complete LOG,2013.0,literal_summary_field,"model=BASELINE best=453.917 best_iter=2013 effective_iter=2513
+---
+[Island 9] [SUMMARY] instance=concentricCircles4 model=BASELINE best=453.917 best_iter=2013 effective_iter=2513 total_t=301.122 ",,unresolved,"model=BASELINE best=453.917 best_iter=2013 effective_iter=2513
+---
+[Island 9] [SUMMARY] instance=concentricCircles4 model=BASELINE best=453.917 best_iter=2013 effective_iter=2513 total_t=301.122 "
+concentricCircles5,2,GBSA,2,solutions\experiment_results\instance15_20260629_094048\run2_seed11.log,6ef8e79d9b5debcff0a2584f1cec2b8a18f17b1c862cc0ad17d400bb22fbed9a,1119,1681,80,1623,True,,,unresolved,,1681.0,literal_summary_field,"[Island 2] [SUMMARY] instance=concentricCircles5 model=GBSA best=634.761
+ best_iter=1119population costs :  effective_iter=1681
+ total_t=268.239 "
+rotatingDiamonds2,1,DEEPSURV,3,solutions\experiment_results\instance17_20260629_063048\run1_seed1.log,9776d87bc61422610cc692597b957713e1863a18ace59926e83388ab7a4d6bbd,25,523,0,359,True,,,unresolved,,,unresolved,
+rotatingDiamonds2,2,RSF,1,solutions\experiment_results\instance17_20260629_063048\run2_seed11.log,368eecbae9903288713546fff5c3d4c6ef77fcfa7735e36c90e247cc0b90941d,35,533,0,335,False,,,unresolved,,534.0,literal_summary_field,[Island 1] [SUMMARY] instance=rotatingDiamonds2 model=RSF best=140.477[Island 8]  best_iter=[LOG] iter=34528 effective_iter=534 total_t=119.082 best= 
+rotatingDiamonds2,4,GBSA,2,solutions\experiment_results\instance17_20260629_063048\run4_seed31.log,7f2a36c920ab2e7bfa97f1adfae1e458f11aa7764bbf82494ab0230c9aa62888,23,522,0,323,False,,23.0,literal_summary_field,[Island 2] [SUMMARY] instance=rotatingDiamonds2 model=GBSA best=140.477 best_iter=23 effective_iter=socp solution : 523145.726 total_t=114.498 ,,unresolved,
+rotatingDiamonds2,4,WEIBULLAFT,5,solutions\experiment_results\instance17_20260629_063048\run4_seed31.log,7f2a36c920ab2e7bfa97f1adfae1e458f11aa7764bbf82494ab0230c9aa62888,19,518,0,321,False,,,unresolved,,,unresolved,
+rotatingDiamonds2,4,MTLR,8,solutions\experiment_results\instance17_20260629_063048\run4_seed31.log,7f2a36c920ab2e7bfa97f1adfae1e458f11aa7764bbf82494ab0230c9aa62888,20,508,0,309,False,,,unresolved,,,unresolved,
+rotatingDiamonds2,5,ELASTICNET,7,solutions\experiment_results\instance17_20260629_063048\run5_seed41.log,f40f74d0b7e6c7bb1d88ca6184867ea3b0a00ec3cea90a1c6eecd0ce4b736bbe,91,501,0,300,False,,,unresolved,,,unresolved,
+rotatingDiamonds3,4,WEIBULLAFT,5,solutions\experiment_results\instance18_20260629_064129\run4_seed31.log,2d78327a4dbdb30d91a049936dd20d361835cb0dd8ee88212e9dff3ea5103f76,554,569,0,384,False,,70.0,literal_summary_field,[Island 5] [SUMMARY] instance= rotatingDiamonds3 model=WEIBULLAFT27.0718 best=380.883 best_iter=70 effective_iter= 57037.5691 total_t=149.663 ,,unresolved,
+rotatingDiamonds3,5,BASELINE,9,solutions\experiment_results\instance18_20260629_064129\run5_seed41.log,1a0d4c200a0cdd5f4aad41168520ed3a7a1f81a4c95dc30d34cff99cfae00bdf,525,666,0,445,False,,,unresolved,,,unresolved,
+bubbles1,3,SSVM,4,solutions\experiment_results\instance1_20260629_013852\run3_seed21.log,3f8a878868c7be0750d1270f9a1704881259af3ab3d75cd8858f869cc3a335b2,6,505,0,455,False,,,unresolved,,,unresolved,
+bubbles1,3,WEIBULLAFT,5,solutions\experiment_results\instance1_20260629_013852\run3_seed21.log,3f8a878868c7be0750d1270f9a1704881259af3ab3d75cd8858f869cc3a335b2,9,508,0,468,False,,,unresolved,,,unresolved,
+team2_200,1,ELASTICNET,7,solutions\experiment_results\instance22_20260629_065952\run1_seed1.log,5b85dad0e8a868a82ee583aafe657e0a598e6c010a2155a195abd95a6d2e4d40,819,1459,141,1077,False,,,unresolved,,,unresolved,
+team2_200,4,RSF,1,solutions\experiment_results\instance22_20260629_065952\run4_seed31.log,ff97378d771659ea250bc4e683ecbfa03de3e8c155860738ed6553db240bd28c,549,1049,1,767,True,,,unresolved,,,unresolved,
+kroD100_or2,2,RSF,1,solutions\experiment_results\instance29_20260629_235512\run2_seed11.log,18f10bfc6630eb6fdfaf62db4b0bb91500ce81475c8606ce33e859ab4da26d9a,379,700,0,473,True,,,unresolved,,,unresolved,
+kroD100_or2,2,SSVM,4,solutions\experiment_results\instance29_20260629_235512\run2_seed11.log,18f10bfc6630eb6fdfaf62db4b0bb91500ce81475c8606ce33e859ab4da26d9a,19,518,0,351,True,,,unresolved,,,unresolved,
+kroD100_or2,3,COX,0,solutions\experiment_results\instance29_20260629_235512\run3_seed21.log,57ac4d85b0387b9bba7ab3dcdd9b86db2a6bbfa86d4951be81a081b6ef66aed6,114,612,0,419,True,,,unresolved,,,unresolved,
+kroD100_or2,4,DEEPSURV,3,solutions\experiment_results\instance29_20260629_235512\run4_seed31.log,76bbd76ee566ba912a9581e48ff25d58403159a2ec483b6ea02f9601453476a9,438,554,0,420,False,,,unresolved,,556.0,literal_summary_field,"[Island 3] [SUMMARY] instance=20kroD100_or2, current population size : 26 model=DEEPSURV best=182.617
+ best_iter=56population distances :  effective_iter=556
+ total_t= 174.887 "
+kroD100_or2,5,MTLR,8,solutions\experiment_results\instance29_20260629_235512\run5_seed41.log,4a7348f34c13a01f7f8b1b920933ee93a1c0c3ab5696e06c1778be1ad1f1a8b9,237,729,0,511,False,,,unresolved,,,unresolved,
+rat195_or2,2,DEEPSURV,3,solutions\experiment_results\instance32_20260629_093349\run2_seed11.log,05bbd9d7134c012877f5cc10b5d47fd298fc2d56e7a8af6c7e0b8a5cb691b597,515,1016,2,862,True,,515.0,literal_summary_field,"[Island 3] [SUMMARY] instance=203.707 199.496rat195_or2 199.827 201.095 199.594 model= 200.236 201.186DEEPSURV best= 198.925
+ best_iter=515 effective_iter=1017[Island 5]  total_t=[LOG] iter=1048 best=198.829 patience=397233.945 ml=WEIBULLAFT iter_t=0.128557 ",,unresolved,
+rat195_or2,4,MTLR,8,solutions\experiment_results\instance32_20260629_093349\run4_seed31.log,7e2f41456d58f0e929b39816450fb451ea79a8cf204635e9b0eee6aec708e78b,361,860,0,734,True,,,unresolved,,,unresolved,
+rd400_or2,3,DEEPSURV,3,solutions\experiment_results\instance33_20260630_021818\run3_seed21.log,104d2d307e35b3897accba528a2d0b95f95f3da672ffcc252ea5221bbdffef70,1864,2823,298,2735,False,,2193.0,literal_summary_field,"[Island 3] [SUMMARY] instance=1022.26 1022.29 1022.27 1022.38 1022.62 1022.25 1022.29 rd400_or21022.29 model=DEEPSURV  best=ListAdapter solutions size before and after : 1021.43991037.64  best_iter=2193 effective_iter=2824 291 total_t=1190.85
+1022.27 1022.39 1023.45 ",,unresolved,
+lin318_or10,2,KNN,6,solutions\experiment_results\instance37_20260630_043021\run2_seed11.log,4ca6122e434631bcbad5ef8b1f9c0e8c0ddcf371fbce86a7bf23a2984eebeed2,983,1612,130,1463,False,,,unresolved,,,unresolved,
+bubbles3,1,GBSA,2,solutions\experiment_results\instance3_20260629_015257\run1_seed1.log,21f2858bb95eb622c46cd8658080b88190abc574cb7c22738c6878d4e8d52da7,701,1254,54,922,False,,,unresolved,,,unresolved,
+bubbles3,3,ELASTICNET,7,solutions\experiment_results\instance3_20260629_015257\run3_seed21.log,c3c49a169f22dfa0804d57a83a68b70d9416df8943bb92d94b063da6031ab298,344,842,0,610,True,effective_iter below complete LOG,344.0,literal_summary_field,"model=ELASTICNET best=530.286 best_iter=344 effective_iter=844
+---
+[Island 7] [SUMMARY] instance=population costs : bubbles3 model=ELASTICNET best=530.286 best_iter=344 effective_iter=844 total_t=187.795 ",,unresolved,"model=ELASTICNET best=530.286 best_iter=344 effective_iter=844
+---
+[Island 7] [SUMMARY] instance=population costs : bubbles3 model=ELASTICNET best=530.286 best_iter=344 effective_iter=844 total_t=187.795 "
+bubbles3,5,SSVM,4,solutions\experiment_results\instance3_20260629_015257\run5_seed41.log,da1a79d431543e4b21881a83280a7b0150578ef1e9c4ac60d52fa88c364953af,681,1230,50,903,False,,681.0,literal_summary_field,"[Island 4] [SUMMARY] instance= bubbles3
+ model=SSVM best=529.998[Island 8]  best_iter=681 effective_iter=1231[LOG] iter=1192 total_t=259.404 best= ",,unresolved,
+kroD100_or30,2,COX,0,solutions\experiment_results\instance43_20260629_145918\run2_seed11.log,a2503fbacfe8c99017c7f80df68d7a7b4c8087b1324313c9afe3d2b96260f452,156,655,0,418,False,,156.0,literal_summary_field,"[Island 0] [SUMMARY] instance=80.0946kroD100_or30 model=COX best=
+
+80.012ListAdapter solutions size before and after :  best_iter=156 effective_iter=population costs : 91656
+  total_t=33137.256KSX ",,unresolved,
+kroD100_or30,2,ELASTICNET,7,solutions\experiment_results\instance43_20260629_145918\run2_seed11.log,a2503fbacfe8c99017c7f80df68d7a7b4c8087b1324313c9afe3d2b96260f452,620,714,0,467,False,,,unresolved,,,unresolved,
+kroD100_or30,3,KNN,6,solutions\experiment_results\instance43_20260629_145918\run3_seed21.log,db0f6c6842a03a9f2f0041e867a6394adb467f7c7d105f5104772195d4f70681,17,515,0,321,False,,,unresolved,,,unresolved,
+kroD100_or30,3,ELASTICNET,7,solutions\experiment_results\instance43_20260629_145918\run3_seed21.log,db0f6c6842a03a9f2f0041e867a6394adb467f7c7d105f5104772195d4f70681,261,605,0,375,False,,,unresolved,,,unresolved,
+kroD100_or30,3,MTLR,8,solutions\experiment_results\instance43_20260629_145918\run3_seed21.log,db0f6c6842a03a9f2f0041e867a6394adb467f7c7d105f5104772195d4f70681,549,710,0,476,False,,,unresolved,,,unresolved,
+kroD100_or30,4,WEIBULLAFT,5,solutions\experiment_results\instance43_20260629_145918\run4_seed31.log,ef2f0f53c880e0b8b9e34776b280b9eca5134ef59d527b7e4233ae0c9eb7677f,193,576,0,350,True,,,unresolved,,,unresolved,
+kroD100_or30,4,KNN,6,solutions\experiment_results\instance43_20260629_145918\run4_seed31.log,ef2f0f53c880e0b8b9e34776b280b9eca5134ef59d527b7e4233ae0c9eb7677f,433,627,0,398,True,,,unresolved,,,unresolved,
+kroD100_or30,4,BASELINE,9,solutions\experiment_results\instance43_20260629_145918\run4_seed31.log,ef2f0f53c880e0b8b9e34776b280b9eca5134ef59d527b7e4233ae0c9eb7677f,129,570,0,363,False,,,unresolved,,,unresolved,
+kroD100_or30,5,SSVM,4,solutions\experiment_results\instance43_20260629_145918\run5_seed41.log,56718443ca178456cec0f599caaeb2fe2e121734804ee46947edc970f489d45a,269,765,0,441,False,,,unresolved,,,unresolved,
+kroD100_or30,5,WEIBULLAFT,5,solutions\experiment_results\instance43_20260629_145918\run5_seed41.log,56718443ca178456cec0f599caaeb2fe2e121734804ee46947edc970f489d45a,572,856,0,532,False,,,unresolved,,,unresolved,
+kroD100_or30,5,KNN,6,solutions\experiment_results\instance43_20260629_145918\run5_seed41.log,56718443ca178456cec0f599caaeb2fe2e121734804ee46947edc970f489d45a,707,1176,46,822,False,,,unresolved,,,unresolved,
+rd400_or30,1,DEEPSURV,3,solutions\experiment_results\instance47_20260630_094941\run1_seed1.log,2911ed5a864b3cedba627653424a3761214c5f36300fab5b7ce6ac91eb9d0b10,486,984,0,874,False,,,unresolved,,,unresolved,
+d493rdmRad,1,RSF,1,solutions\experiment_results\instance49_20260629_163417\run1_seed1.log,4f36f0d7b885f43c2fb2aaba19a164e4bcf78e998404eaa02238367d00d003c2,345,842,0,536,False,,,unresolved,,,unresolved,
+d493rdmRad,2,ELASTICNET,7,solutions\experiment_results\instance49_20260629_163417\run2_seed11.log,4f74f8bab94a5ebd113509b1357dcfc8349a710244e12c5052dd422ec52ad806,384,883,0,574,False,,,unresolved,,,unresolved,
+d493rdmRad,3,MTLR,8,solutions\experiment_results\instance49_20260629_163417\run3_seed21.log,666d651efa48831c0b4b468d19b1d1700d84cd126a69d7d3037a9987ed5cc5cd,372,870,0,542,False,,,unresolved,,,unresolved,
+d493rdmRad,4,DEEPSURV,3,solutions\experiment_results\instance49_20260629_163417\run4_seed31.log,92c16023e5c504aeef52daf4d594323fe872639e5b0b50f8af40f8f0df274b18,393,873,0,567,False,,,unresolved,,,unresolved,
+d493rdmRad,5,DEEPSURV,3,solutions\experiment_results\instance49_20260629_163417\run5_seed41.log,a5f7c173788ee5ed6aab2a8324d1ed66440ebad44d948aa68024107250d3e075,522,1037,17,698,False,,,unresolved,,,unresolved,
+d493rdmRad,5,BASELINE,9,solutions\experiment_results\instance49_20260629_163417\run5_seed41.log,a5f7c173788ee5ed6aab2a8324d1ed66440ebad44d948aa68024107250d3e075,323,821,0,524,False,,322.0,literal_summary_field,[Island 9] [SUMMARY] instance= d493rdmRad model=BASELINE26.1364 27.2727 29.5455 best=134.674  best_iter=322 effective_iter=7.95455 822 total_t=163.57719.3182 7.95455  ,,unresolved,
+lin318rdmRad,2,ELASTICNET,7,solutions\experiment_results\instance52_20260629_165530\run2_seed11.log,1f51800571504725058528166fdf1ec456247544a4e698dbfd799c24cf012f18,152,650,0,418,False,,152.0,literal_summary_field,"[Island 7] [SUMMARY] instance=
+lin318rdmRad model=ELASTICNET best=2047.11 best_iter=152 effective_iter=6522047.11  total_t=143.889 ",,unresolved,
+lin318rdmRad,3,KNN,6,solutions\experiment_results\instance52_20260629_165530\run3_seed21.log,2232f88d1efd95b60c5627da95f33afb95515cfb6a660745a01e2a268d190656,177,673,0,453,False,,,unresolved,,,unresolved,
+pcb442rdmRad,1,GBSA,2,solutions\experiment_results\instance53_20260629_171002\run1_seed1.log,c98be78e3c0e2d99de342806341d032865d6b9cb9b39aa110ed491edc1e20434,875,1462,89,1082,False,,,unresolved,"[Island 2] [SUMMARY] instance=[Island 8] Iteration pcb442rdmRad model=1368
+GBSA best=219.976parents indices : 2 best_iter= 7875
+ effective_iter=1464 total_t=280.581 ",1464.0,literal_summary_field,"[Island 2] [SUMMARY] instance=[Island 8] Iteration pcb442rdmRad model=1368
+GBSA best=219.976parents indices : 2 best_iter= 7875
+ effective_iter=1464 total_t=280.581 "
+pcb442rdmRad,1,KNN,6,solutions\experiment_results\instance53_20260629_171002\run1_seed1.log,c98be78e3c0e2d99de342806341d032865d6b9cb9b39aa110ed491edc1e20434,1972,2575,352,1901,True,,,unresolved,,2577.0,literal_summary_field,[Island 6]  [SUMMARY] instance=pcb442rdmRad228.17   model=KNN220.398 best=23.9669219.911 best_iter= 1921 23.1405221.556  221.72615.7025 220.399 effective_iter= 2577  total_t=374.872 
+pcb442rdmRad,3,ELASTICNET,7,solutions\experiment_results\instance53_20260629_171002\run3_seed21.log,e452d8251ae814abd41af064168908b3ff5afb0b3d974732ad1c87d745d7294d,377,876,0,624,False,,,unresolved,,,unresolved,
+pcb442rdmRad,5,ELASTICNET,7,solutions\experiment_results\instance53_20260629_171002\run5_seed41.log,6105402f41390ce5845f9e3688dc462fef2dd894f8ad3ab647d2aa87855047ee,920,1439,21,991,False,,,unresolved,,,unresolved,
+rat195rdmRad,3,DEEPSURV,3,solutions\experiment_results\instance54_20260629_174232\run3_seed21.log,729401ca6dede911c6ec5a338be6e60c74d2ae7fabfb32979aab3ec6b94efa9a,4,501,0,294,False,,,unresolved,,,unresolved,
+rat195rdmRad,3,ELASTICNET,7,solutions\experiment_results\instance54_20260629_174232\run3_seed21.log,729401ca6dede911c6ec5a338be6e60c74d2ae7fabfb32979aab3ec6b94efa9a,3,500,0,268,False,,,unresolved,,,unresolved,
+rat195rdmRad,3,BASELINE,9,solutions\experiment_results\instance54_20260629_174232\run3_seed21.log,729401ca6dede911c6ec5a338be6e60c74d2ae7fabfb32979aab3ec6b94efa9a,16,514,0,290,False,,,unresolved,,,unresolved,
+rat195rdmRad,4,RSF,1,solutions\experiment_results\instance54_20260629_174232\run4_seed31.log,9bfde72614e91a7d0d1c2761110547f6079e6b4a2a16a2ebe5ca96b01dd5ae63,1,500,0,295,False,,,unresolved,,501.0,literal_summary_field,"[Island 1] [SUMMARY] instance=rat195rdmRad model=RSF best=population costs : 68.224
+ best_iter=68.224168.224 effective_iter=  501 total_t=68.22468.224  98.0103 "
+rat195rdmRad,5,COX,0,solutions\experiment_results\instance54_20260629_174232\run5_seed41.log,7a67a0d05b09e2edb36a5c327042b4ef2bf0958d7f3e77fe60f516331b78c832,17,503,0,294,False,,8.0,literal_summary_field,[Island 0] [SUMMARY] instance=71.1353rat195rdmRad model=COX best= 68.22468.224 best_iter= 8 effective_iter=50868.3899 total_t= 101.852 ,,unresolved,
+team1_100rdmRad,1,RSF,1,solutions\experiment_results\instance56_20260629_184951\run1_seed1.log,56ee1c66ad206ca6540e784de1f4c7cf86aff0bf407f2687694fd88aa9c32615,3,502,0,304,False,,,unresolved,,503.0,literal_summary_field,[Island 1] [SUMMARY] instance=team1_100rdmRad model=[Island 4] RSF best=[LOG] iter=498 best=388.537 patience=485388.537 ml= best_iter=pending3 iter_t= effective_iter=503 total_t=108.132 
+team1_100rdmRad,2,WEIBULLAFT,5,solutions\experiment_results\instance56_20260629_184951\run2_seed11.log,311c50f92cc97cb1be056aa500e20d115e07379625350a92f0390e2f9a547411,52,551,0,341,False,,52.0,literal_summary_field,"[Island 5] [SUMMARY] instance=20 , current population size : 24388.537 
+team1_100rdmRad model=WEIBULLAFT best=population distances : 388.537
+390.708  best_iter=52 effective_iter=25.4902 388.537552 total_t=25.4902 111.79425.4902 ",,unresolved,
+team1_100rdmRad,2,ELASTICNET,7,solutions\experiment_results\instance56_20260629_184951\run2_seed11.log,311c50f92cc97cb1be056aa500e20d115e07379625350a92f0390e2f9a547411,18,517,0,315,False,,,unresolved,,,unresolved,
+team1_100rdmRad,4,MTLR,8,solutions\experiment_results\instance56_20260629_184951\run4_seed31.log,77e3c36ce9003ed8d725c287331eb35f770b5b8b67eee6b05b4b5ed3e85b7e24,11,510,0,318,False,,11.0,literal_summary_field,"[Island 8] [SUMMARY] instance=
+team1_100rdmRad model=[Island 0] Iteration MTLR best=504
+388.537 best_iter=11 effective_iter=parents indices : 9 511 total_t=107.02818 ",,unresolved,
+team1_100rdmRad,5,BASELINE,9,solutions\experiment_results\instance56_20260629_184951\run5_seed41.log,068950989531841f029bed24bd561171527de3decccc5673f2d5ccd42da97e48,9,508,0,277,False,,,unresolved,,,unresolved,
+team2_200rdmRad,2,COX,0,solutions\experiment_results\instance57_20260630_103537\run2_seed11.log,bc0824b37a1e291542013988ebb32c1e8ca2ac064f86146838b73c3188943481,844,1449,108,1130,False,,,unresolved,,,unresolved,
+team2_200rdmRad,3,ELASTICNET,7,solutions\experiment_results\instance57_20260630_103537\run3_seed21.log,f8981911d9026ad2bbda32df56ecf63a4f4cdc32cd0ffe94e035b3ee8302cc91,634,1177,44,867,False,,,unresolved,,,unresolved,"[Island 7] [SUMMARY] instance= total_t=team2_200rdmRad338.645
+ model=ELASTICNET[Island 1]  best=613.659 best_iter=634[Island 3] Iteration 1125[LOG] iter= effective_iter=
+11251178 total_t= best=parents indices : 338.649613.659 "
+team3_300rdmRad,1,ELASTICNET,7,solutions\experiment_results\instance58_20260629_185932\run1_seed1.log,becd677494473fa0a19d89e33e9334532a1a7e5b78699e69556961c155076cbf,170,665,0,423,True,effective_iter below complete LOG,,unresolved,,,unresolved,"[Island 7] [SUMMARY] instance=
+team3_300rdmRad model=ELASTICNET best=378.087[Island 1]  best_iter=Iteration 169 effective_iter=669 total_t=132.707667 "
+team3_300rdmRad,2,KNN,6,solutions\experiment_results\instance58_20260629_185932\run2_seed11.log,3d375c88bdc30ce73b57b676a93c0134367b1629e8d193049d99e6fa799a3812,192,691,0,435,False,,192.0,literal_summary_field,[Island 6] [SUMMARY] instance=[Island 0] team3_300rdmRad model=KNN[LOG] iter= best=703378.087 best=378.087 best_iter=192 effective_iter=692 patience=381 ml= total_t=139.124pending ,,unresolved,
+team3_300rdmRad,3,DEEPSURV,3,solutions\experiment_results\instance58_20260629_185932\run3_seed21.log,2d624c403b41861d5f92eb8b2ac456d22b631c23e0ab6c0ceac3bc6068137db4,294,793,0,507,False,,,unresolved,,,unresolved,
+team3_300rdmRad,3,SSVM,4,solutions\experiment_results\instance58_20260629_185932\run3_seed21.log,2d624c403b41861d5f92eb8b2ac456d22b631c23e0ab6c0ceac3bc6068137db4,204,702,0,449,False,,,unresolved,,,unresolved,
+team3_300rdmRad,3,WEIBULLAFT,5,solutions\experiment_results\instance58_20260629_185932\run3_seed21.log,2d624c403b41861d5f92eb8b2ac456d22b631c23e0ab6c0ceac3bc6068137db4,121,620,0,372,False,,,unresolved,,621.0,literal_summary_field,"[Island 5] [SUMMARY] instance=378.38team3_300rdmRad model= 380.37 420.388 378.154 380.551 WEIBULLAFT best=378.087378.231 378.491  best_iter=393.674 378.315 381.447 121
+ effective_iter=621 total_t=[Island 1] 126.097[LOG] iter=617 best=378.087 patience=143 "
+team3_300rdmRad,4,SSVM,4,solutions\experiment_results\instance58_20260629_185932\run4_seed31.log,5e4dd3afbf04dcb7cfcb9c81573ea50cdad6c545e98f88d9752ba79f0c506cbe,149,648,0,385,False,,,unresolved,,,unresolved,
+team3_300rdmRad,4,KNN,6,solutions\experiment_results\instance58_20260629_185932\run4_seed31.log,5e4dd3afbf04dcb7cfcb9c81573ea50cdad6c545e98f88d9752ba79f0c506cbe,231,730,0,442,False,,,unresolved,,,unresolved,
+team3_300rdmRad,5,DEEPSURV,3,solutions\experiment_results\instance58_20260629_185932\run5_seed41.log,fae3794f243b14feb30193f21836c96bdceb4cc9f1e3393627756ef5c2325b38,196,695,0,433,True,,,unresolved,,,unresolved,
+team5_499rdmRad,1,MTLR,8,solutions\experiment_results\instance60_20260629_202909\run1_seed1.log,f286956a6f23b07a113b5cd41c772a329597f0200c31ed2d7898ab4837ba9022,94,592,0,411,False,,,unresolved,,,unresolved,
+team5_499rdmRad,2,DEEPSURV,3,solutions\experiment_results\instance60_20260629_202909\run2_seed11.log,5ef1315667658e48af8cdc625cf5ec8c9ad03e134aacedc090d30291d9e1d1e3,124,623,0,400,False,,,unresolved,,,unresolved,
+team5_499rdmRad,2,KNN,6,solutions\experiment_results\instance60_20260629_202909\run2_seed11.log,5ef1315667658e48af8cdc625cf5ec8c9ad03e134aacedc090d30291d9e1d1e3,148,647,0,418,False,,,unresolved,,,unresolved,
+team5_499rdmRad,4,KNN,6,solutions\experiment_results\instance60_20260629_202909\run4_seed31.log,c95bb4c95699fef5056eda0260648ccc7b4717a83cdc74d1957861b286f46d75,144,644,0,433,True,effective_iter below complete LOG,144.0,literal_summary_field,"model=KNN best=446.191 best_iter=144 effective_iter=644
+---
+[Island 6] [SUMMARY] instance=team5_499rdmRad model=KNN best=446.191 best_iter=144 effective_iter=644 total_t=135.181 ",,unresolved,"model=KNN best=446.191 best_iter=144 effective_iter=644
+---
+[Island 6] [SUMMARY] instance=team5_499rdmRad model=KNN best=446.191 best_iter=144 effective_iter=644 total_t=135.181 "
+team5_499rdmRad,5,DEEPSURV,3,solutions\experiment_results\instance60_20260629_202909\run5_seed41.log,3d276d9aed544dccddcb6c3dab198b5e1232c5d6dc6bd3dc3ed5b5c118cf54e7,232,616,0,396,False,,,unresolved,,,unresolved,
+car_door_30,1,MTLR,8,solutions\experiment_results\instance63_20260629_204412\run1_seed1.log,012b5ebab4cbe14c1ef17990f4529cbf03ed0db1168a343d2d22d285876e6fc9,17,515,0,332,False,,,unresolved,,,unresolved,
+car_door_40,1,GBSA,2,solutions\experiment_results\instance65_20260630_112335\run1_seed1.log,c61e410722dacedd3e0c63a70bb86f08b59dd20d753a36d4a4a849bbd97c9aa5,241,740,0,494,False,,,unresolved,,741.0,literal_summary_field,[Island 2] [SUMMARY] instance=car_door_4026.6667 [Island 9]  model=GBSA[LOG] iter=13.3333 18.6667 752 best=4992.65 best=4963.66 best_iter=241 patience=294 effective_iter=741 total_t=217.401 ml=pending 
+car_door_40,1,MTLR,8,solutions\experiment_results\instance65_20260630_112335\run1_seed1.log,c61e410722dacedd3e0c63a70bb86f08b59dd20d753a36d4a4a849bbd97c9aa5,219,718,0,486,False,,,unresolved,,,unresolved,
+car_door_40,2,DEEPSURV,3,solutions\experiment_results\instance65_20260630_112335\run2_seed11.log,bd1199205747090223ff536d45123455590bb36a99c0d810b20a9abb8f8f2aa9,466,963,0,675,False,,,unresolved,,,unresolved,
+car_door_40,4,COX,0,solutions\experiment_results\instance65_20260630_112335\run4_seed31.log,949ddb6c65fcb356a43f35d983e6bd53393636794954608b738f26ec23033a9c,447,1037,0,748,False,,,unresolved,,,unresolved,
+car_door_40,4,DEEPSURV,3,solutions\experiment_results\instance65_20260630_112335\run4_seed31.log,949ddb6c65fcb356a43f35d983e6bd53393636794954608b738f26ec23033a9c,112,612,0,395,False,,,unresolved,,,unresolved,
+car_door_40,5,MTLR,8,solutions\experiment_results\instance65_20260630_112335\run5_seed41.log,95311dc06d47ca2b0cb05acfa216c0b713226bae0bb50e05c7aa317de30ebd06,468,975,0,669,False,,,unresolved,,,unresolved,
+car_door_50,4,COX,0,solutions\experiment_results\instance67_20260629_205947\run4_seed31.log,b6438bb3e2ab1146c8089869030a6612872955a6206a821096c5f1db11e5450f,588,1105,18,809,False,,,unresolved,,1106.0,literal_summary_field,[Island 0] [SUMMARY] instance=4796.64car_door_50 model=COX  best=4784.99  best_iter=4778.914947.48 4805.33 4816.39 588 effective_iter=1106 total_t=228.733 
+bubbles6,5,SSVM,4,solutions\experiment_results\instance6_20260629_022814\run5_seed41.log,a4bb12f6c7861b7597d31e3165f53fe20a3ddb6328ef375684b0b73a0c762d0e,865,1466,102,1452,True,,,unresolved,,1467.0,literal_summary_field,[Island 4] [SUMMARY] instance= 1238.38bubbles6 model=SSVM  best=1245.99 best_iter=1238.06 1265.52 1244.77 1255.1 8651244.29 effective_iter=1467 total_t=362.729 

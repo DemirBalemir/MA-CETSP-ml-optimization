@@ -1,0 +1,12 @@
+{
+  "fit_id": "concentricCircles4-deepsurv-fold2",
+  "instance": "concentricCircles4",
+  "model": "DEEPSURV",
+  "fold": 2,
+  "n_train": 2481,
+  "n_test": 1258,
+  "train_runs": 7,
+  "test_runs": 3,
+  "seed": 20261110,
+  "started_utc": "2026-11-07T22:18:46.719363+00:00"
+}

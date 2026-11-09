@@ -5,6 +5,9 @@
  **/
 
 #include "LocalSearch/Solver.hpp"
+#include <stdexcept>
+#include <cstdlib>
+#include <memory>
 
 Solver::Solver() {}
 Solver::~Solver() {}
@@ -40,9 +43,9 @@ void Solver::solve(List* solution) {
         // Create an empty model
         GRBModel model = GRBModel(env);
 
-        double* lbs = new double[n];
-        double* ubs = new double[n];
-        char* types = new char[n];
+        std::unique_ptr<double[]> lbs(new double[n]);
+        std::unique_ptr<double[]> ubs(new double[n]);
+        std::unique_ptr<char[]> types(new char[n]);
         for (int i = 0; i < n; ++i) {
             lbs[i] = -GRB_INFINITY;
             ubs[i] = GRB_INFINITY;
@@ -50,13 +53,13 @@ void Solver::solve(List* solution) {
         }
 
         // Create variables
-        GRBVar* dist = model.addVars(lbs, ubs, nullptr, types, nullptr, n);         // distance
-        GRBVar* dx = model.addVars(lbs, ubs, nullptr, types, nullptr, n);           // x diff
-        GRBVar* dy = model.addVars(lbs, ubs, nullptr, types, nullptr, n);           // y diff
-        GRBVar* s = model.addVars(lbs, ubs, nullptr, types, nullptr, n);            // turing point x
-        GRBVar* t = model.addVars(lbs, ubs, nullptr, types, nullptr, n);            // turing point y
-        GRBVar* x = model.addVars(lbs, ubs, nullptr, types, nullptr, n);            // turing point x
-        GRBVar* y = model.addVars(lbs, ubs, nullptr, types, nullptr, n);            // turing point y
+        std::unique_ptr<GRBVar[]> dist(model.addVars(lbs.get(), ubs.get(), nullptr, types.get(), nullptr, n));
+        std::unique_ptr<GRBVar[]> dx(model.addVars(lbs.get(), ubs.get(), nullptr, types.get(), nullptr, n));
+        std::unique_ptr<GRBVar[]> dy(model.addVars(lbs.get(), ubs.get(), nullptr, types.get(), nullptr, n));
+        std::unique_ptr<GRBVar[]> s(model.addVars(lbs.get(), ubs.get(), nullptr, types.get(), nullptr, n));
+        std::unique_ptr<GRBVar[]> t(model.addVars(lbs.get(), ubs.get(), nullptr, types.get(), nullptr, n));
+        std::unique_ptr<GRBVar[]> x(model.addVars(lbs.get(), ubs.get(), nullptr, types.get(), nullptr, n));
+        std::unique_ptr<GRBVar[]> y(model.addVars(lbs.get(), ubs.get(), nullptr, types.get(), nullptr, n));
 
         // Set objective
         GRBLinExpr obj = 0;
@@ -83,6 +86,23 @@ void Solver::solve(List* solution) {
 
         // Optimize model
         model.optimize();
+        const int status = model.get(GRB_IntAttr_Status);
+        const int solutions = model.get(GRB_IntAttr_SolCount);
+        std::cout << "[SOCP] status=" << status << " solutions=" << solutions << "\n";
+        if (solutions == 0) {
+            if (const char* diagnostic = std::getenv("MA_CETSP_SOCP_DIAGNOSTIC_FILE"))
+                model.write(diagnostic);
+            if (status == GRB_NUMERIC) {
+                // Preserve the original no-solution behavior (unchanged input
+                // candidate) explicitly. Never confuse a license exception with
+                // this numerical fallback, and never read unavailable X values.
+                std::cout << "[SOCP FALLBACK] numerical_no_solution; candidate_unchanged\n";
+                return;
+            }
+            throw std::runtime_error("[SOCP ERROR] No solution available; status=" + std::to_string(status));
+        }
+        if (status != GRB_OPTIMAL && status != GRB_SUBOPTIMAL)
+            throw std::runtime_error("[SOCP ERROR] Unexpected solution status=" + std::to_string(status));
         Node* p = solution->head();
         for (int i = 0 ; i < n; ++i) {
             p->x = x[i].get(GRB_DoubleAttr_X);
@@ -92,15 +112,15 @@ void Solver::solve(List* solution) {
 
         solution->setValue(model.get(GRB_DoubleAttr_ObjVal));
 
-        delete[] lbs;
-        delete[] ubs;
-        delete[] types;
+        std::cout << "[SOCP SUCCESS] objective=" << solution->getValue() << "\n";
 
     } catch(GRBException e) {
         std::cout << "Error code = " << e.getErrorCode() << std::endl;
         std::cout << e.getMessage() << std::endl;
+        throw std::runtime_error("[SOCP ERROR] Gurobi error " + std::to_string(e.getErrorCode()) + ": " + e.getMessage());
     } catch(...) {
         std::cout << "Exception during optimization" << std::endl;
+        throw;
     }
     auto end = std::chrono::high_resolution_clock::now();
     if (LOG) std::cout << "socp solution : " << solution->getValue() << " time : " << std::chrono::duration<double> (end - start).count() << " s" << std::endl;

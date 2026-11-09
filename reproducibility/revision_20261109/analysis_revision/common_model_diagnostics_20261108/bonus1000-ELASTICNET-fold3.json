@@ -1,0 +1,8 @@
+{
+  "instance": "bonus1000",
+  "model": "ELASTICNET",
+  "fold": 3,
+  "cindex": 0.5524401472060644,
+  "seconds": 0.031000000002677552,
+  "warnings": []
+}

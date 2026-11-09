@@ -1,0 +1,25 @@
+{
+  "created_utc": "2026-11-09T00:08:05.382705+00:00",
+  "failure": {
+    "state": "halted",
+    "pid": 9908,
+    "error": "[WinError 5] Access is denied: 'C:\\\\Users\\\\Demir\\\\researchproject\\\\MA-CETSP\\\\solutions\\\\neural53_v1\\\\progress.json.tmp' -> 'C:\\\\Users\\\\Demir\\\\researchproject\\\\MA-CETSP\\\\solutions\\\\neural53_v1\\\\progress.json'",
+    "completed": 656,
+    "planned": 795
+  },
+  "actual_completed_archives": 657,
+  "remaining": 138,
+  "missing_or_partial_attempts": [],
+  "counter_discrepancy": "One existing validated run was absent from the transient in-memory counter because startup progress failed before run_one; its archived result was preserved and hash-verified.",
+  "new_runs_completed_with_three_workers": [
+    "team2_200rdmRad-s21-deepsurv-a1",
+    "team2_200rdmRad-s21-none-a1",
+    "team2_200rdmRad-s21-mtlr-a1"
+  ],
+  "adapter_sha256": "bdc9a344438c9481c5bea0ec79602995bb8eb86b0a4561fc3890257b002a69d9",
+  "frozen_driver_sha256": "f487ed952d94c286d73d5717bd094ebf555974ac921b0d848deac0de2fc2e13e",
+  "protocol_sha256": "3af5c0fac93f8b721c6e2d9ca419a31deb69678898fc657b8890e220f8a40900",
+  "all_26_frozen_files_unchanged": true,
+  "scientific_settings_changed": false,
+  "verification_file": "C:\\Users\\Demir\\researchproject\\MA-CETSP\\solutions\\neural53_v1\\maintenance\\20261109_io_probe\\guard_verification.json"
+}

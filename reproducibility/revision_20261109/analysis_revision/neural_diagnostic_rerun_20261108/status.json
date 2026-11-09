@@ -1,0 +1,7 @@
+{
+  "state": "complete",
+  "completed": 30,
+  "planned": 30,
+  "solver_runs": 0,
+  "result": "corrected_neural_cindex.csv"
+}

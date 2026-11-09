@@ -1,0 +1,12 @@
+{
+  "fit_id": "car_door_50-mtlr-fold1",
+  "instance": "car_door_50",
+  "model": "MTLR",
+  "fold": 1,
+  "n_train": 2478,
+  "n_test": 1255,
+  "train_runs": 6,
+  "test_runs": 4,
+  "seed": 20261219,
+  "started_utc": "2026-11-07T22:18:55.810044+00:00"
+}

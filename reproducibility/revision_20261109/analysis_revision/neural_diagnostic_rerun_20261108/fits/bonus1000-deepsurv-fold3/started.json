@@ -1,0 +1,12 @@
+{
+  "fit_id": "bonus1000-deepsurv-fold3",
+  "instance": "bonus1000",
+  "model": "DEEPSURV",
+  "fold": 3,
+  "n_train": 2500,
+  "n_test": 1251,
+  "train_runs": 37,
+  "test_runs": 18,
+  "seed": 20261311,
+  "started_utc": "2026-11-07T22:19:13.360848+00:00"
+}

@@ -1,0 +1,45 @@
+{
+  "score_version": "negative_rmst_step_v1",
+  "duration_cuts": [
+    0.0,
+    41.0,
+    82.0,
+    123.0,
+    164.0,
+    205.0,
+    246.0,
+    287.0,
+    328.0,
+    369.0,
+    410.0,
+    451.0,
+    492.0,
+    533.0,
+    574.0,
+    615.0,
+    656.0,
+    697.0,
+    738.0,
+    779.0
+  ],
+  "in_features": 10,
+  "num_nodes": [
+    64,
+    64
+  ],
+  "num_durations": 20,
+  "batch_norm": true,
+  "dropout": 0.1,
+  "feature_cols": [
+    "avg_edge_length",
+    "var_edge_length",
+    "bbox_width",
+    "bbox_height",
+    "bbox_area",
+    "centroid_x",
+    "centroid_y",
+    "centroid_dist_sum",
+    "angle_variance",
+    "pre_vnd_cost"
+  ]
+}

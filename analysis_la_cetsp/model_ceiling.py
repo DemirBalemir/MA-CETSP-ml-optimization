@@ -24,6 +24,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent))
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "ml" / "scripts"))
 from feature_ceiling import extract_features, FEATURES
+from neural_training import fit_fixed_epochs
 
 warnings.filterwarnings("ignore")
 
@@ -97,7 +98,7 @@ def _fit_knn(Xtr, ttr, etr, Xte):
     return m.predict(Xte)
 
 
-def _fit_deepsurv(Xtr, ttr, etr, Xte):
+def _fit_deepsurv(Xtr, ttr, etr, Xte, *, audit_dir=None):
     import torch, torchtuples as tt
     from pycox.models import CoxPH
     net = tt.practical.MLPVanilla(in_features=Xtr.shape[1], num_nodes=[64, 64],
@@ -105,16 +106,15 @@ def _fit_deepsurv(Xtr, ttr, etr, Xte):
                                   output_bias=False)
     model = CoxPH(net, tt.optim.Adam)
     model.optimizer.set_lr(0.01)
-    model.fit(Xtr.astype("float32"),
-              (ttr.astype("float32"), etr.astype("float32")),
-              batch_size=min(256, len(Xtr)), epochs=100, verbose=False,
-              callbacks=[tt.callbacks.EarlyStopping(patience=20)])
+    fit_fixed_epochs(model, Xtr.astype("float32"),
+                     (ttr.astype("float32"), etr.astype("float32")),
+                     epochs=100, audit_dir=audit_dir)
     net.eval()
     with torch.no_grad():
         return net(torch.FloatTensor(Xte.astype("float32"))).numpy().flatten()
 
 
-def _fit_mtlr(Xtr, ttr, etr, Xte):
+def _fit_mtlr(Xtr, ttr, etr, Xte, *, audit_dir=None):
     import torchtuples as tt
     from pycox.models import MTLR
     from pycox.preprocessing.label_transforms import LabTransDiscreteTime
@@ -125,12 +125,16 @@ def _fit_mtlr(Xtr, ttr, etr, Xte):
                                   out_features=ND, batch_norm=True, dropout=0.1)
     model = MTLR(net, tt.optim.Adam)
     model.optimizer.set_lr(0.01)
-    model.fit(Xtr.astype("float32"), y, batch_size=min(256, len(Xtr)),
-              epochs=100, verbose=False,
-              callbacks=[tt.callbacks.EarlyStopping(patience=20)])
+    fit_fixed_epochs(model, Xtr.astype("float32"), y,
+                     epochs=100, audit_dir=audit_dir)
     model.duration_index = labtrans.cuts
-    surv = model.predict_surv_df(Xte.astype("float32"))
-    return 1.0 - surv.iloc[-1].values      # higher = shorter survival
+    if audit_dir is not None:
+        (Path(audit_dir) / "duration_cuts.json").write_text(json.dumps(labtrans.cuts.tolist()))
+    from mtlr_scores import risk_from_logits
+    import torch
+    net.eval()
+    with torch.no_grad():
+        return risk_from_logits(net(torch.as_tensor(Xte, dtype=torch.float32)), labtrans.cuts)
 
 
 def build_models(args):

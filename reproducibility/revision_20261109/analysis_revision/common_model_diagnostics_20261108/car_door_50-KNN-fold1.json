@@ -1,0 +1,8 @@
+{
+  "instance": "car_door_50",
+  "model": "KNN",
+  "fold": 1,
+  "cindex": 0.5251697807616548,
+  "seconds": 0.062000000005355105,
+  "warnings": []
+}

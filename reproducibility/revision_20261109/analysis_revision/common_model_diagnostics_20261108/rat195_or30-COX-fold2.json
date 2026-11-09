@@ -1,0 +1,8 @@
+{
+  "instance": "rat195_or30",
+  "model": "COX",
+  "fold": 2,
+  "cindex": 0.5422187439170397,
+  "seconds": 0.0940000000045984,
+  "warnings": []
+}

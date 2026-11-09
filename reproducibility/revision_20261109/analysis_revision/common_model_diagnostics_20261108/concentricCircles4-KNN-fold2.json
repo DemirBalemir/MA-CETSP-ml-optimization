@@ -1,0 +1,8 @@
+{
+  "instance": "concentricCircles4",
+  "model": "KNN",
+  "fold": 2,
+  "cindex": 0.5139578655087912,
+  "seconds": 0.0930000000007567,
+  "warnings": []
+}

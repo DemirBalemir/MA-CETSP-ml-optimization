@@ -1,0 +1,8 @@
+{
+  "instance": "rat195_or30",
+  "model": "ELASTICNET",
+  "fold": 2,
+  "cindex": 0.541801436178581,
+  "seconds": 0.030999999995401595,
+  "warnings": []
+}

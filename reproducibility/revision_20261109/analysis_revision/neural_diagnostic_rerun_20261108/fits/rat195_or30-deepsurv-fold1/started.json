@@ -1,0 +1,12 @@
+{
+  "fit_id": "rat195_or30-deepsurv-fold1",
+  "instance": "rat195_or30",
+  "model": "DEEPSURV",
+  "fold": 1,
+  "n_train": 2495,
+  "n_test": 1218,
+  "train_runs": 6,
+  "test_runs": 4,
+  "seed": 20261509,
+  "started_utc": "2026-11-07T22:19:28.311951+00:00"
+}

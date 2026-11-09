@@ -1,0 +1,8 @@
+{
+  "state": "complete",
+  "runs": 795,
+  "primary": "learned versus random: best and solver_seconds",
+  "uncertainty": "10000 problem-cluster bootstrap draws, seed 20261030; percentile 95% descriptive intervals",
+  "tests": "two-sided Wilcoxon on per-problem relative mean effects; Holm across all six contrasts",
+  "caveat": "No equivalence claim. Active-only diagnostics are descriptive. Interval family is not simultaneous."
+}

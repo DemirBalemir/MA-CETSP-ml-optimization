@@ -1,0 +1,373 @@
+{
+  "bonus1000rdmRad": {
+    "probability": 0.26616355034917777,
+    "basis": "pooled_post1000_rate",
+    "exposure": 8878,
+    "rejected": 2363,
+    "any_fit_failure": false
+  },
+  "bubbles1": {
+    "probability": 0.0,
+    "basis": "calibration_pre_activation_stop",
+    "exposure": 0,
+    "rejected": 0,
+    "any_fit_failure": false
+  },
+  "bubbles2": {
+    "probability": 0.0,
+    "basis": "calibration_pre_activation_stop",
+    "exposure": 0,
+    "rejected": 0,
+    "any_fit_failure": false
+  },
+  "bubbles3": {
+    "probability": 0.14947368421052631,
+    "basis": "pooled_post1000_rate",
+    "exposure": 475,
+    "rejected": 71,
+    "any_fit_failure": false
+  },
+  "bubbles4": {
+    "probability": 0.25538793103448276,
+    "basis": "pooled_post1000_rate",
+    "exposure": 1856,
+    "rejected": 474,
+    "any_fit_failure": false
+  },
+  "bubbles6": {
+    "probability": 0.1684149184149184,
+    "basis": "pooled_post1000_rate",
+    "exposure": 3432,
+    "rejected": 578,
+    "any_fit_failure": false
+  },
+  "bubbles7": {
+    "probability": 0.15787850755473326,
+    "basis": "pooled_post1000_rate",
+    "exposure": 6486,
+    "rejected": 1024,
+    "any_fit_failure": false
+  },
+  "bubbles8": {
+    "probability": 0.11716085017055891,
+    "basis": "pooled_post1000_rate",
+    "exposure": 7622,
+    "rejected": 893,
+    "any_fit_failure": false
+  },
+  "bubbles9": {
+    "probability": 0.033524755548657456,
+    "basis": "pooled_post1000_rate",
+    "exposure": 6443,
+    "rejected": 216,
+    "any_fit_failure": false
+  },
+  "car_door_30": {
+    "probability": 0.0,
+    "basis": "calibration_pre_activation_stop",
+    "exposure": 0,
+    "rejected": 0,
+    "any_fit_failure": false
+  },
+  "car_door_40": {
+    "probability": 0.21202854230377166,
+    "basis": "pooled_post1000_rate",
+    "exposure": 981,
+    "rejected": 208,
+    "any_fit_failure": false
+  },
+  "car_door_50": {
+    "probability": 0.2511415525114155,
+    "basis": "pooled_post1000_rate",
+    "exposure": 219,
+    "rejected": 55,
+    "any_fit_failure": false
+  },
+  "chaoSingleDep": {
+    "probability": 0.21296296296296297,
+    "basis": "pooled_post1000_rate",
+    "exposure": 216,
+    "rejected": 46,
+    "any_fit_failure": false
+  },
+  "concentricCircles2": {
+    "probability": 0.14439220953660176,
+    "basis": "pooled_post1000_rate",
+    "exposure": 1489,
+    "rejected": 215,
+    "any_fit_failure": false
+  },
+  "concentricCircles3": {
+    "probability": 0.1339421613394216,
+    "basis": "pooled_post1000_rate",
+    "exposure": 657,
+    "rejected": 88,
+    "any_fit_failure": false
+  },
+  "concentricCircles4": {
+    "probability": 0.0811554332874828,
+    "basis": "pooled_post1000_rate",
+    "exposure": 3635,
+    "rejected": 295,
+    "any_fit_failure": false
+  },
+  "concentricCircles5": {
+    "probability": 0.17812814491781281,
+    "basis": "pooled_post1000_rate",
+    "exposure": 5962,
+    "rejected": 1062,
+    "any_fit_failure": false
+  },
+  "d493_or10": {
+    "probability": 0.16531713900134953,
+    "basis": "pooled_post1000_rate",
+    "exposure": 4446,
+    "rejected": 735,
+    "any_fit_failure": false
+  },
+  "d493_or30": {
+    "probability": 0.0,
+    "basis": "calibration_pre_activation_stop",
+    "exposure": 0,
+    "rejected": 0,
+    "any_fit_failure": false
+  },
+  "d493rdmRad": {
+    "probability": 0.06756756756756757,
+    "basis": "pooled_post1000_rate",
+    "exposure": 296,
+    "rejected": 20,
+    "any_fit_failure": false
+  },
+  "dsj1000_or10": {
+    "probability": 0.2703804347826087,
+    "basis": "pooled_post1000_rate",
+    "exposure": 736,
+    "rejected": 199,
+    "any_fit_failure": false
+  },
+  "dsj1000_or2": {
+    "probability": 0.14904849600982198,
+    "basis": "pooled_post1000_rate",
+    "exposure": 8145,
+    "rejected": 1214,
+    "any_fit_failure": false
+  },
+  "dsj1000_or30": {
+    "probability": 0.22782546494992847,
+    "basis": "pooled_post1000_rate",
+    "exposure": 2796,
+    "rejected": 637,
+    "any_fit_failure": false
+  },
+  "kroD100_or2": {
+    "probability": 0.0,
+    "basis": "calibration_pre_activation_stop",
+    "exposure": 0,
+    "rejected": 0,
+    "any_fit_failure": false
+  },
+  "kroD100_or30": {
+    "probability": 0.08843537414965986,
+    "basis": "pooled_post1000_rate",
+    "exposure": 147,
+    "rejected": 13,
+    "any_fit_failure": false
+  },
+  "lin318_or10": {
+    "probability": 0.09451046972269384,
+    "basis": "pooled_post1000_rate",
+    "exposure": 3534,
+    "rejected": 334,
+    "any_fit_failure": false
+  },
+  "lin318_or2": {
+    "probability": 0.15276804484933426,
+    "basis": "pooled_post1000_rate",
+    "exposure": 2854,
+    "rejected": 436,
+    "any_fit_failure": false
+  },
+  "lin318rdmRad": {
+    "probability": 0.0,
+    "basis": "calibration_pre_activation_stop",
+    "exposure": 0,
+    "rejected": 0,
+    "any_fit_failure": false
+  },
+  "pcb442_or10": {
+    "probability": 0.1898103811530358,
+    "basis": "pooled_post1000_rate",
+    "exposure": 5221,
+    "rejected": 991,
+    "any_fit_failure": false
+  },
+  "pcb442_or2": {
+    "probability": 0.18534390400685666,
+    "basis": "pooled_post1000_rate",
+    "exposure": 4667,
+    "rejected": 865,
+    "any_fit_failure": false
+  },
+  "pcb442_or30": {
+    "probability": 0.16208082545141875,
+    "basis": "pooled_post1000_rate",
+    "exposure": 4652,
+    "rejected": 754,
+    "any_fit_failure": false
+  },
+  "pcb442rdmRad": {
+    "probability": 0.04888103651354535,
+    "basis": "pooled_post1000_rate",
+    "exposure": 1698,
+    "rejected": 83,
+    "any_fit_failure": true
+  },
+  "rat195_or2": {
+    "probability": 0.20164609053497942,
+    "basis": "pooled_post1000_rate",
+    "exposure": 1701,
+    "rejected": 343,
+    "any_fit_failure": false
+  },
+  "rat195_or30": {
+    "probability": 0.19011815252416756,
+    "basis": "pooled_post1000_rate",
+    "exposure": 1862,
+    "rejected": 354,
+    "any_fit_failure": false
+  },
+  "rat195rdmRad": {
+    "probability": 0.0,
+    "basis": "calibration_pre_activation_stop",
+    "exposure": 0,
+    "rejected": 0,
+    "any_fit_failure": false
+  },
+  "rd400_or10": {
+    "probability": 0.18852301174658193,
+    "basis": "pooled_post1000_rate",
+    "exposure": 5193,
+    "rejected": 979,
+    "any_fit_failure": false
+  },
+  "rd400_or2": {
+    "probability": 0.192193884740031,
+    "basis": "pooled_post1000_rate",
+    "exposure": 7097,
+    "rejected": 1364,
+    "any_fit_failure": false
+  },
+  "rd400_or30": {
+    "probability": 0.06896551724137931,
+    "basis": "pooled_post1000_rate",
+    "exposure": 29,
+    "rejected": 2,
+    "any_fit_failure": false
+  },
+  "rd400rdmRad": {
+    "probability": 0.16923076923076924,
+    "basis": "pooled_post1000_rate",
+    "exposure": 3055,
+    "rejected": 517,
+    "any_fit_failure": false
+  },
+  "rotatingDiamonds2": {
+    "probability": 0.0,
+    "basis": "calibration_pre_activation_stop",
+    "exposure": 0,
+    "rejected": 0,
+    "any_fit_failure": false
+  },
+  "rotatingDiamonds3": {
+    "probability": 0.0,
+    "basis": "calibration_pre_activation_stop",
+    "exposure": 0,
+    "rejected": 0,
+    "any_fit_failure": false
+  },
+  "rotatingDiamonds4": {
+    "probability": 0.2222222222222222,
+    "basis": "pooled_post1000_rate",
+    "exposure": 288,
+    "rejected": 64,
+    "any_fit_failure": false
+  },
+  "rotatingDiamonds5": {
+    "probability": 0.16733466933867736,
+    "basis": "pooled_post1000_rate",
+    "exposure": 998,
+    "rejected": 167,
+    "any_fit_failure": false
+  },
+  "team1_100": {
+    "probability": 0.0,
+    "basis": "calibration_pre_activation_stop",
+    "exposure": 0,
+    "rejected": 0,
+    "any_fit_failure": false
+  },
+  "team1_100rdmRad": {
+    "probability": 0.0,
+    "basis": "calibration_pre_activation_stop",
+    "exposure": 0,
+    "rejected": 0,
+    "any_fit_failure": false
+  },
+  "team2_200": {
+    "probability": 0.31373542828180434,
+    "basis": "pooled_post1000_rate",
+    "exposure": 1973,
+    "rejected": 619,
+    "any_fit_failure": false
+  },
+  "team2_200rdmRad": {
+    "probability": 0.147074327886136,
+    "basis": "pooled_post1000_rate",
+    "exposure": 1897,
+    "rejected": 279,
+    "any_fit_failure": false
+  },
+  "team3_300": {
+    "probability": 0.2641132389675271,
+    "basis": "pooled_post1000_rate",
+    "exposure": 6005,
+    "rejected": 1586,
+    "any_fit_failure": false
+  },
+  "team3_300rdmRad": {
+    "probability": 0.0,
+    "basis": "calibration_pre_activation_stop",
+    "exposure": 0,
+    "rejected": 0,
+    "any_fit_failure": false
+  },
+  "team4_400rdmRad": {
+    "probability": 0.23916838597048087,
+    "basis": "pooled_post1000_rate",
+    "exposure": 6301,
+    "rejected": 1507,
+    "any_fit_failure": false
+  },
+  "team5_499": {
+    "probability": 0.20329138431752178,
+    "basis": "pooled_post1000_rate",
+    "exposure": 3099,
+    "rejected": 630,
+    "any_fit_failure": false
+  },
+  "team5_499rdmRad": {
+    "probability": 0.0,
+    "basis": "calibration_pre_activation_stop",
+    "exposure": 0,
+    "rejected": 0,
+    "any_fit_failure": false
+  },
+  "team6_500": {
+    "probability": 0.15514018691588785,
+    "basis": "pooled_post1000_rate",
+    "exposure": 535,
+    "rejected": 83,
+    "any_fit_failure": false
+  }
+}

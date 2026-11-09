@@ -11,6 +11,8 @@
 #include <iostream>
 #include <random>
 #include <ctime>
+#include <tuple>
+#include <vector>
 #include "cmdline.h"
 #include "Defs.hpp"
 
@@ -39,7 +41,17 @@ public:
     int         island_id  = 0;           // this island's index (set by parallel runner)
     std::string ml_model   = ML_MODEL;    // "COX", "RSF", or "GBSA"
     bool        ml_enable  = ML_ENABLE;   // enable/disable ML filter
+    std::string filter_mode = "legacy";
+    bool ml_model_explicit = false;
+    double train_frac_min = ML_TRAIN_FRAC_MIN, train_frac_hard = ML_TRAIN_FRAC_HARD;
+    int min_events = ML_MIN_EVENTS;
+    double random_reject_rate = 0;
+    int random_start_iter = 0;
+    unsigned int prune_seed = 0;
+    std::string prune_schedule, prune_schedule_hash;
+    std::vector<std::tuple<int,int,double>> prune_windows;
     std::string model_dir;                // path to per-island model directory (derived)
+    std::string output_root, run_id, run_dir, results_dir;
 
     // ---- portable path overrides (pass via cmdline to run on any machine) ----
     std::string python_exe;               // path to python interpreter

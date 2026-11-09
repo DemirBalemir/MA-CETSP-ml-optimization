@@ -31,6 +31,7 @@ void Algo::run() {
     auto start_run = std::chrono::high_resolution_clock::now();
 
     int  iter     = 0;
+    int processed_iter = 0;
     int  best_iter = 0;
     int  patience = 0;
     bool improved  = false;
@@ -50,6 +51,7 @@ void Algo::run() {
         population.current_iter = iter;
         const int reject_before = population.ml_reject_count;
         best_solution = population.nextPopulation(patience);
+        if (params->filter_mode != "legacy") ++processed_iter;
         // An offspring filtered out by the ML model never reached VND, so it is
         // NOT evidence that the search has converged — it is just the filter doing
         // its job.  Such iterations are treated as NEUTRAL for early stopping
@@ -57,6 +59,11 @@ void Algo::run() {
         // no longer trigger a premature stop.  Patience thus measures genuine
         // search stagnation (VND'd offspring that failed to improve) only.
         const bool ml_rejected = population.ml_reject_count > reject_before;
+        if (params->filter_mode != "legacy")
+            std::cout << island_prefix_ << "[FILTER] iter=" << iter
+                      << " rejected=" << population.last_filter_decision.rejected
+                      << " reached_vnd=" << population.last_filter_decision.reached_vnd
+                      << " rejects_total=" << population.ml_reject_count << "\n";
 
         improved           = best_solution->getValue() - best_solution_value < -DELTA;
         best_solution_value = best_solution->getValue();
@@ -87,14 +94,14 @@ void Algo::run() {
         //   filter to act.  Budget fractions scale with params->iteration so the
         //   trigger works for any -r value (200, 1000, 5000, …).
         {
-        const int ml_min_iter  = static_cast<int>(params->iteration * ML_TRAIN_FRAC_MIN);
-        const int ml_hard_iter = static_cast<int>(params->iteration * ML_TRAIN_FRAC_HARD);
+        const int ml_min_iter  = static_cast<int>(params->iteration * params->train_frac_min);
+        const int ml_hard_iter = static_cast<int>(params->iteration * params->train_frac_hard);
 
         if (params->ml_enable && !ml_trained && !ml_training_attempted
                 && iter >= ml_min_iter) {
 
             int  n_events    = data.getEventCount();
-            bool enough_data = n_events >= ML_MIN_EVENTS;
+            bool enough_data = n_events >= params->min_events;
             bool hard_ceil   = iter >= ml_hard_iter;
 
             bool primary  = enough_data;          // budget floor already guarded above
@@ -104,7 +111,7 @@ void Algo::run() {
                 if (!enough_data) {
                     std::cout << island_prefix_
                               << "[ML WARN] Hard-ceiling fallback: only " << n_events
-                              << " events logged (< " << ML_MIN_EVENTS
+                              << " events logged (< " << params->min_events
                               << "). Model quality may be limited.\n";
                 }
                 ml_training_attempted = true;  // never re-enter this block
@@ -130,39 +137,14 @@ void Algo::run() {
 
                 bool train_ok = run_ml_training();
 
+                population.complete_ml_training(train_ok, iter);
+
                 if (train_ok) {
                     ml_trained = true;
-                    population.training_completed_at = iter;
+                    learned_filter_active_ = true;
                 } else {
                     std::cerr << island_prefix_
                               << "[ML] Training failed — ML filter disabled for this run.\n";
-                }
-
-                if (population.ml_model) {
-                    // invalidate() clears Cox cache AND kills the Python server
-                    // so the next prediction call restarts it with the fresh model
-                    population.ml_model->invalidate();
-                }
-
-                // Back-fill Cox scores for current population
-                if (params->ml_model == "COX") {
-                    for (List* s : population.population) {
-                        if (s->has_cox_lp) continue;
-                        std::vector<std::pair<double,double>> coords = s->pre_vnd_coords;
-                        if (coords.empty()) {
-                            Node* p = s->head();
-                            for (int i = 0; i < s->size(); ++i) {
-                                coords.push_back({p->x, p->y});
-                                p = p->next;
-                            }
-                        }
-                        auto feats = GeometryFeatures::extract(coords);
-                        double cost = (s->pre_vnd_value >= 0)
-                                      ? s->pre_vnd_value : s->getValue();
-                        feats["pre_vnd_cost"] = cost;
-                        s->cox_lp     = population.predict_cox_score(feats);
-                        s->has_cox_lp = true;
-                    }
                 }
 
                 // NOTE: patience is deliberately NOT reset here.  It is the shared
@@ -189,7 +171,8 @@ void Algo::run() {
                   << "[LOG] iter=" << iter
                   << " best=" << best_solution->getValue()
                   << " patience=" << patience
-                  << " ml=" << (ml_trained ? params->ml_model : "pending")
+                  << " ml=" << (params->filter_mode == "random" ? "random" :
+                              !params->ml_enable ? "none" : ml_trained ? params->ml_model : "pending")
                   << " iter_t=" << std::chrono::duration<double>(end_iter - start_iter).count()
                   << " total_t=" << std::chrono::duration<double>(end_iter - start_run).count()
                   << "\n";
@@ -227,7 +210,9 @@ void Algo::run() {
             break;
         }
 
-        if (std::chrono::duration<double>(end_iter - start_run).count() > params->max_time) {
+        const auto guard_time = params->filter_mode == "legacy" ? end_iter :
+            std::chrono::high_resolution_clock::now();
+        if (std::chrono::duration<double>(guard_time - start_run).count() > params->max_time) {
             std::cout << island_prefix_
                       << "[STOP] time limit reached (" << params->max_time << "s)\n";
             break;
@@ -240,15 +225,48 @@ void Algo::run() {
     if (!LOG) data.write(best_solution, best_iter,
                          std::to_string(best_running_time.count()));
 
+    if (params->filter_mode != "legacy") {
+        for (List* s : population.population)
+            data.recordLifetime(s->candidate_id, s->birth_iter, processed_iter, true);
+        data.verifyResearch();
+        const auto& recorded = data.researchCounts();
+        if (population.generated_count != population.ml_reject_count + population.vnd_evaluated_count ||
+            population.vnd_evaluated_count != population.admitted_count + population.not_admitted_count ||
+            population.generated_count != processed_iter ||
+            recorded.generated != population.generated_count ||
+            recorded.filter_rejected != population.ml_reject_count ||
+            recorded.vnd_evaluated != population.vnd_evaluated_count ||
+            recorded.admitted != population.admitted_count ||
+            recorded.not_admitted != population.not_admitted_count)
+            throw std::logic_error("candidate accounting invariant failed");
+        total_time_ = std::chrono::duration<double>(
+            std::chrono::high_resolution_clock::now() - start_run).count();
+    }
+
     std::cout << island_prefix_
               << "[SUMMARY] instance=" << FILENAMES[instance_index]
-              << " model=" << params->ml_model
+              << " model=" << (!params->ml_enable ? (params->filter_mode == "random" ? "RANDOM" : "BASELINE") :
+                               (params->filter_mode == "legacy" || learned_filter_active_) ? params->ml_model : "LEARNED_INACTIVE")
               << " best=" << best_solution->getValue()
               << " best_iter=" << best_iter
-              << " effective_iter=" << iter
+              << " effective_iter=" << (params->filter_mode == "legacy" ? iter : processed_iter)
               << " total_t=" << total_time_
               << " ml_rejects=" << population.ml_reject_count
               << "\n";
+    if (params->filter_mode != "legacy") {
+        std::cout << island_prefix_ << "[CANDIDATES] generated=" << population.generated_count
+                  << " filter_rejected=" << population.ml_reject_count
+                  << " vnd_evaluated=" << population.vnd_evaluated_count
+                  << " admitted=" << population.admitted_count
+                  << " not_admitted=" << population.not_admitted_count
+                  << " admitted/generated=";
+        if (population.generated_count) std::cout << double(population.admitted_count)/population.generated_count;
+        else std::cout << "undefined";
+        std::cout << " admitted/vnd_evaluated=";
+        if (population.vnd_evaluated_count) std::cout << double(population.admitted_count)/population.vnd_evaluated_count;
+        else std::cout << "undefined";
+        std::cout << "\n";
+    }
 }
 
 bool Algo::run_ml_training() {
@@ -276,10 +294,21 @@ bool Algo::run_ml_training() {
     // accumulates data from ALL historical runs for this island.
     namespace fs = std::filesystem;
     fs::path log_dir = fs::weakly_canonical(
-        fs::current_path() / LOCAL_RES_DIR / "ml_logs" /
+        (params->results_dir.empty() ? fs::current_path() / LOCAL_RES_DIR : fs::path(params->results_dir)) / "ml_logs" /
         FILENAMES[params->instance_index] /
         ("island_" + std::to_string(params->island_id))
     );
+    if (params->filter_mode != "legacy") {
+        const fs::path this_run = log_dir / ("run-" + params->timestamp);
+        bool has_training_rows = false;
+        if (fs::exists(this_run))
+            for (const auto& file : fs::directory_iterator(this_run))
+                if (file.path().extension() == ".json") { has_training_rows = true; break; }
+        if (!has_training_rows) {
+            std::cerr << island_prefix_ << "[ML ERROR] No current-run training rows; refusing historical fallback\n";
+            return false;
+        }
+    }
 
     // Normalise helpers
     auto to_fwd = [](std::string s) {
@@ -304,7 +333,11 @@ bool Algo::run_ml_training() {
             << " \"" << script_bwd << "\""
             << " --model_dir \"" << model_dir_fwd << "\""
             << " --log_dir \""   << log_dir_fwd   << "\""
-            << " --logfile \""   << training_log  << "\"\r\n";
+            << " --logfile \""   << training_log  << "\"";
+        if (params->filter_mode != "legacy" && params->ml_model == "COX")
+            bat << " --dataset_dir \"" << model_dir_fwd << "\"";
+        if (params->filter_mode != "legacy") bat << " --strict_log_dir";
+        bat << "\r\n";
     }
 
     std::cout << island_prefix_ << "[ML] log_dir="   << log_dir_fwd   << "\n";

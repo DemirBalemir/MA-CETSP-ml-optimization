@@ -1,0 +1,42 @@
+{
+  "fit_id": "car_door_50-mtlr-fold2",
+  "instance": "car_door_50",
+  "model": "MTLR",
+  "fold": 2,
+  "n_train": 2507,
+  "n_test": 1226,
+  "train_runs": 7,
+  "test_runs": 3,
+  "seed": 20261220,
+  "state": "completed",
+  "cindex": 0.4937649312567042,
+  "seconds": 1.9839999999967404,
+  "concordant": 301279,
+  "discordant": 310184,
+  "tied_risk": 102643,
+  "tied_time": 0,
+  "unique_risks": 154,
+  "risk_min": 0.9956656694412231,
+  "risk_max": 1.0000003576278687,
+  "warning_messages": [],
+  "training_audit": {
+    "policy": "fixed_epochs_no_validation_callback_v1",
+    "epochs_requested": 100,
+    "epochs_completed": 100,
+    "batch_size": 256,
+    "training_rows": 2507,
+    "initial_state_sha256": "55c5f0aa50e318f19302c01664f1408cd2e0a23f83bcf49f4af7c9ed2ff9d998",
+    "final_state_sha256": "c05cd40d7325013ff2a9d4cf8a7608ac8140f0d8bd9ab52e6b6f411d740758d9",
+    "changed_parameter_tensors": 10,
+    "parameter_tensors": 10,
+    "batchnorm_batches": {
+      "net.0.batch_norm.num_batches_tracked": 1000,
+      "net.1.batch_norm.num_batches_tracked": 1000
+    },
+    "first_train_loss": 2.895043659210205,
+    "final_train_loss": 0.5458058089017868,
+    "minimum_train_loss": 0.5368866413831711,
+    "saved_weights_verified": true
+  },
+  "prediction_sha256": "b1b06020d1bf0fd97bbf9bab039f1c9353fe04d59886ed83c32088d29fbcac37"
+}

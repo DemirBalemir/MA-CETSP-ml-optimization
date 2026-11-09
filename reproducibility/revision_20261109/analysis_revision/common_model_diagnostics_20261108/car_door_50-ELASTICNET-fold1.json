@@ -1,0 +1,8 @@
+{
+  "instance": "car_door_50",
+  "model": "ELASTICNET",
+  "fold": 1,
+  "cindex": 0.5334216202202807,
+  "seconds": 0.031000000002677552,
+  "warnings": []
+}

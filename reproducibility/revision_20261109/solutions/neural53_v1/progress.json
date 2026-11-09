@@ -1,0 +1,11 @@
+{
+  "state": "complete",
+  "pid": 25896,
+  "completed": 795,
+  "planned": 795,
+  "active": {},
+  "errors": [],
+  "first_30_validated": 30,
+  "free_GiB": 27.898754119873047,
+  "updated_utc": "2026-11-09T07:39:25.445292+00:00"
+}

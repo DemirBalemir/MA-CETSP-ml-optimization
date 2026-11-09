@@ -1,0 +1,27 @@
+{
+  "score_version": "negative_rmst_step_v1",
+  "training_audit": {
+    "policy": "fixed_epochs_no_validation_callback_v1",
+    "epochs_requested": 200,
+    "torch_seed": 20276019,
+    "torch_threads": 2,
+    "epochs_completed": 200,
+    "batch_size": 256,
+    "training_rows": 999,
+    "initial_state_sha256": "b238434b9942a3052c4ba022742d6521b8c10cf4e5a61e71575fe48eb5c98e91",
+    "final_state_sha256": "0b98d83def3332945aa1b562671c9b764f0484bcc185743fe14744974b6daffc",
+    "changed_parameter_tensors": 10,
+    "parameter_tensors": 10,
+    "batchnorm_batches": {
+      "net.0.batch_norm.num_batches_tracked": 800,
+      "net.1.batch_norm.num_batches_tracked": 800
+    },
+    "first_train_loss": 3.227176547050476,
+    "final_train_loss": 0.3101167716085911,
+    "minimum_train_loss": 0.2782078832387924
+  },
+  "threshold": -43.50714671280963,
+  "rejection_percentile": 80,
+  "objective": 0.4326411075612354,
+  "n_samples": 999
+}

@@ -1,0 +1,8 @@
+{
+  "instance": "kroD100_or2",
+  "model": "KNN",
+  "fold": 1,
+  "cindex": 0.537206679017376,
+  "seconds": 0.06199999999807915,
+  "warnings": []
+}

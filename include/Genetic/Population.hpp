@@ -21,6 +21,8 @@
 #include <unordered_map>
 #include <GeometryFeatures.hpp>
 #include <SurvivalModel.hpp>
+#include "Utils/PrunePolicy.hpp"
+#include <memory>
 
 
 
@@ -60,7 +62,14 @@ public:
     List* nextPopulation(int patience);
     int current_iter = -1;
     int ml_reject_count = 0;
-    int training_completed_at = -1;  // set by Algo after training fires; -1 = not yet trained
+    int generated_count = 0, vnd_evaluated_count = 0;
+    int admitted_count = 0, not_admitted_count = 0;
+    // Last offspring outcome for the candidate logger (task 2).
+    struct FilterDecision { bool rejected = false; bool reached_vnd = false; };
+    FilterDecision last_filter_decision;
+    std::unique_ptr<PrunePolicy> prune_policy;
+    std::string filter_mode_;
+    int training_completed_at = -1;  // successful training only; -1 = pending or failed
 
     // rolling rejection-rate cap state
     int  ml_win_attempts_ = 0;   // ML-eligible offspring seen in current window
@@ -73,6 +82,8 @@ public:
     std::string ml_model_name;
     bool        ml_enable_;
 
+    void complete_ml_training(bool success, int iteration);
+    void backfill_cox_scores();
     double compute_relative_lp_threshold(double q);
     double predict_cox_score(const std::map<std::string, double>& feats);
 

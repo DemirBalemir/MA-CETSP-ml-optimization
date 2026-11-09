@@ -1,0 +1,8 @@
+{
+  "instance": "rat195_or30",
+  "model": "SSVM",
+  "fold": 1,
+  "cindex": 0.5835979655774337,
+  "seconds": 0.3899999999994179,
+  "warnings": []
+}

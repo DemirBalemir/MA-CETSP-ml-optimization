@@ -1,0 +1,128 @@
+{
+  "created_utc": "2026-11-07T22:17:40.513584+00:00",
+  "planned_fits": 30,
+  "instances": [
+    "concentricCircles4",
+    "car_door_50",
+    "bonus1000",
+    "kroD100_or2",
+    "rat195_or30"
+  ],
+  "models": [
+    "DEEPSURV",
+    "MTLR"
+  ],
+  "folds": 3,
+  "island": 9,
+  "feature_names": [
+    "avg_edge_length",
+    "var_edge_length",
+    "bbox_width",
+    "bbox_height",
+    "bbox_area",
+    "centroid_x",
+    "centroid_y",
+    "centroid_dist_sum",
+    "angle_variance",
+    "pre_vnd_cost"
+  ],
+  "sampling_seed": 0,
+  "max_files_per_instance": 4000,
+  "sampling_rule": "Original unsorted glob, sample before positive-lifetime filtering; frozen paths below",
+  "historical_selection_limit": "Original fit-specific path hashes were not retained; matching n is not proof of identical samples",
+  "validation": "GroupKFold(3) by run; scaler fits outer training rows only; outer test never used for tuning/stopping",
+  "epochs": 100,
+  "training_policy": "Fixed 100 epochs; remove invalid validation EarlyStopping callback",
+  "architecture": {
+    "hidden_units": [
+      64,
+      64
+    ],
+    "batch_norm": true,
+    "dropout": 0.1,
+    "optimizer": "Adam",
+    "learning_rate": 0.01,
+    "mtlr_durations": 20
+  },
+  "score_convention": "Higher risk means shorter survival; preserve DeepSurv log-risk and MTLR last-bin risk",
+  "metric": "sksurv concordance_index_censored per outer fold, mean folds then equal-weight instances; same legacy scoring scope",
+  "neural_seed_rule": "20261108 + 100*instance_position + 10*model_position + fold (1..3)",
+  "cpu_threads": 2,
+  "interop_threads": 1,
+  "torch_deterministic": true,
+  "versions": {
+    "numpy": "1.26.4",
+    "pandas": "2.3.3",
+    "scipy": "1.15.3",
+    "scikit-learn": "1.7.2",
+    "scikit-survival": "0.25.0",
+    "torch": "2.11.0",
+    "pycox": "0.3.0",
+    "torchtuples": "0.2.2"
+  },
+  "python": "3.10.9 (tags/v3.10.9:1dd9be6, Dec  6 2022, 20:01:21) [MSC v.1934 64 bit (AMD64)]",
+  "source_sha256": {
+    "tools/rerun_neural_diagnostics.py": "9aa1819619d7119687a71897ddd510919a96a70c235535c86e01134f2901b93e",
+    "analysis_la_cetsp/model_ceiling.py": "7642d422a6906fd42a3300411f3a3eea29781f65a96b6a32c314a0c9b4683020",
+    "analysis_la_cetsp/feature_ceiling.py": "54e6dcbbdf941a1466ff89cfe66db3d5262484b260e326d4c166aceb3d80d6b3",
+    "ml/scripts/neural_training.py": "e6b90c941c9840753c91f26c07ca636df1140ad83ec9c36c0647bf2dfd919665",
+    "ml/scripts/train_deepsurv.py": "0d20c2bb4c4ef2f2c5bfaad20550e904eb17cfe1b6f8f661c0fb5068ebc9f80d",
+    "ml/scripts/train_mtlr.py": "d14b68ad18bed472c6e0724d07e8073286aec74a7d6ce63d418e9a295dc735b3"
+  },
+  "counts": [
+    {
+      "instance": "concentricCircles4",
+      "available_files": 13350,
+      "selected_files": 4000,
+      "usable_records": 3739,
+      "runs": 10,
+      "historical_n": 3737,
+      "historical_count_matches": false,
+      "feature_file_sha256": "cff6d5a19f32ae8be733c99a4b519933afee00bfb259b006b97a9fa67358384a"
+    },
+    {
+      "instance": "car_door_50",
+      "available_files": 7840,
+      "selected_files": 4000,
+      "usable_records": 3733,
+      "runs": 10,
+      "historical_n": 3744,
+      "historical_count_matches": false,
+      "feature_file_sha256": "e23b7506bf15b833e8c571211d63400bcf1972910c5cc5b0daba552632d5eec1"
+    },
+    {
+      "instance": "bonus1000",
+      "available_files": 64980,
+      "selected_files": 4000,
+      "usable_records": 3751,
+      "runs": 55,
+      "historical_n": 3755,
+      "historical_count_matches": false,
+      "feature_file_sha256": "68636b67f58296b5466b814bf7d6b7372f9decc062cbd35898624b73d8b3644a"
+    },
+    {
+      "instance": "kroD100_or2",
+      "available_files": 3397,
+      "selected_files": 3397,
+      "usable_records": 3179,
+      "runs": 11,
+      "historical_n": 2609,
+      "historical_count_matches": false,
+      "feature_file_sha256": "112af1e99bd40544bb6daa6d86795f451b15463e65c16f1649170d6cc8b489bf"
+    },
+    {
+      "instance": "rat195_or30",
+      "available_files": 8710,
+      "selected_files": 4000,
+      "usable_records": 3713,
+      "runs": 10,
+      "historical_n": 3723,
+      "historical_count_matches": false,
+      "feature_file_sha256": "727b80cd2dc025e98962588c7843a545acc475b4c49136f4894a6d5d24dfb208"
+    }
+  ],
+  "input_selection_sha256": "0227a2b4029e116c4a31d780971d6ef239e9af6104197eb167e45372f1ca6a3d",
+  "fold_assignments_sha256": "528ee1d3fcca9b409c4b30ae76d79cf5195b10c35ea222fd664e0357c2be57dc",
+  "fit_manifest_sha256": "b96990bd943be0048916b6b9343878599278fa4cec285ee0a21f89acfec559cb",
+  "solver_runs": 0
+}

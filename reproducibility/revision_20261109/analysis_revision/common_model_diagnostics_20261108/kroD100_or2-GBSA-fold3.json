@@ -1,0 +1,8 @@
+{
+  "instance": "kroD100_or2",
+  "model": "GBSA",
+  "fold": 3,
+  "cindex": 0.5994452891169406,
+  "seconds": 16.375,
+  "warnings": []
+}

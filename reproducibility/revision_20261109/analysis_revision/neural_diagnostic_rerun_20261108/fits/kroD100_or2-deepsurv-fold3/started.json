@@ -1,0 +1,12 @@
+{
+  "fit_id": "kroD100_or2-deepsurv-fold3",
+  "instance": "kroD100_or2",
+  "model": "DEEPSURV",
+  "fold": 3,
+  "n_train": 2094,
+  "n_test": 1085,
+  "train_runs": 7,
+  "test_runs": 4,
+  "seed": 20261411,
+  "started_utc": "2026-11-07T22:19:24.881314+00:00"
+}

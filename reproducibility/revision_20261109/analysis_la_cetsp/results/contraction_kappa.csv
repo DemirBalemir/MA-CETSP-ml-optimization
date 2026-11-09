@@ -1,0 +1,4 @@
+instance,kappa,estimator
+concentricCircles4,0.921266,per_run_spearman_mean
+kroD100_or2,0.944309,per_run_spearman_mean
+rat195_or30,0.819762,per_run_spearman_mean

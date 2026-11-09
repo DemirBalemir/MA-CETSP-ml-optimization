@@ -1,3 +1,5 @@
+> Historical manuscript documentation. `paper/main.tex` is not the current IEEE Access submission source. The latest public experiment code and saved-result verification are documented in [the November 2026 reference](../reproducibility/revision_20261109/README.md). Current submission documents are maintained separately; the APA/ESWA instructions below describe this older manuscript only.
+
 # Manuscript and reproducibility
 
 `main.tex` is the local manuscript source. `references.bib` is its complete

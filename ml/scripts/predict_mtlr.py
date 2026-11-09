@@ -8,6 +8,7 @@ import torch
 import torch.nn.functional as F
 import torchtuples as tt
 from pathlib import Path
+from mtlr_scores import risk_from_logits, SCORE_VERSION
 
 # ---- resolve model directory ----
 ap = argparse.ArgumentParser()
@@ -50,6 +51,11 @@ def _predict(feats: dict) -> float:
     X_norm = scaler.transform(df.values).astype("float32")
     with torch.no_grad():
         phi      = net(torch.FloatTensor(X_norm))           # (1, num_durations)
+        version = config.get("score_version", "legacy_last_bin_v1")
+        if version == SCORE_VERSION:
+            return float(risk_from_logits(phi, config["duration_cuts"])[0])
+        if version != "legacy_last_bin_v1":
+            raise ValueError("Unsupported MTLR score version")
         phi_crev = phi.flip(1).cumsum(1).flip(1)            # cumsum_reverse
         phi_pad  = F.pad(phi_crev, [0, 1], value=0.0)      # pad zero at end
         pmf      = F.softmax(phi_pad, dim=1)[:, :-1]       # (1, num_durations)
